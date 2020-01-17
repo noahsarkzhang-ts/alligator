@@ -1,7 +1,9 @@
 package org.noahsark.remoting;
 
 /**
- * Created by hadoop on 2020/1/12.
+ * @author: noahsark
+ * @version:
+ * @date: 2020/1/14
  */
 public interface RemotingService {
 
