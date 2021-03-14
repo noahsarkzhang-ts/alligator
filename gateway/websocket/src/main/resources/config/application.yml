@@ -1,0 +1,12 @@
+common:
+  workQueue:
+    maxQueueNum: 1000
+    maxThreadNum: 100
+  serverConfig:
+    host: 192.168.9.102
+    port: 9090
+
+logging:
+  config: classpath:config/logback-spring.xml
+  file:
+    name: logs/ws-gw.log

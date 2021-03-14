@@ -5,4 +5,4 @@
 logs
 target
 pom.xml.versionsBackup
-alligator.iml
+*.iml
