@@ -31,23 +31,7 @@ import org.noahsark.server.remote.RemotingServer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * An HTTP server which serves Web Socket requests at:
- *
- * http://localhost:8080/websocket
- *
- * Open your browser at <a href="http://localhost:8080/">http://localhost:8080/</a>, then the demo
- * page will be loaded and a Web Socket connection will be made automatically.
- *
- * This server illustrates support for the different web socket specification versions and will work
- * with:
- *
- * <ul> <li>Safari 5+ (draft-ietf-hybi-thewebsocketprotocol-00) <li>Chrome 6-13
- * (draft-ietf-hybi-thewebsocketprotocol-00) <li>Chrome 14+ (draft-ietf-hybi-thewebsocketprotocol-10)
- * <li>Chrome 16+ (RFC 6455 aka draft-ietf-hybi-thewebsocketprotocol-17) <li>Firefox 7+
- * (draft-ietf-hybi-thewebsocketprotocol-10) <li>Firefox 11+ (RFC 6455 aka
- * draft-ietf-hybi-thewebsocketprotocol-17) </ul>
- */
+
 public final class WebSocketServer implements RemotingServer {
 
   private static Logger log = LoggerFactory.getLogger(WebSocketServer.class);

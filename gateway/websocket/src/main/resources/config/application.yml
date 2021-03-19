@@ -3,7 +3,7 @@ common:
     maxQueueNum: 1000
     maxThreadNum: 100
   serverConfig:
-    host: 192.168.9.102
+    host: 192.168.68.25
     port: 9090
 
 logging:
