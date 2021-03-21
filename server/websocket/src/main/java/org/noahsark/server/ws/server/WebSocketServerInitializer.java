@@ -23,23 +23,42 @@ import io.netty.handler.codec.http.HttpServerCodec;
 import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler;
 import io.netty.handler.codec.http.websocketx.extensions.compression.WebSocketServerCompressionHandler;
 import io.netty.handler.ssl.SslContext;
+import io.netty.handler.ssl.SslContextBuilder;
+import io.netty.handler.ssl.util.SelfSignedCertificate;
 import io.netty.handler.timeout.IdleStateHandler;
 import org.noahsark.server.queue.WorkQueue;
+import org.noahsark.server.remote.AbstractRemotingServer;
+import org.noahsark.server.remote.RemoteOption;
 import org.noahsark.server.remote.ServerIdleStateTrigger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  */
 public class WebSocketServerInitializer extends ChannelInitializer<SocketChannel> {
 
+    private static Logger log = LoggerFactory.getLogger(WebSocketServerInitializer.class);
+
     private static final String WEBSOCKET_PATH = "/websocket";
 
-    private final SslContext sslCtx;
+    private SslContext sslCtx;
 
-    private final WorkQueue workQueue;
+    private WorkQueue workQueue;
 
-    public WebSocketServerInitializer(SslContext sslCtx,WorkQueue workQueue) {
-        this.sslCtx = sslCtx;
-        this.workQueue = workQueue;
+    public WebSocketServerInitializer(AbstractRemotingServer server) {
+        try {
+            if (server.option(RemoteOption.SSL_ENABLE)) {
+                SelfSignedCertificate ssc = new SelfSignedCertificate();
+                sslCtx = SslContextBuilder.forServer(ssc.certificate(), ssc.privateKey()).build();
+            } else {
+                sslCtx = null;
+            }
+
+            workQueue = server.getWorkQueue();
+
+        } catch (Exception ex) {
+            log.info("catch an exception!", ex);
+        }
     }
 
     @Override

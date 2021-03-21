@@ -18,12 +18,9 @@ public class ApplicationStopListener implements ApplicationListener<ContextClose
 
     private static Logger logger = LoggerFactory.getLogger(ApplicationStopListener.class);
 
-    @Autowired
-    private WorkQueue workQueue;
 
     @Override
     public void onApplicationEvent(ContextClosedEvent contextClosedEvent) {
         logger.info("Application stoped!");
-        workQueue.shutdown();
     }
 }

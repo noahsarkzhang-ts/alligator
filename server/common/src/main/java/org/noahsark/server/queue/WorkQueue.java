@@ -35,7 +35,7 @@ public class WorkQueue {
     private BlockingQueue<RpcRequest> queue;
 
     // 业务分发器
-    private Dispatcher dispatcher;
+    private Dispatcher dispatcher = Dispatcher.getInstance();
 
     public WorkQueue() {
     }

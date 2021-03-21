@@ -1,0 +1,57 @@
+package org.noahsark.server.remote;
+
+
+/**
+ * Created by hadoop on 2021/3/21.
+ */
+public class RemoteOption<T> {
+
+  private String name;
+
+  private T defaultValue;
+
+  public RemoteOption() {
+  }
+
+  public RemoteOption(String name, T value) {
+    this.name = name;
+    this.defaultValue = value;
+  }
+
+  public T getDefaultValue() {
+    return this.defaultValue;
+  }
+
+  public static <T> RemoteOption<T> valueOf(String name, T value) {
+    return new RemoteOption<>(name, value);
+  }
+
+  public static final RemoteOption<Integer> THREAD_NUM_OF_QUEUE = valueOf(
+      ServerConfig.THREAD_NUM_OF_QUEUE_KEY, ServerConfig.THREAD_NUM_OF_QUEUE_DEFAULT);
+
+  public static final RemoteOption<Integer> CAPACITY_OF_QUEUE = valueOf(
+      ServerConfig.CAPACITY_OF_QUEUE_KEY, ServerConfig.CAPACITY_OF_QUEUE_DEFAULT);
+
+  public static final RemoteOption<Boolean> SSL_ENABLE = valueOf(ServerConfig.SSL_ENABLE_KEY,
+      ServerConfig.SSL_ENABLE_DEFAULT);
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+
+    RemoteOption<?> that = (RemoteOption<?>) o;
+
+    return name != null ? name.equals(that.name) : that.name == null;
+  }
+
+  @Override
+  public int hashCode() {
+    return name != null ? name.hashCode() : 0;
+  }
+}

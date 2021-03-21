@@ -23,21 +23,40 @@ import io.netty.handler.codec.LengthFieldPrepender;
 import io.netty.handler.codec.string.StringDecoder;
 import io.netty.handler.codec.string.StringEncoder;
 import io.netty.handler.ssl.SslContext;
+import io.netty.handler.ssl.SslContextBuilder;
+import io.netty.handler.ssl.util.SelfSignedCertificate;
 import io.netty.handler.timeout.IdleStateHandler;
 import org.noahsark.server.queue.WorkQueue;
+import org.noahsark.server.remote.AbstractRemotingServer;
+import org.noahsark.server.remote.RemoteOption;
 import org.noahsark.server.remote.ServerIdleStateTrigger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  */
 public class TcpServerInitializer extends ChannelInitializer<SocketChannel> {
 
-    private final SslContext sslCtx;
+    private static Logger log = LoggerFactory.getLogger(TcpServerInitializer.class);
 
-    private final WorkQueue workQueue;
+    private SslContext sslCtx;
 
-    public TcpServerInitializer(SslContext sslCtx,WorkQueue workQueue) {
-        this.sslCtx = sslCtx;
-        this.workQueue = workQueue;
+    private WorkQueue workQueue;
+
+    public TcpServerInitializer(AbstractRemotingServer server) {
+        try {
+            if (server.option(RemoteOption.SSL_ENABLE)) {
+                SelfSignedCertificate ssc = new SelfSignedCertificate();
+                sslCtx = SslContextBuilder.forServer(ssc.certificate(), ssc.privateKey()).build();
+            } else {
+                sslCtx = null;
+            }
+
+            workQueue = server.getWorkQueue();
+
+        } catch (Exception ex) {
+            log.info("catch an exception!", ex);
+        }
     }
 
     @Override

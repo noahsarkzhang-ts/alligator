@@ -16,7 +16,7 @@ public class ServerBizHandler extends SimpleChannelInboundHandler<String> {
     protected void channelRead0(ChannelHandlerContext ctx, String data) throws Exception {
         try {
             System.out.println("receive data: " + data);
-//            ctx.writeAndFlush(REC_HEART_BEAT);
+            ctx.writeAndFlush(REC_HEART_BEAT);
         } catch (Exception e) {
             e.printStackTrace();
         }

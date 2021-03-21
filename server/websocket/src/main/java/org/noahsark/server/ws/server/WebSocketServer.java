@@ -15,117 +15,28 @@
  */
 package org.noahsark.server.ws.server;
 
-import io.netty.bootstrap.ServerBootstrap;
-import io.netty.channel.Channel;
-import io.netty.channel.EventLoopGroup;
-import io.netty.channel.nio.NioEventLoopGroup;
-import io.netty.channel.socket.nio.NioServerSocketChannel;
-import io.netty.handler.logging.LogLevel;
-import io.netty.handler.logging.LoggingHandler;
-import io.netty.handler.ssl.SslContext;
-import io.netty.handler.ssl.SslContextBuilder;
-import io.netty.handler.ssl.util.SelfSignedCertificate;
-import java.net.InetSocketAddress;
-import org.noahsark.server.queue.WorkQueue;
-import org.noahsark.server.remote.RemotingServer;
+import io.netty.channel.ChannelInitializer;
+import io.netty.channel.socket.SocketChannel;
+import org.noahsark.server.remote.AbstractRemotingServer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
-public final class WebSocketServer implements RemotingServer {
+public final class WebSocketServer extends AbstractRemotingServer {
 
   private static Logger log = LoggerFactory.getLogger(WebSocketServer.class);
 
-  static final boolean SSL = System.getProperty("ssl") != null;
-  static final int PORT = Integer.parseInt(System.getProperty("port", SSL ? "8443" : "9090"));
-
-  private EventLoopGroup bossGroup;
-
-  private EventLoopGroup workerGroup;
-
-  private WebSocketServerInitializer webSocketServerInitializer;
-
-  private String host;
-
-  private int port = PORT;
-
-  private Channel channel;
-
-  private WorkQueue workQueue;
-
-  public void init() {
-    bossGroup = new NioEventLoopGroup(1);
-    workerGroup = new NioEventLoopGroup();
-
-    SslContext sslCtx = null;
-    try {
-      if (SSL) {
-        SelfSignedCertificate ssc = new SelfSignedCertificate();
-        sslCtx = SslContextBuilder.forServer(ssc.certificate(), ssc.privateKey()).build();
-      } else {
-        sslCtx = null;
-      }
-    } catch (Exception ex) {
-      ex.printStackTrace();
-    }
-
-    webSocketServerInitializer = new WebSocketServerInitializer(sslCtx,workQueue);
-  }
-
-  public WebSocketServer() {
-  }
+  public WebSocketServer(){}
 
   public WebSocketServer(String host, int port) {
-
-    this.host = host;
-
-    this.port = port;
+    super(host,port);
   }
 
   @Override
-  public void start() {
-
-    try {
-      ServerBootstrap bootstrap = new ServerBootstrap();
-      bootstrap.group(bossGroup, workerGroup)
-          .channel(NioServerSocketChannel.class)
-          .handler(new LoggingHandler(LogLevel.INFO))
-          .childHandler(webSocketServerInitializer);
-
-      InetSocketAddress address = new InetSocketAddress(host, port);
-
-      channel = bootstrap.bind(address).sync().channel();
-
-      log.info("Open your web browser and navigate to " +
-          (SSL ? "https" : "http") + "://" + host + ":" + port + '/');
-
-      channel.closeFuture().sync();
-    } catch (Exception ex) {
-      ex.printStackTrace();
-    } finally {
-      bossGroup.shutdownGracefully();
-      workerGroup.shutdownGracefully();
-    }
+  protected ChannelInitializer<SocketChannel> getChannelInitializer(AbstractRemotingServer server) {
+    return new WebSocketServerInitializer(this);
   }
 
-  @Override
-  public void shutdown() {
-    if (channel != null) {
-      channel.close();
-    }
-    bossGroup.shutdownGracefully();
-    workerGroup.shutdownGracefully();
-
-    log.info("Shutdown the websocket server...");
-  }
-
-  public WorkQueue getWorkQueue() {
-    return workQueue;
-  }
-
-  public void setWorkQueue(WorkQueue workQueue) {
-    this.workQueue = workQueue;
-  }
 
   public static void main(String[] args) {
 
@@ -143,4 +54,6 @@ public final class WebSocketServer implements RemotingServer {
 
     webSocketServer.start();
   }
+
+
 }

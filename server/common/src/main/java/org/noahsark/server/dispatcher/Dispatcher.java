@@ -14,6 +14,16 @@ public class Dispatcher {
 
     private Map<String, AbstractProcessor> processors = new HashMap<>();
 
+    private static class DispatcherHolder {
+        private static final Dispatcher instance = new Dispatcher();
+    }
+
+    private Dispatcher() {}
+
+    public static Dispatcher getInstance() {
+        return DispatcherHolder.instance;
+    }
+
     public AbstractProcessor getProcessor(String name) {
         return processors.get(name);
     }
@@ -21,5 +31,11 @@ public class Dispatcher {
     public void register(String name, AbstractProcessor processor) {
         processors.put(name, processor);
     }
+
+
+
+
+
+
 
 }

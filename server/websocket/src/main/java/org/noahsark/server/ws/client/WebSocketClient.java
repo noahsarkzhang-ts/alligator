@@ -66,7 +66,6 @@ public final class WebSocketClient implements RemotingClient {
 
   private EventLoopGroup group;
 
-  private WebSocketClientHandler handler;
 
   private WebSocketClientInitializer webSocketClientInitializer;
 
@@ -117,10 +116,10 @@ public final class WebSocketClient implements RemotingClient {
 
       group = new NioEventLoopGroup();
 
-      handler =
+     /* handler =
           new WebSocketClientHandler(
               WebSocketClientHandshakerFactory.newHandshaker(
-                  uri, WebSocketVersion.V13, null, true, new DefaultHttpHeaders()));
+                  uri, WebSocketVersion.V13, null, true, new DefaultHttpHeaders()));*/
 
       webSocketClientInitializer = new WebSocketClientInitializer(sslCtx, uri, host, port,
           this);

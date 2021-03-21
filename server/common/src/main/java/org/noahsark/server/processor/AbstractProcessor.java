@@ -24,15 +24,14 @@ public abstract class AbstractProcessor<T, R> implements Runnable {
 
     private RpcRequest request;
 
-    @Autowired
-    private Dispatcher dispatcher;
+    private Dispatcher dispatcher = Dispatcher.getInstance();
 
     protected String getProcessName() {
         return this.getClassName() + ":" + this.getMethod();
     }
 
     @PostConstruct
-    protected void register() {
+    public void register() {
         dispatcher.register(getProcessName(), this);
     }
 
