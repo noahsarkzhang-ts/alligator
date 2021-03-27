@@ -41,6 +41,7 @@ import io.netty.channel.*;
 import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.websocketx.*;
 import io.netty.util.CharsetUtil;
+import io.netty.util.internal.StringUtil;
 import org.noahsark.server.future.FutureManager;
 import org.noahsark.server.future.RpcPromise;
 import org.noahsark.server.rpc.RpcCommand;
@@ -106,6 +107,9 @@ public class WebSocketClientHandler extends SimpleChannelInboundHandler<Object> 
             String response = textFrame.text();
             System.out.println("WebSocket Client received message: " + response);
 
+            if (StringUtil.isNullOrEmpty(response)) {
+                return;
+            }
 
             RpcCommand command = RpcCommand.marshalFromJson(response);
             RpcPromise promise = FutureManager.getInstance().getPromise(command.getRequestId());

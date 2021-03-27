@@ -99,6 +99,8 @@ public class WebSocketFrameHandler extends SimpleChannelInboundHandler<WebSocket
                     });
                 }
 
+                return;
+
                 //ctx.channel().writeAndFlush(new TextWebSocketFrame(request.toUpperCase(Locale.US)));
             } else {
                 message = "unsupported frame type: " + frame.getClass().getName();
