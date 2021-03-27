@@ -116,6 +116,8 @@ public class WebSocketClientHandler extends SimpleChannelInboundHandler<Object> 
 
             if (promise != null) {
                 promise.setSuccess(command.getPayload());
+                FutureManager.getInstance().removePromis(command.getRequestId());
+
             } else {
                 log.warn("promis is null : {}", command.getRequestId());
             }

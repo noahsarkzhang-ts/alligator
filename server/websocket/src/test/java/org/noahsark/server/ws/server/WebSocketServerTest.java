@@ -111,7 +111,7 @@ public class WebSocketServerTest {
 
             System.out.println("text = " + text);
 
-            context.sendResponse(result);
+            context.sendResponse(new TextWebSocketFrame(text));
         }
 
         @Override

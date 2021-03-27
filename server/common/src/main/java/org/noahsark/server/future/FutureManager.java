@@ -2,6 +2,7 @@ package org.noahsark.server.future;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.PriorityQueue;
 
 /**
  * @author: noahsark
@@ -10,6 +11,7 @@ import java.util.Map;
  */
 public class FutureManager {
     private Map<Integer, RpcPromise> futures = new HashMap<>();
+    private PriorityQueue<RpcPromise> queue = new PriorityQueue<>();
 
     private static class FutureManagerHolder {
         private static final FutureManager instance = new FutureManager();
@@ -28,6 +30,17 @@ public class FutureManager {
 
     public void registerPromise(Integer requestId, RpcPromise promise) {
         futures.put(requestId, promise);
+        queue.add(promise);
+    }
+
+    public void removePromis(Integer requestId) {
+        this.queue.remove(this.futures.get(requestId));
+        this.futures.remove(requestId);
+    }
+
+    public void removePromis(RpcPromise promise) {
+        queue.remove(promise);
+        this.futures.remove(promise.getRequestId());
     }
 
 }

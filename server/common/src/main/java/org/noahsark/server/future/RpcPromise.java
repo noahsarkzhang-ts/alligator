@@ -4,9 +4,8 @@ import io.netty.util.concurrent.DefaultPromise;
 import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.GenericFutureListener;
 import io.netty.util.concurrent.UnorderedThreadPoolEventExecutor;
-import org.noahsark.server.rpc.Result;
-import org.noahsark.server.session.UserInfo;
-import org.noahsark.server.util.TypeUtils;
+
+import java.time.Instant;
 
 /**
  * @author: noahsark
@@ -17,8 +16,15 @@ public class RpcPromise extends DefaultPromise<Object> {
 
     private static final UnorderedThreadPoolEventExecutor EVENT_EXECUTOR = new UnorderedThreadPoolEventExecutor(5);
 
+    private long timeStampMillis;
+
+    private int requestId;
+
     public RpcPromise() {
         super(EVENT_EXECUTOR);
+
+        Instant instant = Instant.now();
+        timeStampMillis = instant.toEpochMilli();
     }
 
     public void addCallback(CommandCallback callback) {
@@ -28,6 +34,22 @@ public class RpcPromise extends DefaultPromise<Object> {
                 callback.callback(future.get());
             }
         });
+    }
+
+    public long getTimeStampMillis() {
+        return timeStampMillis;
+    }
+
+    public void setTimeStampMillis(long timeStampMillis) {
+        this.timeStampMillis = timeStampMillis;
+    }
+
+    public int getRequestId() {
+        return requestId;
+    }
+
+    public void setRequestId(int requestId) {
+        this.requestId = requestId;
     }
 
     public static void main(String[] args) {

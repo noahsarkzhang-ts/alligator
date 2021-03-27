@@ -24,7 +24,7 @@ public class RpcContext {
         this.session = builder.session;
     }
 
-    public void sendResponse(Result<?> result) {
+   /* public void sendResponse(Result<?> result) {
 
         Response response = new Response.Builder()
                 .biz(command.getBiz())
@@ -44,11 +44,11 @@ public class RpcContext {
         WebSocketFrame frame = new TextWebSocketFrame(text);
 
         session.getChannel().writeAndFlush(frame);
-    }
-
-    /*public void sendResponse(Object repsponse) {
-        session.getChannel().writeAndFlush(new TextWebSocketFrame("test"));
     }*/
+
+    public void sendResponse(Object repsponse) {
+        session.getChannel().writeAndFlush(repsponse);
+    }
 
     public Session getSession() {
         return session;
