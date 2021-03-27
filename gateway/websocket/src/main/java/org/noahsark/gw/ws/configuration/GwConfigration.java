@@ -20,7 +20,6 @@ public class GwConfigration {
     workQueue.setMaxQueueNum(config.getWorkQueue().getMaxQueueNum());
     workQueue.setMaxThreadNum(config.getWorkQueue().getMaxThreadNum());
 
-    workQueue.setDispatcher(dispatcher);
     workQueue.init();
 
     return workQueue;

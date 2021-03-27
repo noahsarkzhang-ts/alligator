@@ -71,6 +71,6 @@ public class TcpServerInitializer extends ChannelInitializer<SocketChannel> {
         ch.pipeline().addLast("frameEncoder", new LengthFieldPrepender(4));
         ch.pipeline().addLast("decoder", new StringDecoder());
         ch.pipeline().addLast("encoder", new StringEncoder());
-        ch.pipeline().addLast("bizHandler", new ServerBizHandler());
+        ch.pipeline().addLast("bizHandler", new TcpServerHandler());
     }
 }

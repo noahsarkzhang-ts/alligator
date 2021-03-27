@@ -21,7 +21,6 @@ public class GwCommandLineRunner implements CommandLineRunner {
   @Autowired
   private CommonConfig config;
 
-
   @Override
   public void run(String... strings) throws Exception {
 

@@ -15,18 +15,16 @@
  */
 package org.noahsark.server.ws.server;
 
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+import com.google.gson.JsonSyntaxException;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import io.netty.handler.codec.http.websocketx.WebSocketFrame;
 
+import org.noahsark.server.dispatcher.Dispatcher;
+import org.noahsark.server.processor.AbstractProcessor;
 import org.noahsark.server.queue.WorkQueue;
-import org.noahsark.server.rpc.Request;
-import org.noahsark.server.rpc.Response;
-import org.noahsark.server.rpc.RpcContext;
-import org.noahsark.server.rpc.RpcRequest;
+import org.noahsark.server.rpc.*;
 import org.noahsark.server.session.Session;
 import org.noahsark.server.util.JsonUtils;
 import org.slf4j.Logger;
@@ -49,47 +47,87 @@ public class WebSocketFrameHandler extends SimpleChannelInboundHandler<WebSocket
     protected void channelRead0(ChannelHandlerContext ctx, WebSocketFrame frame) throws Exception {
         // ping and pong frames already handled
 
-        if (frame instanceof TextWebSocketFrame) {
-            // Send the uppercase string back.
-            String request = ((TextWebSocketFrame) frame).text();
-            log.info("receive request: {}", request);
+        Response response = null;
+        Result<Void> result = new Result<>();
+        String message = null;
 
-            JsonObject data = new JsonParser().parse(request).getAsJsonObject();
-            Request gwRequest = new Request();
-            gwRequest.setClassName(data.get("className").getAsString());
-            gwRequest.setMethod(data.get("method").getAsString());
-            gwRequest.setRequestId(data.get("requestId").getAsInt());
-            gwRequest.setVersion(data.get("version").getAsString());
-            gwRequest.setPayload(data.getAsJsonObject("payload"));
+        try {
 
-            Session session = new Session();
-            session.setChannel(ctx.channel());
+            if (frame instanceof TextWebSocketFrame) {
+                // Send the uppercase string back.
+                String request = ((TextWebSocketFrame) frame).text();
+                log.info("receive request: {}", request);
 
-            RpcContext rpcContext = new RpcContext();
-            rpcContext.setRequest(gwRequest);
-            rpcContext.setSession(session);
+                RpcCommand command = RpcCommand.marshalFromJson(request);
+                Session session = Session.getOrCreatedSession(ctx.channel());
 
-            RpcRequest rpcRequest = new RpcRequest();
-            rpcRequest.setContext(rpcContext);
-            rpcRequest.setRequest(gwRequest);
+                RpcContext rpcContext = new RpcContext.Builder()
+                        .command(command)
+                        .session(session)
+                        .build();
 
-            if (workQueue.isBusy()) {
-                log.info("server is busy: {}", request);
+                RpcRequest rpcRequest = new RpcRequest.Builder()
+                        .request(command)
+                        .context(rpcContext)
+                        .build();
 
-                Response<Void> response = new Response<>();
-                response.setCode(1000);
-                response.setMessage("server is busy");
-                ctx.channel().writeAndFlush(new TextWebSocketFrame(JsonUtils.toJson(response)));
+                if (workQueue.isBusy()) {
+                    log.info("server is busy: {}", request);
 
+                    result.setCode(1000);
+                    result.setMessage("server is busy");
+
+                    response = new Response.Builder()
+                            .requestId(command.getRequestId())
+                            .biz(command.getBiz())
+                            .cmd(command.getCmd())
+                            .payload(result)
+                            .build();
+
+                    ctx.channel().writeAndFlush(new TextWebSocketFrame(JsonUtils.toJson(response)));
+
+                } else {
+                    workQueue.add(new Runnable() {
+                        @Override
+                        public void run() {
+                            String processName = command.getBiz() + ":" + command.getCmd();
+                            log.info("processName: {}", processName);
+
+                            AbstractProcessor processor = Dispatcher.getInstance().getProcessor(processName);
+                            processor.process(rpcRequest);
+                        }
+                    });
+                }
+
+                //ctx.channel().writeAndFlush(new TextWebSocketFrame(request.toUpperCase(Locale.US)));
             } else {
-                workQueue.add(rpcRequest);
+                message = "unsupported frame type: " + frame.getClass().getName();
+                throw new UnsupportedOperationException(message);
             }
+        } catch (JsonSyntaxException e) {
+            result.setCode(1001);
+            result.setMessage("Format Error!");
 
-            //ctx.channel().writeAndFlush(new TextWebSocketFrame(request.toUpperCase(Locale.US)));
-        } else {
-            String message = "unsupported frame type: " + frame.getClass().getName();
-            throw new UnsupportedOperationException(message);
+            response = new Response.Builder()
+                    .requestId(0)
+                    .biz(0)
+                    .cmd(0)
+                    .payload(result)
+                    .build();
+
+        } catch (UnsupportedOperationException e) {
+            result.setCode(1002);
+            result.setMessage(message);
+
+            response = new Response.Builder()
+                    .requestId(0)
+                    .biz(0)
+                    .cmd(0)
+                    .payload(result)
+                    .build();
         }
+
+        ctx.channel().writeAndFlush(new TextWebSocketFrame(JsonUtils.toJson(response)));
     }
 
     public WorkQueue getWorkQueue() {

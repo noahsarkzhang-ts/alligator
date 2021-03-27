@@ -1,70 +1,60 @@
 package org.noahsark.server.rpc;
 
+import org.noahsark.server.constant.RpcCommandType;
+import org.noahsark.server.constant.RpcCommandVer;
+
 import java.io.Serializable;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Created by hadoop on 2021/3/13.
  */
-public class Request implements Serializable {
+public class Request extends RpcCommand implements Serializable {
 
-  private int requestId;
+    private static final AtomicInteger NEXT_ID = new AtomicInteger(1);
 
-  private String className;
+    public Request() {
 
-  private String method;
+        this.setRequestId(nextId());
+        this.setType(RpcCommandType.REQUEST);
+        this.setVer(RpcCommandVer.V1);
 
-  private String version;
+    }
 
-  private Object payload;
+    public Request(Builder builder) {
 
-  public int getRequestId() {
-    return requestId;
-  }
+        super(builder.commandBuilder);
 
-  public void setRequestId(int requestId) {
-    this.requestId = requestId;
-  }
+        this.setRequestId(nextId());
+        this.setType(RpcCommandType.REQUEST);
+        this.setVer(RpcCommandVer.V1);
+    }
 
-  public String getClassName() {
-    return className;
-  }
+    public static final int nextId() {
+        return NEXT_ID.getAndIncrement();
+    }
 
-  public void setClassName(String className) {
-    this.className = className;
-  }
 
-  public String getMethod() {
-    return method;
-  }
+    public static class Builder {
+        private RpcCommand.Builder commandBuilder = new RpcCommand.Builder();
 
-  public void setMethod(String method) {
-    this.method = method;
-  }
+        public Builder biz(int biz) {
+            this.commandBuilder.biz(biz);
+            return this;
+        }
 
-  public String getVersion() {
-    return version;
-  }
+        public Builder cmd(int cmd) {
+            this.commandBuilder.cmd(cmd);
+            return this;
+        }
 
-  public void setVersion(String version) {
-    this.version = version;
-  }
+        public Builder payload(Object payload) {
+            this.commandBuilder.payload(payload);
+            return this;
+        }
 
-  public Object getPayload() {
-    return payload;
-  }
-
-  public void setPayload(Object payload) {
-    this.payload = payload;
-  }
-
-  @Override
-  public String toString() {
-    return "Request{" +
-        "requestId=" + requestId +
-        ", className='" + className + '\'' +
-        ", method='" + method + '\'' +
-        ", version='" + version + '\'' +
-        ", payload=" + payload +
-        '}';
-  }
+        public Request build() {
+            return new Request(this);
+        }
+    }
 }

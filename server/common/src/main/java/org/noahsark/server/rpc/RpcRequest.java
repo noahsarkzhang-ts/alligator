@@ -7,11 +7,16 @@ package org.noahsark.server.rpc;
  */
 public class RpcRequest {
 
-    private Request request;
+    private RpcCommand request;
 
     private RpcContext context;
 
     public RpcRequest() {
+    }
+
+    public RpcRequest(Builder builder) {
+        this.request = builder.request;
+        this.context = builder.context;
     }
 
     public RpcRequest(Request request, RpcContext context) {
@@ -19,7 +24,7 @@ public class RpcRequest {
         this.request = request;
     }
 
-    public Request getRequest() {
+    public RpcCommand getRequest() {
         return request;
     }
 
@@ -35,7 +40,26 @@ public class RpcRequest {
         this.context = context;
     }
 
-    public void sendResponse(Response<?> response) {
+    public void sendResponse(Response response) {
         this.getContext().sendResponse(response);
+    }
+
+    public static class Builder {
+        private RpcCommand request;
+        private RpcContext context;
+
+        public Builder request(RpcCommand request) {
+            this.request = request;
+            return this;
+        }
+
+        public Builder context(RpcContext context) {
+            this.context = context;
+            return this;
+        }
+
+        public RpcRequest build() {
+            return new RpcRequest(this);
+        }
     }
 }

@@ -1,46 +1,57 @@
 package org.noahsark.server.rpc;
 
+import org.noahsark.server.constant.RpcCommandType;
+import org.noahsark.server.constant.RpcCommandVer;
+
+import java.io.Serializable;
+
 /**
  * Created by hadoop on 2021/3/13.
  */
-public class Response<R>  {
+public class Response extends RpcCommand implements Serializable {
 
-  private int code;
+    public Response() {
 
-  private String message;
+        this.setType(RpcCommandType.RESPONSE);
+        this.setVer(RpcCommandVer.V1);
 
-  private R payload;
+    }
 
-  public int getCode() {
-    return code;
-  }
+    public Response(Builder builder) {
 
-  public void setCode(int code) {
-    this.code = code;
-  }
+        super(builder.commandBuilder);
 
-  public String getMessage() {
-    return message;
-  }
+        this.setType(RpcCommandType.RESPONSE);
+        this.setVer(RpcCommandVer.V1);
+    }
 
-  public void setMessage(String message) {
-    this.message = message;
-  }
+    public static class Builder {
 
-  public R getPayload() {
-    return payload;
-  }
+        private RpcCommand.Builder commandBuilder = new RpcCommand.Builder();
 
-  public void setPayload(R payload) {
-    this.payload = payload;
-  }
+        public Builder requestId(int requestId) {
+            this.commandBuilder.requestId(requestId);
+            return this;
+        }
 
-  @Override
-  public String toString() {
-    return "Response{" +
-        "code=" + code +
-        ", message='" + message + '\'' +
-        ", payload=" + payload +
-        '}';
-  }
+        public Builder biz(int biz) {
+            this.commandBuilder.biz(biz);
+            return this;
+        }
+
+        public Builder cmd(int cmd) {
+            this.commandBuilder.cmd(cmd);
+            return this;
+        }
+
+        public Builder payload(Object payload) {
+            this.commandBuilder.payload(payload);
+            return this;
+        }
+
+        public Response build() {
+            return new Response(this);
+        }
+    }
+
 }

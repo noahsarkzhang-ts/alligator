@@ -1,6 +1,8 @@
 package org.noahsark.server.remote;
 
-import io.netty.handler.codec.http.websocketx.WebSocketFrame;
+import org.noahsark.server.future.CommandCallback;
+import org.noahsark.server.future.RpcPromise;
+import org.noahsark.server.rpc.Request;
 
 /**
  * Created by hadoop on 2021/3/7.
@@ -17,8 +19,8 @@ public interface RemotingClient {
 
   void toggleServer();
 
-  void sendMessage(WebSocketFrame frame);
-
   void sendMessage(String text);
+
+  RpcPromise invoke(Request reques, CommandCallback callback);
 
 }

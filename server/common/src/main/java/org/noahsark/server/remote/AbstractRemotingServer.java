@@ -68,6 +68,7 @@ public abstract class AbstractRemotingServer implements RemotingServer {
     this.host = host;
 
     this.port = port;
+
   }
 
   @Override
@@ -110,7 +111,7 @@ public abstract class AbstractRemotingServer implements RemotingServer {
     return this.workQueue;
   }
 
-  public void registerProcessor(AbstractProcessor<?,?> processor) {
+  public void registerProcessor(AbstractProcessor<?> processor) {
     processor.register();
   }
 

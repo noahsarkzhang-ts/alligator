@@ -1,16 +1,18 @@
 package org.noahsark.server.remote;
 
 import io.netty.bootstrap.Bootstrap;
-import io.netty.channel.Channel;
-import io.netty.channel.ChannelInitializer;
-import io.netty.channel.EventLoopGroup;
+import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
-import io.netty.handler.codec.http.websocketx.WebSocketFrame;
-import io.netty.handler.ssl.SslContext;
-import io.netty.handler.ssl.SslContextBuilder;
-import io.netty.handler.ssl.util.InsecureTrustManagerFactory;
+import org.noahsark.server.future.CommandCallback;
+import org.noahsark.server.future.FutureManager;
+import org.noahsark.server.future.RpcPromise;
+import org.noahsark.server.rpc.Request;
+import org.noahsark.server.util.JsonUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
@@ -20,106 +22,118 @@ import java.util.Map;
  */
 public abstract class AbstractRemotingClient implements RemotingClient {
 
-  private String url;
+    private static Logger log = LoggerFactory.getLogger(AbstractRemotingClient.class);
 
-  private String host;
+    protected String host;
 
-  private int port;
+    protected int port;
 
-  private EventLoopGroup group;
+    private EventLoopGroup group;
 
-  private ChannelInitializer<SocketChannel> clientInitializer;
+    private Map<RemoteOption<?>, Object> clientOptions = new HashMap<>();
 
-  private Map<RemoteOption<?>, Object> clientOptions = new HashMap<>();
+    protected Channel channel;
 
-  private Channel channel;
+    private Bootstrap bootstrap;
 
-  private Bootstrap bootstrap;
+    private RetryPolicy retryPolicy;
 
-  private RetryPolicy retryPolicy;
-
-
-  public AbstractRemotingClient(String url) {
-    this.url = url;
-
-    init();
-  }
-
-  public AbstractRemotingClient(String host, int port) {
-    this.host = host;
-    this.port = port;
-
-    init();
-  }
-
-  private boolean init() {
-    try {
-
-      group = new NioEventLoopGroup();
-      retryPolicy = new ExponentialBackOffRetry(1000, Integer.MAX_VALUE, 60 * 1000);
-
-      bootstrap = new Bootstrap();
-      bootstrap.group(group)
-          .channel(NioSocketChannel.class)
-          .handler(getChannelInitializer(this));
-
-    } catch (Exception ex) {
-      ex.printStackTrace();
-
-      return false;
+    public AbstractRemotingClient() {
     }
 
-    return true;
-  }
+    public AbstractRemotingClient(String host, int port) {
+        this.host = host;
+        this.port = port;
 
-  protected abstract ChannelInitializer<SocketChannel> getChannelInitializer(
-      AbstractRemotingClient server);
+        init();
+    }
 
-  public <T> void option(RemoteOption<T> option, T value) {
-    this.clientOptions.put(option, value);
+    protected void init() {
+        try {
+            preInit();
 
-  }
+            group = new NioEventLoopGroup();
+            retryPolicy = new ExponentialBackOffRetry(1000, Integer.MAX_VALUE, 60 * 1000);
 
-  public <T> T option(RemoteOption<T> option) {
-    return this.clientOptions.containsKey(option) ? (T) this.clientOptions.get(option)
-        : option.getDefaultValue();
-  }
+            bootstrap = new Bootstrap();
+            bootstrap.group(group)
+                    .channel(NioSocketChannel.class)
+                    .handler(getChannelInitializer(this));
 
+        } catch (Exception ex) {
+            log.warn("catch an exception.", ex);
+        }
+    }
 
+    protected abstract ChannelInitializer<SocketChannel> getChannelInitializer(
+            AbstractRemotingClient server);
 
+    public <T> void option(RemoteOption<T> option, T value) {
+        this.clientOptions.put(option, value);
 
-  @Override
-  public void connect() {
+    }
 
-  }
+    public <T> T option(RemoteOption<T> option) {
+        return this.clientOptions.containsKey(option) ? (T) this.clientOptions.get(option)
+                : option.getDefaultValue();
+    }
 
-  @Override
-  public void shutdown() {
+    @Override
+    public void connect() {
+        synchronized (bootstrap) {
+            ChannelFuture future = bootstrap.connect(this.host, this.port);
+            future.addListener(getConnectionListener());
+            this.channel = future.channel();
+            future.awaitUninterruptibly();
 
-  }
+        }
 
-  @Override
-  public RetryPolicy getRetryPolicy() {
-    return null;
-  }
+    }
 
-  @Override
-  public void ping() {
+    @Override
+    public void shutdown() {
+        if (channel != null) {
+            channel.close();
+        }
+        group.shutdownGracefully();
 
-  }
+    }
 
-  @Override
-  public void toggleServer() {
+    @Override
+    public  RpcPromise invoke(Request request, CommandCallback callback) {
 
-  }
+        RpcPromise promise = new RpcPromise();
+        promise.addCallback(callback);
 
-  @Override
-  public void sendMessage(WebSocketFrame frame) {
+        String text = JsonUtils.toJson(request);
+        this.sendMessage(text);
 
-  }
+        FutureManager.getInstance().registerPromise(request.getRequestId(), promise);
+        return promise;
+    }
 
-  @Override
-  public void sendMessage(String text) {
+    @Override
+    public RetryPolicy getRetryPolicy() {
+        return retryPolicy;
+    }
 
-  }
+    @Override
+    public void toggleServer() {
+        // TODO
+    }
+
+    protected abstract void preInit();
+
+    public abstract URI getUri();
+
+    private ChannelFutureListener getConnectionListener() {
+        return new ChannelFutureListener() {
+            @Override
+            public void operationComplete(ChannelFuture future) throws Exception {
+                if (!future.isSuccess()) {
+                    future.channel().pipeline().fireChannelInactive();
+                }
+            }
+        };
+    }
 }

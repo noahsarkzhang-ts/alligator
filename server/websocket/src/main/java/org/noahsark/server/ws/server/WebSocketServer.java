@@ -24,36 +24,23 @@ import org.slf4j.LoggerFactory;
 
 public final class WebSocketServer extends AbstractRemotingServer {
 
-  private static Logger log = LoggerFactory.getLogger(WebSocketServer.class);
+    private static Logger log = LoggerFactory.getLogger(WebSocketServer.class);
 
-  public WebSocketServer(){}
+    public WebSocketServer() {
+    }
 
-  public WebSocketServer(String host, int port) {
-    super(host,port);
-  }
+    public WebSocketServer(String host, int port) {
+        super(host, port);
+    }
 
-  @Override
-  protected ChannelInitializer<SocketChannel> getChannelInitializer(AbstractRemotingServer server) {
-    return new WebSocketServerInitializer(this);
-  }
+    @Override
+    protected ChannelInitializer<SocketChannel> getChannelInitializer(AbstractRemotingServer server) {
+        return new WebSocketServerInitializer(this);
+    }
 
+    public static void main(String[] args) {
 
-  public static void main(String[] args) {
-
-    String host = "192.168.9.102";
-    int port = 9090;
-
-    final WebSocketServer webSocketServer = new WebSocketServer(host,port);
-
-    Runtime.getRuntime().addShutdownHook(new Thread() {
-      @Override
-      public void run() {
-        webSocketServer.shutdown();
-      }
-    });
-
-    webSocketServer.start();
-  }
+    }
 
 
 }

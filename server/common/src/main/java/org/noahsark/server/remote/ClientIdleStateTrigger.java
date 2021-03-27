@@ -4,6 +4,8 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.handler.timeout.IdleState;
 import io.netty.handler.timeout.IdleStateEvent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * <p>
@@ -11,6 +13,8 @@ import io.netty.handler.timeout.IdleStateEvent;
  * </p>
  */
 public class ClientIdleStateTrigger extends ChannelInboundHandlerAdapter {
+
+    private static Logger log = LoggerFactory.getLogger(ClientIdleStateTrigger.class);
 
     private RemotingClient remotingClient;
 
@@ -24,7 +28,7 @@ public class ClientIdleStateTrigger extends ChannelInboundHandlerAdapter {
             IdleState state = ((IdleStateEvent) evt).state();
             if (state == IdleState.WRITER_IDLE) {
 
-                System.out.println("Idle timeout,send heart beat!");
+                log.info("Idle timeout,send heart beat!");
 
                 this.remotingClient.ping();
             }

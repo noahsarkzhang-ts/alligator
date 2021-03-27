@@ -3,7 +3,7 @@ package org.noahsark.server.remote;
 /**
  * Created by hadoop on 2021/3/21.
  */
-public class ServerConfig {
+public class RemoteConfig {
 
   public static final String THREAD_NUM_OF_QUEUE_KEY = "THREAD_NUM_OF_QUEUE_KEY";
 

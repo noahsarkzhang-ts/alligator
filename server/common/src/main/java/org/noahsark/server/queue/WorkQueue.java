@@ -1,15 +1,11 @@
 package org.noahsark.server.queue;
 
-
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
-import org.noahsark.server.dispatcher.Dispatcher;
-import org.noahsark.server.processor.AbstractProcessor;
-import org.noahsark.server.rpc.RpcRequest;
 import org.noahsark.server.thread.ServiceThread;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 /**
  * @author: noahsark
@@ -32,10 +28,7 @@ public class WorkQueue {
     private WorkThread[] threads;
 
     // 阻塞队列
-    private BlockingQueue<RpcRequest> queue;
-
-    // 业务分发器
-    private Dispatcher dispatcher = Dispatcher.getInstance();
+    private BlockingQueue<Runnable> queue;
 
     public WorkQueue() {
     }
@@ -46,7 +39,7 @@ public class WorkQueue {
 
         WorkThread thread;
         for (int i = 0; i < maxThreadNum; i++) {
-            thread = new WorkThread(i, queue, dispatcher);
+            thread = new WorkThread(i, queue);
 
             threads[i] = thread;
 
@@ -60,11 +53,11 @@ public class WorkQueue {
         return queue.size() >= maxQueueNum;
     }
 
-    public void add(RpcRequest request) {
+    public void add(Runnable task) {
         if (this.queue.size() <= maxQueueNum) {
-            log.info("Add request: {}", request);
+            log.info("Add request: {}", task);
 
-            this.queue.add(request);
+            this.queue.add(task);
         } else {
             log.warn("event request size[{}] enough, so drop this request {}", this.queue.size(), queue.toString());
         }
@@ -86,14 +79,6 @@ public class WorkQueue {
         this.maxThreadNum = maxThreadNum;
     }
 
-    public Dispatcher getDispatcher() {
-        return dispatcher;
-    }
-
-    public void setDispatcher(Dispatcher dispatcher) {
-        this.dispatcher = dispatcher;
-    }
-
     public void shutdown() {
         for (WorkThread thread : threads) {
             thread.shutdown();
@@ -106,14 +91,11 @@ public class WorkQueue {
         private int seq;
 
         // 工作队列
-        private BlockingQueue<RpcRequest> queue;
+        private BlockingQueue<Runnable> queue;
 
-        private Dispatcher dispatcher;
-
-        public WorkThread(int seq, BlockingQueue<RpcRequest> queue, Dispatcher dispatcher) {
+        public WorkThread(int seq, BlockingQueue<Runnable> queue) {
             this.seq = seq;
             this.queue = queue;
-            this.dispatcher = dispatcher;
         }
 
         @Override
@@ -121,13 +103,10 @@ public class WorkQueue {
 
             while (!this.isStopped()) {
                 try {
-                    RpcRequest request = this.queue.take();
+                    // RpcRequest request = this.queue.take();
 
-                    String processName = request.getRequest().getClassName() + ":" + request.getRequest().getMethod();
-                    log.info("processName: {}", processName);
-
-                    AbstractProcessor processor = dispatcher.getProcessor(processName);
-                    processor.process(request);
+                    Runnable task = this.queue.take();
+                    task.run();
 
                 } catch (Exception ex) {
                     log.warn(this.getServiceName() + " controller has exception. ", ex);

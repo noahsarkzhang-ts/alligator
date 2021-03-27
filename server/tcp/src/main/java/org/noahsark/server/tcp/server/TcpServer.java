@@ -19,7 +19,6 @@ import io.netty.channel.ChannelInitializer;
 import io.netty.channel.socket.SocketChannel;
 import org.noahsark.server.remote.AbstractRemotingServer;
 
-
 public final class TcpServer extends AbstractRemotingServer {
 
   public TcpServer(String host, int port) {
@@ -33,21 +32,5 @@ public final class TcpServer extends AbstractRemotingServer {
 
   public static void main(String[] args) {
 
-    String host = "192.168.9.101";
-    int port = 9090;
-
-    final TcpServer tcpServer = new TcpServer(host, port);
-
-    tcpServer.init();
-
-
-    Runtime.getRuntime().addShutdownHook(new Thread() {
-      @Override
-      public void run() {
-        tcpServer.shutdown();
-      }
-    });
-
-    tcpServer.start();
   }
 }

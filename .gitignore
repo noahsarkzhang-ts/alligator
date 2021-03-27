@@ -6,3 +6,4 @@ logs
 target
 pom.xml.versionsBackup
 *.iml
+*.log

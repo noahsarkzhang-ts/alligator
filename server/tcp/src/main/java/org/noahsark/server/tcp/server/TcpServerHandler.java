@@ -8,7 +8,7 @@ import io.netty.channel.SimpleChannelInboundHandler;
  * <p>收到来自客户端的数据包后, 直接在控制台打印出来.</p>
  */
 @ChannelHandler.Sharable
-public class ServerBizHandler extends SimpleChannelInboundHandler<String> {
+public class TcpServerHandler extends SimpleChannelInboundHandler<String> {
 
     private final String REC_HEART_BEAT = "I had received the heart beat!";
 

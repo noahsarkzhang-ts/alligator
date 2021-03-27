@@ -27,13 +27,13 @@ public class RemoteOption<T> {
   }
 
   public static final RemoteOption<Integer> THREAD_NUM_OF_QUEUE = valueOf(
-      ServerConfig.THREAD_NUM_OF_QUEUE_KEY, ServerConfig.THREAD_NUM_OF_QUEUE_DEFAULT);
+      RemoteConfig.THREAD_NUM_OF_QUEUE_KEY, RemoteConfig.THREAD_NUM_OF_QUEUE_DEFAULT);
 
   public static final RemoteOption<Integer> CAPACITY_OF_QUEUE = valueOf(
-      ServerConfig.CAPACITY_OF_QUEUE_KEY, ServerConfig.CAPACITY_OF_QUEUE_DEFAULT);
+      RemoteConfig.CAPACITY_OF_QUEUE_KEY, RemoteConfig.CAPACITY_OF_QUEUE_DEFAULT);
 
-  public static final RemoteOption<Boolean> SSL_ENABLE = valueOf(ServerConfig.SSL_ENABLE_KEY,
-      ServerConfig.SSL_ENABLE_DEFAULT);
+  public static final RemoteOption<Boolean> SSL_ENABLE = valueOf(RemoteConfig.SSL_ENABLE_KEY,
+      RemoteConfig.SSL_ENABLE_DEFAULT);
 
   @Override
   public boolean equals(Object o) {

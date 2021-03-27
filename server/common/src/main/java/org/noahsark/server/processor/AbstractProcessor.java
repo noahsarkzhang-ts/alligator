@@ -1,16 +1,15 @@
 package org.noahsark.server.processor;
 
-
 import com.google.gson.JsonElement;
-import java.util.concurrent.ExecutorService;
-import javax.annotation.PostConstruct;
 import org.noahsark.server.dispatcher.Dispatcher;
-import org.noahsark.server.rpc.Response;
+import org.noahsark.server.rpc.RpcContext;
 import org.noahsark.server.rpc.RpcRequest;
 import org.noahsark.server.util.JsonUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+
+import javax.annotation.PostConstruct;
+import java.util.concurrent.ExecutorService;
 
 /**
  * @author: noahsark
@@ -18,7 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  * @date: 2020/12/3
  */
 
-public abstract class AbstractProcessor<T, R> implements Runnable {
+public abstract class AbstractProcessor<T> implements Runnable {
 
     private static Logger log = LoggerFactory.getLogger(AbstractProcessor.class);
 
@@ -27,7 +26,7 @@ public abstract class AbstractProcessor<T, R> implements Runnable {
     private Dispatcher dispatcher = Dispatcher.getInstance();
 
     protected String getProcessName() {
-        return this.getClassName() + ":" + this.getMethod();
+        return this.getBiz() + ":" + this.getCmd();
     }
 
     @PostConstruct
@@ -54,31 +53,23 @@ public abstract class AbstractProcessor<T, R> implements Runnable {
         RpcRequest rpcRequest = this.getRequest();
         T request = null;
 
-        JsonElement params = (JsonElement)rpcRequest.getRequest().getPayload();
+        try {
+            JsonElement params = (JsonElement)rpcRequest.getRequest().getPayload();
 
-        if (!Void.class.equals(getParamsClass())) {
-            request = JsonUtils.fromJson(params, getParamsClass());
+            if (!Void.class.equals(getParamsClass())) {
+                request = JsonUtils.fromJson(params, getParamsClass());
 
-            log.info("request: {}", params.toString());
+                log.info("request: {}", params.toString());
+
+                execute(request,rpcRequest.getContext());
+            }
+        } catch (Exception ex) {
+            log.warn("catch an exception!",ex);
         }
 
-        Response<R> result = execute(request);
-
-        log.info("result : {}", JsonUtils.toJson(result));
-
-        if (result != null) {
-
-            rpcRequest.sendResponse(result);
-        }
     }
 
-    /**
-     * 业务处理方法，每一个业务都要实现这个方法
-     *
-     * @param request 请求的参数类
-     * @return 返回结果
-     */
-    protected abstract Response<R> execute(T request);
+    protected abstract void execute(T request, RpcContext context);
 
     /**
      * 请求参数的类型，用于Json的反序列化
@@ -92,12 +83,12 @@ public abstract class AbstractProcessor<T, R> implements Runnable {
      *
      * @return 请求对应的类的名称
      */
-    protected abstract String getClassName();
+    protected abstract int getBiz();
 
     /**
      * 一个请求由两个部分组成：类名 + 方法名
      *
      * @return 请求对应的类的方法
      */
-    protected abstract String getMethod();
+    protected abstract int getCmd();
 }

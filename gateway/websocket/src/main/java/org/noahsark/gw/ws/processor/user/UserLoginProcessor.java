@@ -4,26 +4,28 @@ import java.util.UUID;
 
 import org.noahsark.server.processor.AbstractProcessor;
 import org.noahsark.server.rpc.Response;
+import org.noahsark.server.rpc.Result;
+import org.noahsark.server.rpc.RpcContext;
 import org.springframework.stereotype.Component;
 
 /**
  * Created by hadoop on 2021/3/13.
  */
 @Component
-public class UserLoginProcessor extends AbstractProcessor<UserLoginInfo,UserLoginResult> {
+public class UserLoginProcessor extends AbstractProcessor<UserLoginInfo> {
 
   @Override
-  protected Response<UserLoginResult> execute(UserLoginInfo request) {
+  protected void execute(UserLoginInfo request, RpcContext context) {
 
     UserLoginResult result = new UserLoginResult();
     result.setToken(UUID.randomUUID().toString());
 
-    Response<UserLoginResult> response = new Response<>();
+    Result<UserLoginResult> response = new Result<>();
     response.setCode(0);
     response.setMessage("success");
-    response.setPayload(result);
+    response.setData(result);
 
-    return response;
+    context.sendResponse(response);
   }
 
   @Override
@@ -32,12 +34,13 @@ public class UserLoginProcessor extends AbstractProcessor<UserLoginInfo,UserLogi
   }
 
   @Override
-  protected String getClassName() {
-    return "user";
+  protected int getBiz() {
+    return 1;
   }
 
   @Override
-  protected String getMethod() {
-    return "login";
+  protected int getCmd() {
+    return 1000;
   }
+
 }
