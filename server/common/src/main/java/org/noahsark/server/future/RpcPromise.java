@@ -6,55 +6,78 @@ import io.netty.util.concurrent.GenericFutureListener;
 import io.netty.util.concurrent.UnorderedThreadPoolEventExecutor;
 
 import java.time.Instant;
+import java.util.concurrent.ExecutionException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author: noahsark
  * @version:
  * @date: 2021/3/25
  */
-public class RpcPromise extends DefaultPromise<Object> {
+public class RpcPromise extends DefaultPromise<Object> implements Comparable<RpcPromise> {
 
-    private static final UnorderedThreadPoolEventExecutor EVENT_EXECUTOR = new UnorderedThreadPoolEventExecutor(5);
+  private static Logger log = LoggerFactory.getLogger(RpcPromise.class);
 
-    private long timeStampMillis;
+  private static final UnorderedThreadPoolEventExecutor EVENT_EXECUTOR = new UnorderedThreadPoolEventExecutor(
+      5);
 
-    private int requestId;
+  private long timeStampMillis;
 
-    public RpcPromise() {
-        super(EVENT_EXECUTOR);
+  private int requestId;
 
-        Instant instant = Instant.now();
-        timeStampMillis = instant.toEpochMilli();
-    }
+  public RpcPromise() {
+    super(EVENT_EXECUTOR);
 
-    public void addCallback(CommandCallback callback) {
-        this.addListener(new GenericFutureListener<Future<? super Object>>() {
-            @Override
-            public void operationComplete(Future<? super Object> future) throws Exception {
-                callback.callback(future.get());
-            }
-        });
-    }
+    Instant instant = Instant.now();
+    timeStampMillis = instant.toEpochMilli();
 
-    public long getTimeStampMillis() {
-        return timeStampMillis;
-    }
+  }
 
-    public void setTimeStampMillis(long timeStampMillis) {
-        this.timeStampMillis = timeStampMillis;
-    }
+  public void addCallback(CommandCallback callback) {
+    this.addListener(new GenericFutureListener<Future<? super Object>>() {
+      @Override
+      public void operationComplete(Future<? super Object> future) throws Exception {
 
-    public int getRequestId() {
-        return requestId;
-    }
+        Object result = null;
 
-    public void setRequestId(int requestId) {
-        this.requestId = requestId;
-    }
+        try {
+          result = future.get();
 
-    public static void main(String[] args) {
+          callback.callback(result);
+
+        } catch (InterruptedException ex) {
+          log.warn("catch an ception.", ex);
+        } catch (ExecutionException ex) {
+          log.warn("catch an ception.", ex);
+        }
+      }
+    });
+  }
+
+  public long getTimeStampMillis() {
+    return timeStampMillis;
+  }
+
+  public void setTimeStampMillis(long timeStampMillis) {
+    this.timeStampMillis = timeStampMillis;
+  }
+
+  public int getRequestId() {
+    return requestId;
+  }
+
+  public void setRequestId(int requestId) {
+    this.requestId = requestId;
+  }
+
+  public static void main(String[] args) {
         /*System.out.println("class = " + TypeUtils.getFirstParameterizedType(new RpcPromise<UserInfo>(){}));*/
-        
-    }
 
+  }
+
+  @Override
+  public int compareTo(RpcPromise o) {
+    return (int) (this.timeStampMillis - o.getTimeStampMillis());
+  }
 }

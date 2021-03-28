@@ -26,6 +26,8 @@ import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.util.SelfSignedCertificate;
 import io.netty.handler.timeout.IdleStateHandler;
+import org.noahsark.server.hander.AuthHandler;
+import org.noahsark.server.hander.CommandHandler;
 import org.noahsark.server.queue.WorkQueue;
 import org.noahsark.server.remote.AbstractRemotingServer;
 import org.noahsark.server.remote.RemoteOption;
@@ -74,6 +76,8 @@ public class WebSocketServerInitializer extends ChannelInitializer<SocketChannel
         pipeline.addLast(new WebSocketServerCompressionHandler());
         pipeline.addLast(new WebSocketServerProtocolHandler(WEBSOCKET_PATH, null, true));
         pipeline.addLast(new WebSocketIndexPageHandler(WEBSOCKET_PATH));
+        pipeline.addLast(new CommandHandler());
+        pipeline.addLast(new AuthHandler());
         pipeline.addLast(new WebSocketFrameHandler(workQueue));
     }
 }

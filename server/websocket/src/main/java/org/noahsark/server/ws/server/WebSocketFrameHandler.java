@@ -15,16 +15,17 @@
  */
 package org.noahsark.server.ws.server;
 
-import com.google.gson.JsonSyntaxException;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
-import io.netty.handler.codec.http.websocketx.WebSocketFrame;
-
 import org.noahsark.server.dispatcher.Dispatcher;
 import org.noahsark.server.processor.AbstractProcessor;
 import org.noahsark.server.queue.WorkQueue;
-import org.noahsark.server.rpc.*;
+import org.noahsark.server.rpc.Response;
+import org.noahsark.server.rpc.Result;
+import org.noahsark.server.rpc.RpcCommand;
+import org.noahsark.server.rpc.RpcContext;
+import org.noahsark.server.rpc.RpcRequest;
 import org.noahsark.server.session.Session;
 import org.noahsark.server.util.JsonUtils;
 import org.slf4j.Logger;
@@ -33,110 +34,88 @@ import org.slf4j.LoggerFactory;
 /**
  * Echoes uppercase content of text frames.
  */
-public class WebSocketFrameHandler extends SimpleChannelInboundHandler<WebSocketFrame> {
+public class WebSocketFrameHandler extends SimpleChannelInboundHandler<RpcCommand> {
 
-    private static Logger log = LoggerFactory.getLogger(WebSocketFrameHandler.class);
+  private static Logger log = LoggerFactory.getLogger(WebSocketFrameHandler.class);
 
-    private WorkQueue workQueue;
+  private WorkQueue workQueue;
 
-    public WebSocketFrameHandler(WorkQueue workQueue) {
-        this.workQueue = workQueue;
-    }
+  public WebSocketFrameHandler(WorkQueue workQueue) {
+    this.workQueue = workQueue;
+  }
 
-    @Override
-    protected void channelRead0(ChannelHandlerContext ctx, WebSocketFrame frame) throws Exception {
-        // ping and pong frames already handled
+  @Override
+  protected void channelRead0(ChannelHandlerContext ctx, RpcCommand command) throws Exception {
+    // ping and pong frames already handled
 
-        Response response = null;
-        Result<Void> result = new Result<>();
-        String message = null;
+    Response response = null;
+    Result<Void> result = new Result<>();
 
-        try {
+    try {
 
-            if (frame instanceof TextWebSocketFrame) {
-                // Send the uppercase string back.
-                String request = ((TextWebSocketFrame) frame).text();
-                log.info("receive request: {}", request);
+      Session session = Session.getOrCreatedSession(ctx.channel());
 
-                RpcCommand command = RpcCommand.marshalFromJson(request);
-                Session session = Session.getOrCreatedSession(ctx.channel());
+      RpcContext rpcContext = new RpcContext.Builder()
+          .command(command)
+          .session(session)
+          .build();
 
-                RpcContext rpcContext = new RpcContext.Builder()
-                        .command(command)
-                        .session(session)
-                        .build();
+      RpcRequest rpcRequest = new RpcRequest.Builder()
+          .request(command)
+          .context(rpcContext)
+          .build();
 
-                RpcRequest rpcRequest = new RpcRequest.Builder()
-                        .request(command)
-                        .context(rpcContext)
-                        .build();
+      if (workQueue.isBusy()) {
+        log.info("server is busy: {}", JsonUtils.toJson(command));
 
-                if (workQueue.isBusy()) {
-                    log.info("server is busy: {}", request);
+        result.setCode(1000);
+        result.setMessage("server is busy");
 
-                    result.setCode(1000);
-                    result.setMessage("server is busy");
-
-                    response = new Response.Builder()
-                            .requestId(command.getRequestId())
-                            .biz(command.getBiz())
-                            .cmd(command.getCmd())
-                            .payload(result)
-                            .build();
-
-                    ctx.channel().writeAndFlush(new TextWebSocketFrame(JsonUtils.toJson(response)));
-
-                } else {
-                    workQueue.add(new Runnable() {
-                        @Override
-                        public void run() {
-                            String processName = command.getBiz() + ":" + command.getCmd();
-                            log.info("processName: {}", processName);
-
-                            AbstractProcessor processor = Dispatcher.getInstance().getProcessor(processName);
-                            processor.process(rpcRequest);
-                        }
-                    });
-                }
-
-                return;
-
-                //ctx.channel().writeAndFlush(new TextWebSocketFrame(request.toUpperCase(Locale.US)));
-            } else {
-                message = "unsupported frame type: " + frame.getClass().getName();
-                throw new UnsupportedOperationException(message);
-            }
-        } catch (JsonSyntaxException e) {
-            result.setCode(1001);
-            result.setMessage("Format Error!");
-
-            response = new Response.Builder()
-                    .requestId(0)
-                    .biz(0)
-                    .cmd(0)
-                    .payload(result)
-                    .build();
-
-        } catch (UnsupportedOperationException e) {
-            result.setCode(1002);
-            result.setMessage(message);
-
-            response = new Response.Builder()
-                    .requestId(0)
-                    .biz(0)
-                    .cmd(0)
-                    .payload(result)
-                    .build();
-        }
+        response = new Response.Builder()
+            .requestId(command.getRequestId())
+            .biz(command.getBiz())
+            .cmd(command.getCmd())
+            .payload(result)
+            .build();
 
         ctx.channel().writeAndFlush(new TextWebSocketFrame(JsonUtils.toJson(response)));
+
+      } else {
+        workQueue.add(new Runnable() {
+          @Override
+          public void run() {
+            String processName = command.getBiz() + ":" + command.getCmd();
+            log.info("processName: {}", processName);
+
+            AbstractProcessor processor = Dispatcher.getInstance().getProcessor(processName);
+            processor.process(rpcRequest);
+          }
+        });
+      }
+
+      return;
+
+    } catch (Exception ex) {
+      result.setCode(1003);
+      result.setMessage("System exception!");
+
+      response = new Response.Builder()
+          .requestId(0)
+          .biz(0)
+          .cmd(0)
+          .payload(result)
+          .build();
+
     }
 
-    public WorkQueue getWorkQueue() {
-        return workQueue;
-    }
+    ctx.channel().writeAndFlush(new TextWebSocketFrame(JsonUtils.toJson(response)));
+  }
 
-    public void setWorkQueue(WorkQueue workQueue) {
-        this.workQueue = workQueue;
-    }
+  public WorkQueue getWorkQueue() {
+    return workQueue;
+  }
+
+  public void setWorkQueue(WorkQueue workQueue) {
+    this.workQueue = workQueue;
+  }
 }

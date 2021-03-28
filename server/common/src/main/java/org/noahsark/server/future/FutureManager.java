@@ -1,8 +1,12 @@
 package org.noahsark.server.future;
 
+import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.PriorityQueue;
+import org.noahsark.server.exception.TimeoutException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author: noahsark
@@ -10,6 +14,9 @@ import java.util.PriorityQueue;
  * @date: 2021/3/25
  */
 public class FutureManager {
+
+    private static Logger log = LoggerFactory.getLogger(FutureManager.class);
+
     private Map<Integer, RpcPromise> futures = new HashMap<>();
     private PriorityQueue<RpcPromise> queue = new PriorityQueue<>();
 
@@ -41,6 +48,34 @@ public class FutureManager {
     public void removePromis(RpcPromise promise) {
         queue.remove(promise);
         this.futures.remove(promise.getRequestId());
+    }
+
+    public void clear(int intervalMillis) {
+
+        Instant instant = Instant.now();
+        long currentMillis = instant.toEpochMilli();
+
+        RpcPromise promise = null;
+        long timeStampMillis = 0L;
+        long timeoutMillis = 0L;
+
+        while (!queue.isEmpty()) {
+            promise = queue.peek();
+
+            timeStampMillis = promise.getTimeStampMillis();
+            timeoutMillis = currentMillis - timeStampMillis;
+
+            if (timeoutMillis >= intervalMillis) {
+
+                promise.setFailure(new TimeoutException());
+                this.removePromis(promise);
+
+                log.warn("Request timeout: {},timeout: {}",promise.getRequestId(),timeoutMillis);
+            } else {
+                break;
+            }
+        }
+
     }
 
 }

@@ -9,6 +9,7 @@ import org.noahsark.server.future.CommandCallback;
 import org.noahsark.server.future.FutureManager;
 import org.noahsark.server.future.RpcPromise;
 import org.noahsark.server.rpc.Request;
+import org.noahsark.server.thread.ClientClearThread;
 import org.noahsark.server.util.JsonUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,6 +39,8 @@ public abstract class AbstractRemotingClient implements RemotingClient {
 
     private RetryPolicy retryPolicy;
 
+    private ClientClearThread clearThread;
+
     public AbstractRemotingClient() {
     }
 
@@ -51,6 +54,9 @@ public abstract class AbstractRemotingClient implements RemotingClient {
     protected void init() {
         try {
             preInit();
+
+            clearThread = new ClientClearThread();
+            clearThread.start();
 
             group = new NioEventLoopGroup();
             retryPolicy = new ExponentialBackOffRetry(1000, Integer.MAX_VALUE, 60 * 1000);
@@ -96,6 +102,10 @@ public abstract class AbstractRemotingClient implements RemotingClient {
             channel.close();
         }
         group.shutdownGracefully();
+
+        if (clearThread != null) {
+            clearThread.shutdown();
+        }
 
     }
 
