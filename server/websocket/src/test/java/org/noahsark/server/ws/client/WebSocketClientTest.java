@@ -16,7 +16,7 @@ public class WebSocketClientTest {
 
     @Test
     public void clientTest() {
-        String url = System.getProperty("url", "ws://192.168.9.100:9090/websocket");
+        String url = System.getProperty("url", "ws://192.168.68.25:9090/websocket");
 
         WebSocketClient client = new WebSocketClient(url);
         client.connect();

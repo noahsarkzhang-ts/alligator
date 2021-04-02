@@ -51,14 +51,14 @@ public class WebSocketIndexPageHandler extends SimpleChannelInboundHandler<FullH
         // Handle a bad request.
         if (!req.decoderResult().isSuccess()) {
             sendHttpResponse(ctx, req, new DefaultFullHttpResponse(req.protocolVersion(), BAD_REQUEST,
-                                                                   ctx.alloc().buffer(0)));
+                    ctx.alloc().buffer(0)));
             return;
         }
 
         // Allow only GET methods.
         if (!GET.equals(req.method())) {
             sendHttpResponse(ctx, req, new DefaultFullHttpResponse(req.protocolVersion(), FORBIDDEN,
-                                                                   ctx.alloc().buffer(0)));
+                    ctx.alloc().buffer(0)));
             return;
         }
 
@@ -74,7 +74,7 @@ public class WebSocketIndexPageHandler extends SimpleChannelInboundHandler<FullH
             sendHttpResponse(ctx, req, res);
         } else {
             sendHttpResponse(ctx, req, new DefaultFullHttpResponse(req.protocolVersion(), NOT_FOUND,
-                                                                   ctx.alloc().buffer(0)));
+                    ctx.alloc().buffer(0)));
         }
     }
 

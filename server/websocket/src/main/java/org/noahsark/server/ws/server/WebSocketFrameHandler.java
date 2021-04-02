@@ -36,86 +36,83 @@ import org.slf4j.LoggerFactory;
  */
 public class WebSocketFrameHandler extends SimpleChannelInboundHandler<RpcCommand> {
 
-  private static Logger log = LoggerFactory.getLogger(WebSocketFrameHandler.class);
+    private static Logger log = LoggerFactory.getLogger(WebSocketFrameHandler.class);
 
-  private WorkQueue workQueue;
+    private WorkQueue workQueue;
 
-  public WebSocketFrameHandler(WorkQueue workQueue) {
-    this.workQueue = workQueue;
-  }
-
-  @Override
-  protected void channelRead0(ChannelHandlerContext ctx, RpcCommand command) throws Exception {
-    // ping and pong frames already handled
-
-    Response response = null;
-    Result<Void> result = new Result<>();
-
-    try {
-
-      Session session = Session.getOrCreatedSession(ctx.channel());
-
-      RpcContext rpcContext = new RpcContext.Builder()
-          .command(command)
-          .session(session)
-          .build();
-
-      RpcRequest rpcRequest = new RpcRequest.Builder()
-          .request(command)
-          .context(rpcContext)
-          .build();
-
-      if (workQueue.isBusy()) {
-        log.info("server is busy: {}", JsonUtils.toJson(command));
-
-        result.setCode(1000);
-        result.setMessage("server is busy");
-
-        response = new Response.Builder()
-            .requestId(command.getRequestId())
-            .biz(command.getBiz())
-            .cmd(command.getCmd())
-            .payload(result)
-            .build();
-
-        ctx.channel().writeAndFlush(new TextWebSocketFrame(JsonUtils.toJson(response)));
-
-      } else {
-        workQueue.add(new Runnable() {
-          @Override
-          public void run() {
-            String processName = command.getBiz() + ":" + command.getCmd();
-            log.info("processName: {}", processName);
-
-            AbstractProcessor processor = Dispatcher.getInstance().getProcessor(processName);
-            processor.process(rpcRequest);
-          }
-        });
-      }
-
-      return;
-
-    } catch (Exception ex) {
-      result.setCode(1003);
-      result.setMessage("System exception!");
-
-      response = new Response.Builder()
-          .requestId(0)
-          .biz(0)
-          .cmd(0)
-          .payload(result)
-          .build();
-
+    public WebSocketFrameHandler(WorkQueue workQueue) {
+        this.workQueue = workQueue;
     }
 
-    ctx.channel().writeAndFlush(new TextWebSocketFrame(JsonUtils.toJson(response)));
-  }
+    @Override
+    protected void channelRead0(ChannelHandlerContext ctx, RpcCommand command) throws Exception {
+        // ping and pong frames already handled
 
-  public WorkQueue getWorkQueue() {
-    return workQueue;
-  }
+        Response response = null;
+        Result<Void> result = new Result<>();
 
-  public void setWorkQueue(WorkQueue workQueue) {
-    this.workQueue = workQueue;
-  }
+        try {
+
+            Session session = Session.getOrCreatedSession(ctx.channel());
+
+            RpcContext rpcContext = new RpcContext.Builder()
+                    .command(command)
+                    .session(session)
+                    .build();
+
+            RpcRequest rpcRequest = new RpcRequest.Builder()
+                    .request(command)
+                    .context(rpcContext)
+                    .build();
+
+            if (workQueue.isBusy()) {
+                log.info("server is busy: {}", JsonUtils.toJson(command));
+
+                result.setCode(1000);
+                result.setMessage("server is busy");
+
+                response = new Response.Builder()
+                        .requestId(command.getRequestId())
+                        .biz(command.getBiz())
+                        .cmd(command.getCmd())
+                        .payload(result)
+                        .build();
+
+                ctx.channel().writeAndFlush(new TextWebSocketFrame(JsonUtils.toJson(response)));
+
+            } else {
+                workQueue.add(() -> {
+                    String processName = command.getBiz() + ":" + command.getCmd();
+                    log.info("processName: {}", processName);
+
+                    AbstractProcessor processor = Dispatcher.getInstance().getProcessor(processName);
+                    processor.process(rpcRequest);
+                });
+            }
+
+            return;
+
+        } catch (Exception ex) {
+            result.setCode(1003);
+            result.setMessage("System exception!");
+
+            response = new Response.Builder()
+                    .requestId(0)
+                    .biz(0)
+                    .cmd(0)
+                    .payload(result)
+                    .build();
+
+        }
+
+        ctx.channel().writeAndFlush(new TextWebSocketFrame(JsonUtils.toJson(response)));
+    }
+
+    public WorkQueue getWorkQueue() {
+        return workQueue;
+    }
+
+    public void setWorkQueue(WorkQueue workQueue) {
+        this.workQueue = workQueue;
+    }
 }

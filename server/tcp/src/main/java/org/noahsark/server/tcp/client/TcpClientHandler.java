@@ -2,11 +2,12 @@ package org.noahsark.server.tcp.client;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
+import org.noahsark.server.rpc.RpcCommand;
 
-public class TcpClientHandler extends SimpleChannelInboundHandler<String> {
+public class TcpClientHandler extends SimpleChannelInboundHandler<RpcCommand> {
 
     @Override
-    protected void channelRead0(ChannelHandlerContext ctx, String data) throws Exception {
+    protected void channelRead0(ChannelHandlerContext ctx, RpcCommand data) throws Exception {
         try {
             System.out.println("receive data: " + data);
         } catch (Exception e) {

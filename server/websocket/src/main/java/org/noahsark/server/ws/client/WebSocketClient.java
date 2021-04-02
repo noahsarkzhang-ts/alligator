@@ -22,6 +22,8 @@ import io.netty.handler.codec.http.websocketx.PingWebSocketFrame;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import io.netty.handler.codec.http.websocketx.WebSocketFrame;
 import org.noahsark.server.remote.AbstractRemotingClient;
+import org.noahsark.server.rpc.RpcCommand;
+import org.noahsark.server.util.JsonUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,7 +58,9 @@ public final class WebSocketClient extends AbstractRemotingClient {
     }
 
     @Override
-    public void sendMessage(String text) {
+    public void sendMessage(RpcCommand command) {
+
+        String text = JsonUtils.toJson(command);
         WebSocketFrame frame = new TextWebSocketFrame(text);
         this.channel.writeAndFlush(frame);
     }

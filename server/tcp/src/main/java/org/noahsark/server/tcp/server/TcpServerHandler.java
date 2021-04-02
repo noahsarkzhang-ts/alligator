@@ -3,20 +3,32 @@ package org.noahsark.server.tcp.server;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
+import org.noahsark.server.rpc.Response;
+import org.noahsark.server.rpc.RpcCommand;
+import org.noahsark.server.tcp.common.HearBeat;
 
 /**
  * <p>收到来自客户端的数据包后, 直接在控制台打印出来.</p>
  */
 @ChannelHandler.Sharable
-public class TcpServerHandler extends SimpleChannelInboundHandler<String> {
-
-    private final String REC_HEART_BEAT = "I had received the heart beat!";
+public class TcpServerHandler extends SimpleChannelInboundHandler<RpcCommand> {
 
     @Override
-    protected void channelRead0(ChannelHandlerContext ctx, String data) throws Exception {
+    protected void channelRead0(ChannelHandlerContext ctx, RpcCommand data) throws Exception {
         try {
             System.out.println("receive data: " + data);
-            ctx.writeAndFlush(REC_HEART_BEAT);
+
+            HearBeat hearBeat = new HearBeat();
+            hearBeat.setLoad(1);
+
+            Response response = new Response.Builder()
+                    .biz(data.getBiz())
+                    .cmd(data.getCmd())
+                    .requestId(data.getRequestId())
+                    .payload(hearBeat)
+                    .build();
+
+            ctx.writeAndFlush(response);
         } catch (Exception e) {
             e.printStackTrace();
         }

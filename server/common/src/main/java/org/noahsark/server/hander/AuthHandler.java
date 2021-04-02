@@ -11,14 +11,14 @@ import org.slf4j.LoggerFactory;
  */
 public class AuthHandler extends SimpleChannelInboundHandler<RpcCommand> {
 
-  private static Logger log = LoggerFactory.getLogger(AuthHandler.class);
+    private static Logger log = LoggerFactory.getLogger(AuthHandler.class);
 
-  @Override
-  protected void channelRead0(ChannelHandlerContext ctx, RpcCommand msg) throws Exception {
+    @Override
+    protected void channelRead0(ChannelHandlerContext ctx, RpcCommand msg) throws Exception {
 
-    // TODO 用户认证
+        // TODO 用户认证
 
-    ctx.fireChannelRead(msg);
+        ctx.fireChannelRead(msg);
 
-  }
+    }
 }

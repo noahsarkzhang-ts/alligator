@@ -115,8 +115,9 @@ public abstract class AbstractRemotingClient implements RemotingClient {
         RpcPromise promise = new RpcPromise();
         promise.addCallback(callback);
 
-        String text = JsonUtils.toJson(request);
-        this.sendMessage(text);
+        this.sendMessage(request);
+
+        /*this.channel.writeAndFlush(request);*/
 
         FutureManager.getInstance().registerPromise(request.getRequestId(), promise);
         return promise;

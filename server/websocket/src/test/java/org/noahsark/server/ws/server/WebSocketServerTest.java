@@ -19,7 +19,7 @@ public class WebSocketServerTest {
 
     @Test
     public void testServer() {
-        String host = "192.168.9.100";
+        String host = "192.168.68.25";
         int port = 9090;
 
         // 请求

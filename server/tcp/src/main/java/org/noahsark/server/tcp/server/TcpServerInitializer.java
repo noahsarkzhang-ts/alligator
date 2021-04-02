@@ -26,6 +26,8 @@ import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.util.SelfSignedCertificate;
 import io.netty.handler.timeout.IdleStateHandler;
+import org.noahsark.server.hander.CommandDecoder;
+import org.noahsark.server.hander.CommandEncoder;
 import org.noahsark.server.queue.WorkQueue;
 import org.noahsark.server.remote.AbstractRemotingServer;
 import org.noahsark.server.remote.RemoteOption;
@@ -69,8 +71,8 @@ public class TcpServerInitializer extends ChannelInitializer<SocketChannel> {
         pipeline.addLast(new ServerIdleStateTrigger());
         ch.pipeline().addLast("frameDecoder", new LengthFieldBasedFrameDecoder(Integer.MAX_VALUE, 0, 4, 0, 4));
         ch.pipeline().addLast("frameEncoder", new LengthFieldPrepender(4));
-        ch.pipeline().addLast("decoder", new StringDecoder());
-        ch.pipeline().addLast("encoder", new StringEncoder());
+        ch.pipeline().addLast("decoder", new CommandDecoder());
+        ch.pipeline().addLast("encoder", new CommandEncoder());
         ch.pipeline().addLast("bizHandler", new TcpServerHandler());
     }
 }

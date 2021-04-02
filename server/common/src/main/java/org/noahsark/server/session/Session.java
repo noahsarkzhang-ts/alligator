@@ -14,7 +14,7 @@ public class Session {
 
     public static final String SESSION_KEY_NAME = "NOAHSARK_SESSION";
 
-    private static final AttributeKey<String> SESSION_KEY = AttributeKey.newInstance(SESSION_KEY_NAME);
+    public static final AttributeKey<String> SESSION_KEY = AttributeKey.newInstance(SESSION_KEY_NAME);
 
     private String sessionId;
 

@@ -4,6 +4,9 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.handler.timeout.IdleState;
 import io.netty.handler.timeout.IdleStateEvent;
+import io.netty.util.internal.StringUtil;
+import org.noahsark.server.session.Session;
+import org.noahsark.server.session.SessionManager;
 
 /**
  * <p>在规定时间内未收到客户端的任何数据包, 将主动断开该连接</p>
@@ -14,6 +17,13 @@ public class ServerIdleStateTrigger extends ChannelInboundHandlerAdapter {
         if (evt instanceof IdleStateEvent) {
             IdleState state = ((IdleStateEvent) evt).state();
             if (state == IdleState.READER_IDLE) {
+
+                // 连接超过，删除会话
+                String sessionId = ctx.channel().attr(Session.SESSION_KEY).get();
+                if (!StringUtil.isNullOrEmpty(sessionId)) {
+                    ctx.channel().attr(Session.SESSION_KEY).set("");
+                    SessionManager.getInstance().remove(sessionId);
+                }
 
                 System.out.println("Client timeout, disconnect!!!");
                 ctx.disconnect();

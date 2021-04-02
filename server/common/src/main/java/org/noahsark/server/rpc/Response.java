@@ -2,6 +2,7 @@ package org.noahsark.server.rpc;
 
 import org.noahsark.server.constant.RpcCommandType;
 import org.noahsark.server.constant.RpcCommandVer;
+import org.noahsark.server.constant.SerializerType;
 
 import java.io.Serializable;
 
@@ -14,7 +15,7 @@ public class Response extends RpcCommand implements Serializable {
 
         this.setType(RpcCommandType.RESPONSE);
         this.setVer(RpcCommandVer.V1);
-
+        this.setSerializer(SerializerType.JSON);
     }
 
     public Response(Builder builder) {
@@ -23,6 +24,7 @@ public class Response extends RpcCommand implements Serializable {
 
         this.setType(RpcCommandType.RESPONSE);
         this.setVer(RpcCommandVer.V1);
+        this.setSerializer(SerializerType.JSON);
     }
 
     public static class Builder {

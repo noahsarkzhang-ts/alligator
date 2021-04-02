@@ -2,6 +2,7 @@ package org.noahsark.server.rpc;
 
 import org.noahsark.server.constant.RpcCommandType;
 import org.noahsark.server.constant.RpcCommandVer;
+import org.noahsark.server.constant.SerializerType;
 
 import java.io.Serializable;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -18,6 +19,7 @@ public class Request extends RpcCommand implements Serializable {
         this.setRequestId(nextId());
         this.setType(RpcCommandType.REQUEST);
         this.setVer(RpcCommandVer.V1);
+        this.setSerializer(SerializerType.JSON);
 
     }
 
@@ -28,6 +30,7 @@ public class Request extends RpcCommand implements Serializable {
         this.setRequestId(nextId());
         this.setType(RpcCommandType.REQUEST);
         this.setVer(RpcCommandVer.V1);
+        this.setSerializer(SerializerType.JSON);
     }
 
     public static final int nextId() {

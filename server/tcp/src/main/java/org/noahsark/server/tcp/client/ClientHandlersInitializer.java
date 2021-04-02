@@ -9,6 +9,8 @@ import io.netty.handler.codec.string.StringDecoder;
 import io.netty.handler.codec.string.StringEncoder;
 import io.netty.handler.timeout.IdleStateHandler;
 import io.netty.util.CharsetUtil;
+import org.noahsark.server.hander.CommandDecoder;
+import org.noahsark.server.hander.CommandEncoder;
 import org.noahsark.server.remote.ClientIdleStateTrigger;
 import org.noahsark.server.remote.ReconnectHandler;
 import org.noahsark.server.remote.RemotingClient;
@@ -31,8 +33,8 @@ public class ClientHandlersInitializer extends ChannelInitializer<SocketChannel>
 
         pipeline.addLast(new LengthFieldBasedFrameDecoder(Integer.MAX_VALUE, 0, 4, 0, 4));
         pipeline.addLast(new LengthFieldPrepender(4));
-        pipeline.addLast(new StringDecoder(CharsetUtil.UTF_8));
-        pipeline.addLast(new StringEncoder(CharsetUtil.UTF_8));
+        pipeline.addLast(new CommandDecoder());
+        pipeline.addLast(new CommandEncoder());
         pipeline.addLast(new TcpClientHandler());
     }
 }
