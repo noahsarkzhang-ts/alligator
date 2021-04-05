@@ -1,6 +1,5 @@
 package org.noahsark.server.ws.server;
 
-import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import org.junit.Test;
 import org.noahsark.server.processor.AbstractProcessor;
 import org.noahsark.server.rpc.Response;
@@ -19,7 +18,7 @@ public class WebSocketServerTest {
 
     @Test
     public void testServer() {
-        String host = "192.168.68.25";
+        String host = "192.168.9.103";
         int port = 9090;
 
         // 请求
@@ -111,7 +110,7 @@ public class WebSocketServerTest {
 
             System.out.println("text = " + text);
 
-            context.sendResponse(new TextWebSocketFrame(text));
+            context.sendResponse(response);
         }
 
         @Override

@@ -4,6 +4,8 @@ import com.google.gson.JsonElement;
 import org.noahsark.server.dispatcher.Dispatcher;
 import org.noahsark.server.rpc.RpcContext;
 import org.noahsark.server.rpc.RpcRequest;
+import org.noahsark.server.serializer.Serializer;
+import org.noahsark.server.serializer.SerializerManager;
 import org.noahsark.server.util.JsonUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,17 +56,25 @@ public abstract class AbstractProcessor<T> implements Runnable {
         T request = null;
 
         try {
-            JsonElement params = (JsonElement)rpcRequest.getRequest().getPayload();
+            Object params = rpcRequest.getRequest().getPayload();
 
             if (!Void.class.equals(getParamsClass())) {
-                request = JsonUtils.fromJson(params, getParamsClass());
 
-                log.info("request: {}", params.toString());
+                Serializer serializer = SerializerManager.getInstance()
+                    .getSerializer(rpcRequest.getRequest().getSerializer());
 
-                execute(request,rpcRequest.getContext());
+                if (params instanceof JsonElement) {
+                    request = JsonUtils.fromJson((JsonElement) params, getParamsClass());
+                } else if (params.getClass().isArray()) {
+                    request = serializer.decode((byte[]) params, getParamsClass());
+                }
+
+                log.info("request: {}", JsonUtils.toJson(request));
+
+                execute(request, rpcRequest.getContext());
             }
         } catch (Exception ex) {
-            log.warn("catch an exception!",ex);
+            log.warn("catch an exception!", ex);
         }
 
     }
@@ -91,4 +101,6 @@ public abstract class AbstractProcessor<T> implements Runnable {
      * @return 请求对应的类的方法
      */
     protected abstract int getCmd();
+
 }
+

@@ -1,7 +1,9 @@
 package org.noahsark.server.ws.client;
 
+import java.util.ArrayList;
+import java.util.List;
 import org.junit.Test;
-import org.noahsark.server.future.CommandCallback;
+import org.noahsark.client.future.CommandCallback;
 import org.noahsark.server.rpc.Request;
 import org.noahsark.server.ws.server.WebSocketServerTest;
 
@@ -16,7 +18,7 @@ public class WebSocketClientTest {
 
     @Test
     public void clientTest() {
-        String url = System.getProperty("url", "ws://192.168.68.25:9090/websocket");
+        String url = System.getProperty("url", "ws://192.168.9.103:9090/websocket");
 
         WebSocketClient client = new WebSocketClient(url);
         client.connect();
@@ -25,9 +27,9 @@ public class WebSocketClientTest {
 
             TimeUnit.SECONDS.sleep(2);
 
-            String [] requests = {
-                    "{\"biz\":1,\"cmd\":1000,\"requestId\":1,\"version\":\"V1.0\",\"payload\":{\"userName\":\"allan\",\"password\":\"test\"}}",
-                    "Hello World!"
+            String[] requests = {
+                "{\"biz\":1,\"cmd\":1000,\"requestId\":1,\"version\":\"V1.0\",\"payload\":{\"userName\":\"allan\",\"password\":\"test\"}}",
+                "Hello World!"
             };
 
             WebSocketServerTest.UserInfo userInfo = new WebSocketServerTest.UserInfo();
@@ -35,17 +37,22 @@ public class WebSocketClientTest {
             userInfo.setPassword("pwd");
 
             Request request = new Request.Builder()
-                    .biz(1)
-                    .cmd(1000)
-                    .payload(userInfo)
-                    .build();
+                .biz(1)
+                .cmd(1000)
+                .payload(userInfo)
+                .build();
 
             client.invoke(request, new CommandCallback() {
                 @Override
                 public void callback(Object result) {
                     System.out.println("result = " + result);
                 }
-            });
+
+                @Override
+                public void failure(Throwable cause) {
+                    cause.printStackTrace();
+                }
+            },3000);
 
            /* for (String request: requests) {
                 System.out.println("request = " + request);
@@ -73,8 +80,31 @@ public class WebSocketClientTest {
             }*/
         } catch (Exception ex) {
             ex.printStackTrace();
+        } finally {
+            client.shutdown();
         }
-        finally {
+    }
+
+    @Test
+    public void multiServerTest() {
+
+        List<String> urls = new ArrayList<>();
+
+        urls.add("ws://192.168.9.103:9090/websocket");
+        urls.add("ws://192.168.9.103:9091/websocket");
+
+        WebSocketClient client = new WebSocketClient(urls);
+
+        try {
+
+            client.connect();
+
+            TimeUnit.SECONDS.sleep(120);
+
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        } finally {
             client.shutdown();
         }
     }

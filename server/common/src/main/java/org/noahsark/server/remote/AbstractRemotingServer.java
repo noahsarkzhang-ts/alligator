@@ -12,7 +12,6 @@ import io.netty.handler.logging.LoggingHandler;
 import java.net.InetSocketAddress;
 import java.util.HashMap;
 import java.util.Map;
-import org.noahsark.server.dispatcher.Dispatcher;
 import org.noahsark.server.processor.AbstractProcessor;
 import org.noahsark.server.queue.WorkQueue;
 import org.slf4j.Logger;
@@ -34,8 +33,6 @@ public abstract class AbstractRemotingServer implements RemotingServer {
   private Map<RemoteOption<?>, Object> serverOptions = new HashMap<>();
 
   private WorkQueue workQueue;
-
-  private Dispatcher dispatcher = Dispatcher.getInstance();
 
   private String host;
 

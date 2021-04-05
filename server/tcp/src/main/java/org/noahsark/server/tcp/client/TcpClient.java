@@ -2,52 +2,75 @@ package org.noahsark.server.tcp.client;
 
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.socket.SocketChannel;
-import org.noahsark.server.future.RpcPromise;
+import java.util.List;
+import org.noahsark.client.manager.ConnectionManager;
 import org.noahsark.server.remote.AbstractRemotingClient;
-import org.noahsark.server.rpc.Request;
+import org.noahsark.server.remote.ExponentialBackOffRetry;
+import org.noahsark.server.remote.ServerInfo;
 import org.noahsark.server.rpc.RpcCommand;
-import org.noahsark.server.tcp.common.HearBeat;
 
 import java.net.URI;
 
 public class TcpClient extends AbstractRemotingClient {
 
     public TcpClient(String host, int port) {
-        super(host,port);
+        super(host, port);
+    }
+
+    public TcpClient(String url) {
+        super(url);
+    }
+
+    public TcpClient(List<String> urls) {
+        super(urls);
     }
 
     @Override
-    protected ChannelInitializer<SocketChannel> getChannelInitializer(AbstractRemotingClient server) {
+    protected ChannelInitializer<SocketChannel> getChannelInitializer(
+        AbstractRemotingClient server) {
         return new ClientHandlersInitializer(this);
     }
 
     @Override
     protected void preInit() {
+
+        ConnectionManager connectionManager = new ConnectionManager();
+        connectionManager.setHeartbeatFactory(new TcpHeartbeatFactory());
+        connectionManager
+            .setRetryPolicy(new ExponentialBackOffRetry(1000, 4, 60 * 1000));
+
+        this.connectionManager = connectionManager;
+
     }
 
     @Override
-    public URI getUri() {
-        return null;
+    public ServerInfo convert(String url) {
+
+        ServerInfo serverInfo = new ServerInfo();
+        serverInfo.setOriginUrl(url);
+
+        String[] parts = url.split(":");
+
+        serverInfo.setHost(parts[0]);
+        serverInfo.setPort(Integer.valueOf(parts[1]));
+
+        return serverInfo;
+    }
+
+    @Override
+    public ConnectionManager getConnectionManager() {
+        return this.connectionManager;
     }
 
     @Override
     public void ping() {
 
-        HearBeat hearBeat = new HearBeat();
-        hearBeat.setLoad(10);
-
-        Request request = new Request.Builder()
-                .biz(1)
-                .cmd(1000)
-                .payload(hearBeat)
-                .build();
-
-        this.sendMessage(request);
+        this.sendMessage((RpcCommand) this.connectionManager.getHeartbeatFactory().getPing());
     }
 
     @Override
     public void sendMessage(RpcCommand command) {
-        this.channel.writeAndFlush(command);
+        this.connection.getChannel().writeAndFlush(command);
     }
 
     public static void main(String[] args) {

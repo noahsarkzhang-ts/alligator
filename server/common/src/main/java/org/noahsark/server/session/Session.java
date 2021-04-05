@@ -6,6 +6,7 @@ import io.netty.util.AttributeKey;
 import java.util.Date;
 import java.util.Objects;
 import java.util.UUID;
+import org.noahsark.client.future.Connection;
 
 /**
  * Created by hadoop on 2021/3/13.
@@ -20,15 +21,15 @@ public class Session {
 
     private UserInfo user;
 
-    private Channel channel;
+    private Connection connection;
 
     private Date lastAccessTime;
 
-    public Session(Channel channel) {
+    public Session(Connection connection) {
         this.sessionId = UUID.randomUUID().toString();
         this.lastAccessTime = new Date();
 
-        this.channel = channel;
+        this.connection = connection;
     }
 
     public UserInfo getUser() {
@@ -37,14 +38,6 @@ public class Session {
 
     public void setUser(UserInfo user) {
         this.user = user;
-    }
-
-    public Channel getChannel() {
-        return channel;
-    }
-
-    public void setChannel(Channel channel) {
-        this.channel = channel;
     }
 
     public Date getLastAccessTime() {
@@ -63,15 +56,29 @@ public class Session {
         this.sessionId = sessionId;
     }
 
+    public Connection getConnection() {
+        return connection;
+    }
+
+    public void setConnection(Connection connection) {
+        this.connection = connection;
+    }
+
+    public Channel getChannel() {
+        return connection.getChannel();
+    }
+
     public static Session getOrCreatedSession(Channel channel) {
 
         String sessionId = channel.attr(SESSION_KEY).get();
         Session session;
 
+        Connection connection = new Connection(channel);
+
         if (sessionId == null) {
-            session = new Session(channel);
+            session = new Session(connection);
             channel.attr(SESSION_KEY).set(session.getSessionId());
-            SessionManager.getInstance().addSession(session.getSessionId(),session);
+            SessionManager.getInstance().addSession(session.getSessionId(), session);
         } else {
             session = SessionManager.getInstance().getSession(sessionId);
         }
@@ -81,8 +88,12 @@ public class Session {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Session)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof Session)) {
+            return false;
+        }
         Session session = (Session) o;
         return getSessionId().equals(session.getSessionId());
     }

@@ -20,18 +20,17 @@ import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 import io.netty.handler.codec.LengthFieldPrepender;
-import io.netty.handler.codec.string.StringDecoder;
-import io.netty.handler.codec.string.StringEncoder;
 import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.util.SelfSignedCertificate;
 import io.netty.handler.timeout.IdleStateHandler;
-import org.noahsark.server.hander.CommandDecoder;
-import org.noahsark.server.hander.CommandEncoder;
+import org.noahsark.server.hander.ServerBizServiceHandler;
 import org.noahsark.server.queue.WorkQueue;
 import org.noahsark.server.remote.AbstractRemotingServer;
 import org.noahsark.server.remote.RemoteOption;
-import org.noahsark.server.remote.ServerIdleStateTrigger;
+import org.noahsark.server.hander.ServerIdleStateTrigger;
+import org.noahsark.server.tcp.handler.CommandDecoder;
+import org.noahsark.server.tcp.handler.CommandEncoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -69,10 +68,10 @@ public class TcpServerInitializer extends ChannelInitializer<SocketChannel> {
         }
         pipeline.addLast(new IdleStateHandler(120, 0, 0));
         pipeline.addLast(new ServerIdleStateTrigger());
-        ch.pipeline().addLast("frameDecoder", new LengthFieldBasedFrameDecoder(Integer.MAX_VALUE, 0, 4, 0, 4));
-        ch.pipeline().addLast("frameEncoder", new LengthFieldPrepender(4));
-        ch.pipeline().addLast("decoder", new CommandDecoder());
-        ch.pipeline().addLast("encoder", new CommandEncoder());
-        ch.pipeline().addLast("bizHandler", new TcpServerHandler());
+        ch.pipeline().addLast(new LengthFieldBasedFrameDecoder(Integer.MAX_VALUE, 0, 4, 0, 4));
+        ch.pipeline().addLast(new LengthFieldPrepender(4));
+        ch.pipeline().addLast(new CommandDecoder());
+        ch.pipeline().addLast(new CommandEncoder());
+        ch.pipeline().addLast(new ServerBizServiceHandler(this.workQueue));
     }
 }

@@ -1,9 +1,8 @@
 package org.noahsark.server.rpc;
 
-import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
-import io.netty.handler.codec.http.websocketx.WebSocketFrame;
+import org.noahsark.client.future.CommandCallback;
+import org.noahsark.client.future.RpcPromise;
 import org.noahsark.server.session.Session;
-import org.noahsark.server.util.JsonUtils;
 
 /**
  * @author: noahsark
@@ -24,30 +23,17 @@ public class RpcContext {
         this.session = builder.session;
     }
 
-   /* public void sendResponse(Result<?> result) {
-
-        Response response = new Response.Builder()
-                .biz(command.getBiz())
-                .cmd(command.getCmd())
-                .requestId(command.getRequestId())
-                .payload(result)
-                .build();
-
-        sendResponse(response);
-    }
-
-    public void sendResponse(Response response) {
-        String text = JsonUtils.toJson(response);
-
-        System.out.println("text = " + text);
-
-        WebSocketFrame frame = new TextWebSocketFrame(text);
-
-        session.getChannel().writeAndFlush(frame);
-    }*/
-
     public void sendResponse(Object repsponse) {
         session.getChannel().writeAndFlush(repsponse);
+    }
+
+    public RpcPromise invoke(Request request, CommandCallback commandCallback, int timeoutMillis) {
+
+        RpcPromise promise = new RpcPromise();
+
+        promise.invoke(this.getSession().getConnection(),request,commandCallback,timeoutMillis);
+
+        return promise;
     }
 
     public Session getSession() {

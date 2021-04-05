@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-package org.noahsark.server.ws.server;
+package org.noahsark.server.ws.handler;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;

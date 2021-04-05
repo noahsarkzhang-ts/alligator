@@ -35,29 +35,30 @@
 //OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 //THE SOFTWARE.
 
-package org.noahsark.server.ws.client;
+package org.noahsark.server.ws.handler;
 
 import io.netty.channel.*;
 import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.websocketx.*;
 import io.netty.util.CharsetUtil;
 import io.netty.util.internal.StringUtil;
-import org.noahsark.server.future.FutureManager;
-import org.noahsark.server.future.RpcPromise;
+import org.noahsark.server.remote.RemotingClient;
 import org.noahsark.server.rpc.RpcCommand;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @ChannelHandler.Sharable
-public class WebSocketClientHandler extends SimpleChannelInboundHandler<Object> {
+public class WebSocketClientDecoder extends SimpleChannelInboundHandler<Object> {
 
-    private static Logger log = LoggerFactory.getLogger(WebSocketClientHandler.class);
+    private static Logger log = LoggerFactory.getLogger(WebSocketClientDecoder.class);
 
     private final WebSocketClientHandshaker handshaker;
     private ChannelPromise handshakeFuture;
+    private RemotingClient client;
 
-    public WebSocketClientHandler(WebSocketClientHandshaker handshaker) {
+    public WebSocketClientDecoder(WebSocketClientHandshaker handshaker,RemotingClient client) {
         this.handshaker = handshaker;
+        this.client = client;
     }
 
     public ChannelFuture handshakeFuture() {
@@ -85,11 +86,11 @@ public class WebSocketClientHandler extends SimpleChannelInboundHandler<Object> 
         if (!handshaker.isHandshakeComplete()) {
             try {
                 handshaker.finishHandshake(ch, (FullHttpResponse) msg);
-                System.out.println("WebSocket Client connected!");
+                log.info("WebSocket Client connected!");
                 handshakeFuture.setSuccess();
-            } catch (WebSocketHandshakeException e) {
-                System.out.println("WebSocket Client failed to connect");
-                handshakeFuture.setFailure(e);
+            } catch (WebSocketHandshakeException ex) {
+                log.warn("WebSocket Client failed to connect");
+                handshakeFuture.setFailure(ex);
             }
             return;
         }
@@ -105,28 +106,24 @@ public class WebSocketClientHandler extends SimpleChannelInboundHandler<Object> 
         if (frame instanceof TextWebSocketFrame) {
             TextWebSocketFrame textFrame = (TextWebSocketFrame) frame;
             String response = textFrame.text();
-            System.out.println("WebSocket Client received message: " + response);
+            log.info("WebSocket Client received message: " + response);
 
             if (StringUtil.isNullOrEmpty(response)) {
                 return;
             }
 
             RpcCommand command = RpcCommand.marshalFromJson(response);
-            RpcPromise promise = FutureManager.getInstance().getPromise(command.getRequestId());
 
-            if (promise != null) {
-                promise.setSuccess(command.getPayload());
-                FutureManager.getInstance().removePromis(command.getRequestId());
-
-            } else {
-                log.warn("promis is null : {}", command.getRequestId());
-            }
-
+            ctx.fireChannelRead(command);
 
         } else if (frame instanceof PongWebSocketFrame) {
-            System.out.println("WebSocket Client received pong");
+            // 清空心跳计数
+            client.getConnectionManager().getHeartbeatStatus().reset();
+
+            log.info("WebSocket Client received pong");
+
         } else if (frame instanceof CloseWebSocketFrame) {
-            System.out.println("WebSocket Client received closing");
+            log.info("WebSocket Client received closing");
             ch.close();
         }
 

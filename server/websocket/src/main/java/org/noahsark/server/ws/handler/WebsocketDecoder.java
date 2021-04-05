@@ -1,4 +1,4 @@
-package org.noahsark.server.hander;
+package org.noahsark.server.ws.handler;
 
 import com.google.gson.JsonSyntaxException;
 import io.netty.channel.ChannelHandlerContext;
@@ -15,9 +15,9 @@ import org.slf4j.LoggerFactory;
 /**
  * Created by hadoop on 2021/3/28.
  */
-public class CommandHandler extends SimpleChannelInboundHandler<WebSocketFrame> {
+public class WebsocketDecoder extends SimpleChannelInboundHandler<WebSocketFrame> {
 
-  private static Logger log = LoggerFactory.getLogger(CommandHandler.class);
+  private static Logger log = LoggerFactory.getLogger(WebsocketDecoder.class);
 
   @Override
   protected void channelRead0(ChannelHandlerContext ctx, WebSocketFrame msg) throws Exception {

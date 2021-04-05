@@ -2,7 +2,7 @@ package org.noahsark.server.thread;
 
 import java.time.LocalDateTime;
 import java.util.concurrent.TimeUnit;
-import org.noahsark.server.future.FutureManager;
+import org.noahsark.client.future.FutureManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

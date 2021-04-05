@@ -1,9 +1,11 @@
-package org.noahsark.server.remote;
+package org.noahsark.server.hander;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.handler.timeout.IdleState;
 import io.netty.handler.timeout.IdleStateEvent;
+import org.noahsark.client.heartbeat.HeartbeatStatus;
+import org.noahsark.server.remote.RemotingClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,6 +31,19 @@ public class ClientIdleStateTrigger extends ChannelInboundHandlerAdapter {
             if (state == IdleState.WRITER_IDLE) {
 
                 log.info("Idle timeout,send heart beat!");
+
+                HeartbeatStatus heartbeatStatus = remotingClient.getConnectionManager()
+                    .getHeartbeatStatus();
+
+                if (heartbeatStatus.incAndtimeout()) {
+                    log.info("server time out, and toggle server");
+
+                    heartbeatStatus.reset();
+
+                    this.remotingClient.toggleServer();
+
+                    return;
+                }
 
                 this.remotingClient.ping();
             }

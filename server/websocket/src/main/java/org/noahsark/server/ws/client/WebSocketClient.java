@@ -15,96 +15,94 @@
  */
 package org.noahsark.server.ws.client;
 
-import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.socket.SocketChannel;
-import io.netty.handler.codec.http.websocketx.PingWebSocketFrame;
-import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import io.netty.handler.codec.http.websocketx.WebSocketFrame;
+import java.net.URI;
+import java.util.List;
+import org.noahsark.client.manager.ConnectionManager;
 import org.noahsark.server.remote.AbstractRemotingClient;
+import org.noahsark.server.remote.ExponentialBackOffRetry;
+import org.noahsark.server.remote.ServerInfo;
 import org.noahsark.server.rpc.RpcCommand;
-import org.noahsark.server.util.JsonUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.net.URI;
 
 
 public final class WebSocketClient extends AbstractRemotingClient {
 
     private static Logger log = LoggerFactory.getLogger(WebSocketClient.class);
 
-    private String url;
-
-    private URI uri;
-
     public WebSocketClient() {
     }
 
     public WebSocketClient(String url) {
-        this.url = url;
+        super(url);
+    }
 
-        init();
+    public WebSocketClient(List<String> urls) {
+        super(urls);
+
     }
 
     @Override
-    protected ChannelInitializer<SocketChannel> getChannelInitializer(AbstractRemotingClient server) {
+    protected ChannelInitializer<SocketChannel> getChannelInitializer(
+        AbstractRemotingClient server) {
         return new WebSocketClientInitializer(this);
     }
 
     public void sendMessage(WebSocketFrame frame) {
-        this.channel.writeAndFlush(frame);
+        this.connection.getChannel().writeAndFlush(frame);
 
     }
 
     @Override
     public void sendMessage(RpcCommand command) {
 
-        String text = JsonUtils.toJson(command);
-        WebSocketFrame frame = new TextWebSocketFrame(text);
-        this.channel.writeAndFlush(frame);
+        this.connection.getChannel().writeAndFlush(command);
     }
 
     @Override
     protected void preInit() {
 
-        try {
-            uri = new URI(url);
-            String scheme = uri.getScheme() == null ? "ws" : uri.getScheme();
-            this.host = uri.getHost() == null ? "127.0.0.1" : uri.getHost();
-            if (uri.getPort() == -1) {
-                if ("ws".equalsIgnoreCase(scheme)) {
-                    port = 80;
-                } else if ("wss".equalsIgnoreCase(scheme)) {
-                    port = 443;
-                } else {
-                    port = -1;
-                }
-            } else {
-                port = uri.getPort();
-            }
+        ConnectionManager connectionManager = new ConnectionManager();
+        connectionManager.setHeartbeatFactory(new WebsocketHeartbeatFactory());
+        connectionManager.setRetryPolicy(new ExponentialBackOffRetry(1000,
+            4, 60 * 1000));
 
-            if (!"ws".equalsIgnoreCase(scheme) && !"wss".equalsIgnoreCase(scheme)) {
-                log.warn("Only WS(S) is supported.");
-            }
+        this.connectionManager = connectionManager;
 
-        } catch (Exception ex) {
-            log.warn("catch an exception.", ex);
-        }
-
-    }
-
-    @Override
-    public URI getUri() {
-        return this.uri;
     }
 
     @Override
     public void ping() {
-        WebSocketFrame frame = new PingWebSocketFrame(
-                Unpooled.wrappedBuffer(new byte[]{8, 1, 8, 1}));
-        this.sendMessage(frame);
+        this.sendMessage((WebSocketFrame) this.connectionManager.getHeartbeatFactory().getPing());
     }
+
+    @Override
+    public ServerInfo convert(String url) {
+        ServerInfo serverInfo = new ServerInfo();
+        serverInfo.setOriginUrl(url);
+
+        try {
+
+            URI uri = new URI(url);
+
+            String host = uri.getHost() == null ? "127.0.0.1" : uri.getHost();
+            int port = uri.getPort();
+
+            serverInfo.setHost(host);
+            serverInfo.setPort(port);
+            serverInfo.setUri(uri);
+
+        } catch (Exception ex) {
+            log.warn("catch an exception.", ex);
+
+        }
+
+        return serverInfo;
+    }
+
 
     public static void main(String[] args) throws Exception {
 

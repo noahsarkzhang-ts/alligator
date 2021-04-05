@@ -14,7 +14,7 @@ public class ReconnectHandler extends ChannelInboundHandlerAdapter {
 
     private static Logger log = LoggerFactory.getLogger(ReconnectHandler.class);
 
-    private int retries = 0;
+    private int retries = 1;
     private RetryPolicy retryPolicy;
 
     private RemotingClient remotringClient;
@@ -26,23 +26,21 @@ public class ReconnectHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         log.info("Successfully established a connection to the server.");
-        retries = 3;
+        retries = 1;
         ctx.fireChannelActive();
     }
 
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
-        if (retries == 0) {
-            log.info("Lost the TCP connection with the server.");
-            ctx.close();
-        }
 
         boolean allowRetry = getRetryPolicy().allowRetry(retries);
         if (allowRetry) {
 
             long sleepTimeMs = getRetryPolicy().getSleepTimeMs(retries);
 
-            log.info(String.format("Try to reconnect to the server after %dms. Retry count: %d.", sleepTimeMs, ++retries));
+            log.info(String
+                .format("Try to reconnect to the server after %dms. Retry count: %d.", sleepTimeMs,
+                    retries++));
 
             final EventLoop eventLoop = ctx.channel().eventLoop();
 
@@ -52,7 +50,12 @@ public class ReconnectHandler extends ChannelInboundHandlerAdapter {
                 remotringClient.connect();
             }, sleepTimeMs, TimeUnit.MILLISECONDS);
 
-            retries--;
+        } else {
+
+            retries = 1;
+
+            remotringClient.toggleServer();
+
         }
         ctx.fireChannelInactive();
     }
@@ -60,7 +63,8 @@ public class ReconnectHandler extends ChannelInboundHandlerAdapter {
 
     private RetryPolicy getRetryPolicy() {
         if (this.retryPolicy == null) {
-            this.retryPolicy = remotringClient.getRetryPolicy();
+            this.retryPolicy = remotringClient.getConnectionManager()
+                .getRetryPolicy();
         }
         return this.retryPolicy;
     }

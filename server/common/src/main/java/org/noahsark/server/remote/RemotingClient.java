@@ -1,7 +1,8 @@
 package org.noahsark.server.remote;
 
-import org.noahsark.server.future.CommandCallback;
-import org.noahsark.server.future.RpcPromise;
+import org.noahsark.client.future.CommandCallback;
+import org.noahsark.client.future.RpcPromise;
+import org.noahsark.client.manager.ConnectionManager;
 import org.noahsark.server.rpc.Request;
 import org.noahsark.server.rpc.RpcCommand;
 
@@ -14,14 +15,16 @@ public interface RemotingClient {
 
   void shutdown();
 
-  RetryPolicy getRetryPolicy();
-
   void ping();
 
   void toggleServer();
 
+  ServerInfo getServerInfo();
+
+  ConnectionManager getConnectionManager();
+
   void sendMessage(RpcCommand command);
 
-  RpcPromise invoke(Request reques, CommandCallback callback);
+  RpcPromise invoke(Request request, CommandCallback commandCallback, int timeoutMillis);
 
 }

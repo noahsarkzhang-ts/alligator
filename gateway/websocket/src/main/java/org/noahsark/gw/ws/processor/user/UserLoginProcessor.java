@@ -3,7 +3,6 @@ package org.noahsark.gw.ws.processor.user;
 import java.util.UUID;
 
 import org.noahsark.server.processor.AbstractProcessor;
-import org.noahsark.server.rpc.Response;
 import org.noahsark.server.rpc.Result;
 import org.noahsark.server.rpc.RpcContext;
 import org.springframework.stereotype.Component;

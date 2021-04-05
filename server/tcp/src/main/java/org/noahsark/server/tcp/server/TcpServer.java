@@ -18,16 +18,23 @@ package org.noahsark.server.tcp.server;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.socket.SocketChannel;
 import org.noahsark.server.remote.AbstractRemotingServer;
+import org.noahsark.server.tcp.processor.PingProcessor;
 
 public final class TcpServer extends AbstractRemotingServer {
 
   public TcpServer(String host, int port) {
     super(host,port);
+
+    registerDefaultPorcessor();
   }
 
   @Override
   protected ChannelInitializer<SocketChannel> getChannelInitializer(AbstractRemotingServer server) {
     return new TcpServerInitializer(this);
+  }
+
+  private void registerDefaultPorcessor() {
+    this.registerProcessor(new PingProcessor());
   }
 
   public static void main(String[] args) {

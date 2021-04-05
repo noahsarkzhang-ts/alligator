@@ -5,6 +5,8 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.util.List;
+import org.noahsark.server.rpc.Result;
 
 /**
  * @author: noahsark
@@ -21,6 +23,19 @@ public class JsonUtils {
 
     public static <T> T fromJson(JsonElement json, Class<T> classz) {
         return GSON.fromJson(json, classz);
+    }
+
+    public static <T> Result<T> fromJsonObject(String json, Class<T> clazz) {
+        Type type = new ParameterizedTypeImpl(Result.class, new Class[]{clazz});
+        return GSON.fromJson(json, type);
+    }
+
+    public static <T> Result<List<T>> fromJsonArray(String json, Class<T> clazz) {
+        // 生成List<T> 中的 List<T>
+        Type listType = new ParameterizedTypeImpl(List.class, new Class[]{clazz});
+        // 根据List<T>生成完整的Result<List<T>>
+        Type type = new ParameterizedTypeImpl(Result.class, new Type[]{listType});
+        return GSON.fromJson(json, type);
     }
 
     public static <T> String toJson(T obj) {

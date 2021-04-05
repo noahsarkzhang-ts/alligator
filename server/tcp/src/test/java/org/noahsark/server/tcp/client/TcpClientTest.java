@@ -1,5 +1,7 @@
 package org.noahsark.server.tcp.client;
 
+import java.util.ArrayList;
+import java.util.List;
 import org.junit.Test;
 
 import java.util.concurrent.TimeUnit;
@@ -12,8 +14,25 @@ import java.util.concurrent.TimeUnit;
 public class TcpClientTest {
 
     @Test
-    public void tcpClientText() {
-        TcpClient tcpClient = new TcpClient("192.168.68.25", 2222);
+    public void tcpClientTest() {
+        TcpClient tcpClient = new TcpClient("192.168.9.101", 2222);
+        tcpClient.connect();
+
+        try {
+            TimeUnit.SECONDS.sleep(120);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    public void tcpMultiServerTest() {
+        List<String> urls = new ArrayList<>();
+
+        urls.add("192.168.9.103:2222");
+        urls.add("192.168.9.103:2223");
+
+        TcpClient tcpClient = new TcpClient(urls);
         tcpClient.connect();
 
         try {

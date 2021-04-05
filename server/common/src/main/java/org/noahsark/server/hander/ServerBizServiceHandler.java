@@ -13,11 +13,10 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-package org.noahsark.server.ws.server;
+package org.noahsark.server.hander;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
-import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import org.noahsark.server.dispatcher.Dispatcher;
 import org.noahsark.server.processor.AbstractProcessor;
 import org.noahsark.server.queue.WorkQueue;
@@ -34,13 +33,13 @@ import org.slf4j.LoggerFactory;
 /**
  * Echoes uppercase content of text frames.
  */
-public class WebSocketFrameHandler extends SimpleChannelInboundHandler<RpcCommand> {
+public class ServerBizServiceHandler extends SimpleChannelInboundHandler<RpcCommand> {
 
-    private static Logger log = LoggerFactory.getLogger(WebSocketFrameHandler.class);
+    private static Logger log = LoggerFactory.getLogger(ServerBizServiceHandler.class);
 
     private WorkQueue workQueue;
 
-    public WebSocketFrameHandler(WorkQueue workQueue) {
+    public ServerBizServiceHandler(WorkQueue workQueue) {
         this.workQueue = workQueue;
     }
 
@@ -78,7 +77,7 @@ public class WebSocketFrameHandler extends SimpleChannelInboundHandler<RpcComman
                         .payload(result)
                         .build();
 
-                ctx.channel().writeAndFlush(new TextWebSocketFrame(JsonUtils.toJson(response)));
+                ctx.channel().writeAndFlush(response);
 
             } else {
                 workQueue.add(() -> {
@@ -86,7 +85,14 @@ public class WebSocketFrameHandler extends SimpleChannelInboundHandler<RpcComman
                     log.info("processName: {}", processName);
 
                     AbstractProcessor processor = Dispatcher.getInstance().getProcessor(processName);
-                    processor.process(rpcRequest);
+
+                    if (processor != null) {
+                        processor.process(rpcRequest);
+                    } else {
+                        log.warn("No processor: {}", processName);
+                    }
+
+
                 });
             }
 
@@ -105,7 +111,7 @@ public class WebSocketFrameHandler extends SimpleChannelInboundHandler<RpcComman
 
         }
 
-        ctx.channel().writeAndFlush(new TextWebSocketFrame(JsonUtils.toJson(response)));
+        ctx.channel().writeAndFlush(response);
     }
 
     public WorkQueue getWorkQueue() {

@@ -27,11 +27,14 @@ import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.util.SelfSignedCertificate;
 import io.netty.handler.timeout.IdleStateHandler;
 import org.noahsark.server.hander.AuthHandler;
-import org.noahsark.server.hander.CommandHandler;
+import org.noahsark.server.hander.ServerBizServiceHandler;
+import org.noahsark.server.ws.handler.WebsocketDecoder;
 import org.noahsark.server.queue.WorkQueue;
 import org.noahsark.server.remote.AbstractRemotingServer;
 import org.noahsark.server.remote.RemoteOption;
-import org.noahsark.server.remote.ServerIdleStateTrigger;
+import org.noahsark.server.hander.ServerIdleStateTrigger;
+import org.noahsark.server.ws.handler.WebSocketIndexPageHandler;
+import org.noahsark.server.ws.handler.WebsocketEncoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -76,8 +79,9 @@ public class WebSocketServerInitializer extends ChannelInitializer<SocketChannel
         pipeline.addLast(new WebSocketServerCompressionHandler());
         pipeline.addLast(new WebSocketServerProtocolHandler(WEBSOCKET_PATH, null, true));
         pipeline.addLast(new WebSocketIndexPageHandler(WEBSOCKET_PATH));
-        pipeline.addLast(new CommandHandler());
+        pipeline.addLast(new WebsocketDecoder());
+        pipeline.addLast(new WebsocketEncoder());
         pipeline.addLast(new AuthHandler());
-        pipeline.addLast(new WebSocketFrameHandler(workQueue));
+        pipeline.addLast(new ServerBizServiceHandler(workQueue));
     }
 }
