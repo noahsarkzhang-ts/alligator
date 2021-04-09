@@ -16,34 +16,34 @@ import org.springframework.stereotype.Component;
 @Component
 public class GwCommandLineRunner implements CommandLineRunner {
 
-  private static Logger log = LoggerFactory.getLogger(GwCommandLineRunner.class);
+    private static Logger log = LoggerFactory.getLogger(GwCommandLineRunner.class);
 
-  @Autowired
-  private CommonConfig config;
+    @Autowired
+    private CommonConfig config;
 
-  @Override
-  public void run(String... strings) throws Exception {
+    @Override
+    public void run(String... strings) throws Exception {
 
-    final WebSocketServer webSocketServer = new WebSocketServer(config.getServerConfig().getHost(),
-        config.getServerConfig().getPort());
+        final WebSocketServer webSocketServer = new WebSocketServer(config.getServerConfig().getHost(),
+                config.getServerConfig().getPort());
 
-    webSocketServer
-        .option(RemoteOption.THREAD_NUM_OF_QUEUE, config.getWorkQueue().getMaxThreadNum());
-    webSocketServer
-        .option(RemoteOption.CAPACITY_OF_QUEUE, config.getWorkQueue().getMaxQueueNum());
+        webSocketServer
+                .option(RemoteOption.THREAD_NUM_OF_QUEUE, config.getWorkQueue().getMaxThreadNum());
+        webSocketServer
+                .option(RemoteOption.CAPACITY_OF_QUEUE, config.getWorkQueue().getMaxQueueNum());
 
-    webSocketServer.init();
+        webSocketServer.init();
 
-    Runtime.getRuntime().addShutdownHook(new Thread() {
-      @Override
-      public void run() {
-        webSocketServer.shutdown();
-      }
-    });
+        Runtime.getRuntime().addShutdownHook(new Thread() {
+            @Override
+            public void run() {
+                webSocketServer.shutdown();
+            }
+        });
 
-    webSocketServer.start();
+        webSocketServer.start();
 
-    log.info("Stat server!!!");
+        log.info("Stat server!!!");
 
-  }
+    }
 }
