@@ -7,4 +7,10 @@ public interface HeartbeatFactory<T> {
 
     T getPing();
 
+    default PingPayloadGenerator getPayloadGenerator() {
+        return null;
+    }
+
+    default void setPayloadGenerator(PingPayloadGenerator payload) {}
+
 }

@@ -1,6 +1,7 @@
 package org.noahsark.server.tcp.client;
 
 import org.noahsark.client.heartbeat.HeartbeatFactory;
+import org.noahsark.client.heartbeat.PingPayloadGenerator;
 import org.noahsark.server.constant.RpcCommandType;
 import org.noahsark.server.constant.RpcCommandVer;
 import org.noahsark.server.constant.SerializerType;
@@ -13,11 +14,20 @@ import org.noahsark.server.tcp.common.Ping;
  */
 public class TcpHeartbeatFactory implements HeartbeatFactory<RpcCommand> {
 
+    private PingPayloadGenerator payloadGenerator;
+
     @Override
     public RpcCommand getPing() {
 
-        Ping hearBeat = new Ping();
-        hearBeat.setLoad(10);
+        Object payload;
+        if (payloadGenerator != null) {
+            payload = payloadGenerator.getPayload();
+        } else {
+            Ping hearBeat = new Ping();
+            hearBeat.setLoad(10);
+
+            payload = hearBeat;
+        }
 
         RpcCommand command = new RpcCommand.Builder()
             .requestId(0)
@@ -26,10 +36,21 @@ public class TcpHeartbeatFactory implements HeartbeatFactory<RpcCommand> {
             .type(RpcCommandType.REQUEST)
             .ver(RpcCommandVer.V1)
             .serializer(SerializerType.JSON)
-            .payload(hearBeat)
+            .payload(payload)
             .build();
 
         return command;
+    }
+
+    @Override
+    public PingPayloadGenerator getPayloadGenerator() {
+        return this.payloadGenerator;
+    }
+
+    @Override
+    public void setPayloadGenerator(PingPayloadGenerator payload) {
+        this.payloadGenerator = payload;
+
     }
 
     public static RpcCommand getPong(RpcCommand ping) {

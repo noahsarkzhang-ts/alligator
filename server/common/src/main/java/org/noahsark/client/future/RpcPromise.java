@@ -71,26 +71,47 @@ public class RpcPromise extends DefaultPromise<Object> implements Comparable<Rpc
         });
     }
 
+    public Object invokeSync(Connection connection, Request request, int timeoutMillis) {
+
+        this.invoke(connection, request, null, timeoutMillis);
+
+        try {
+            return this.get();
+
+        } catch (Exception ex) {
+            log.warn("catch an exception. ", ex);
+        }
+
+        return null;
+
+    }
+
+
     public void invoke(Connection connection, Request request, CommandCallback commandCallback,
         int timeoutMillis) {
 
         connection.registerPromise(request.getRequestId(), this);
-        addCallback(connection,request,commandCallback);
+        if (commandCallback != null) {
+            addCallback(connection, request, commandCallback);
+        }
 
         try {
             //add timeout
-            Timeout timeout = TimerHolder.getTimer().newTimeout(new TimerTask() {
-                @Override
-                public void run(Timeout timeout) throws Exception {
-                    RpcPromise promise = connection.removePromis(request.getRequestId());
+            if (timeoutMillis > 0) {
+                Timeout timeout = TimerHolder.getTimer().newTimeout(new TimerTask() {
+                    @Override
+                    public void run(Timeout timeout) throws Exception {
+                        RpcPromise promise = connection.removePromis(request.getRequestId());
 
-                    if (promise != null) {
-                        promise.setFailure(new TimeoutException());
+                        if (promise != null) {
+                            promise.setFailure(new TimeoutException());
+                        }
                     }
-                }
 
-            }, timeoutMillis, TimeUnit.MILLISECONDS);
-            setTimeout(timeout);
+                }, timeoutMillis, TimeUnit.MILLISECONDS);
+                setTimeout(timeout);
+            }
+
             connection.getChannel().writeAndFlush(request).addListener(new ChannelFutureListener() {
 
                 @Override

@@ -3,6 +3,7 @@ package org.noahsark.server.tcp.client;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.socket.SocketChannel;
 import java.util.List;
+import org.noahsark.client.heartbeat.PingPayloadGenerator;
 import org.noahsark.client.manager.ConnectionManager;
 import org.noahsark.server.remote.AbstractRemotingClient;
 import org.noahsark.server.remote.ExponentialBackOffRetry;
@@ -71,6 +72,13 @@ public class TcpClient extends AbstractRemotingClient {
     @Override
     public void sendMessage(RpcCommand command) {
         this.connection.getChannel().writeAndFlush(command);
+    }
+
+    public void registerPingPayloadGenerator(PingPayloadGenerator payloadGenerator) {
+        if (this.connectionManager != null) {
+            this.connectionManager.getHeartbeatFactory()
+                .setPayloadGenerator(payloadGenerator);
+        }
     }
 
     public static void main(String[] args) {

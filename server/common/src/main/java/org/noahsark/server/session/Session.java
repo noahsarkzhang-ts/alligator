@@ -19,7 +19,7 @@ public class Session {
 
     private String sessionId;
 
-    private UserInfo user;
+    private Subject subject;
 
     private Connection connection;
 
@@ -32,12 +32,12 @@ public class Session {
         this.connection = connection;
     }
 
-    public UserInfo getUser() {
-        return user;
+    public Subject getSubject() {
+        return subject;
     }
 
-    public void setUser(UserInfo user) {
-        this.user = user;
+    public void setSubject(Subject subject) {
+        this.subject = subject;
     }
 
     public Date getLastAccessTime() {

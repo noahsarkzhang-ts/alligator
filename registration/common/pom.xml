@@ -23,6 +23,10 @@
 
     <dependencies>
         <dependency>
+            <groupId>org.noahsark</groupId>
+            <artifactId>alligator-server-tcp</artifactId>
+        </dependency>
+        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
         </dependency>
