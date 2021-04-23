@@ -3,9 +3,12 @@ package org.noahsark.server.util;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
+
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.List;
+
+import io.netty.util.CharsetUtil;
 import org.noahsark.server.rpc.Result;
 
 /**
@@ -28,6 +31,12 @@ public class JsonUtils {
     public static <T> Result<T> fromJsonObject(String json, Class<T> clazz) {
         Type type = new ParameterizedTypeImpl(Result.class, new Class[]{clazz});
         return GSON.fromJson(json, type);
+    }
+
+    public static Result<Void> fromCommonObject(byte[] object) {
+        String json = new String((byte[]) object, CharsetUtil.UTF_8);
+
+        return JsonUtils.fromJsonObject(json, Void.class);
     }
 
     public static <T> Result<List<T>> fromJsonArray(String json, Class<T> clazz) {

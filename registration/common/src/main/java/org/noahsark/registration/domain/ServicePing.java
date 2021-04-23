@@ -16,4 +16,11 @@ public class ServicePing {
     public void setLoad(int load) {
         this.load = load;
     }
+
+    @Override
+    public String toString() {
+        return "ServicePing{" +
+                "load=" + load +
+                '}';
+    }
 }

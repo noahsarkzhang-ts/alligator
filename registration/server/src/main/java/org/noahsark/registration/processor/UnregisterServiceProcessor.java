@@ -1,21 +1,26 @@
 package org.noahsark.registration.processor;
 
 import org.noahsark.registration.constant.RegistrationConstants;
+import org.noahsark.registration.domain.Id;
 import org.noahsark.registration.domain.Service;
 import org.noahsark.registration.repository.Repository;
 import org.noahsark.server.processor.AbstractProcessor;
 import org.noahsark.server.rpc.Response;
 import org.noahsark.server.rpc.RpcContext;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 /**
  * Created by hadoop on 2021/4/11.
  */
-public class UnregisterServiceProcessor extends AbstractProcessor<Service> {
+@Component
+public class UnregisterServiceProcessor extends AbstractProcessor<Id> {
 
+    @Autowired
     private Repository repository;
 
     @Override
-    protected void execute(Service request, RpcContext context) {
+    protected void execute(Id request, RpcContext context) {
 
         repository.unRegisterService(request.getId());
 
@@ -25,8 +30,8 @@ public class UnregisterServiceProcessor extends AbstractProcessor<Service> {
     }
 
     @Override
-    protected Class<Service> getParamsClass() {
-        return Service.class;
+    protected Class<Id> getParamsClass() {
+        return Id.class;
     }
 
     @Override

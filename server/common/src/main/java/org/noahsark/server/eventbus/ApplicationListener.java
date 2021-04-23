@@ -6,5 +6,5 @@ package org.noahsark.server.eventbus;
  * @date: 2021/4/9
  */
 public abstract class ApplicationListener<E extends ApplicationEvent> implements EventListener {
-    abstract void onApplicationEvent(E event);
+    public abstract void onApplicationEvent(E event);
 }

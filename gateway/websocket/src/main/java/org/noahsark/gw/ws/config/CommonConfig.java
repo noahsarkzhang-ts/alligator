@@ -16,6 +16,8 @@ public class CommonConfig {
 
     private ServerConfig serverConfig;
 
+    private RegServer regServer;
+
     public static class WorkQueueConfig {
 
         private int maxQueueNum;
@@ -61,6 +63,28 @@ public class CommonConfig {
         }
     }
 
+    public static class RegServer {
+        private String host;
+
+        private int port;
+
+        public String getHost() {
+            return host;
+        }
+
+        public void setHost(String host) {
+            this.host = host;
+        }
+
+        public int getPort() {
+            return port;
+        }
+
+        public void setPort(int port) {
+            this.port = port;
+        }
+    }
+
     public WorkQueueConfig getWorkQueue() {
         return workQueue;
     }
@@ -75,5 +99,13 @@ public class CommonConfig {
 
     public void setServerConfig(ServerConfig serverConfig) {
         this.serverConfig = serverConfig;
+    }
+
+    public RegServer getRegServer() {
+        return regServer;
+    }
+
+    public void setRegServer(RegServer regServer) {
+        this.regServer = regServer;
     }
 }

@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -51,7 +50,9 @@ public final class EventBus {
     public void post(ApplicationEvent event) {
         List<ApplicationListener> listeners = listenerMap.get(event.getClass());
 
-        executor.execute(() -> listeners.stream().forEach(listener -> listener.onApplicationEvent(event)));
+        if (listeners != null) {
+            executor.execute(() -> listeners.stream().forEach(listener -> listener.onApplicationEvent(event)));
+        }
     }
 
     public void close() {

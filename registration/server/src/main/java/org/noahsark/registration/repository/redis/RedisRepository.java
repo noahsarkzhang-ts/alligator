@@ -4,6 +4,8 @@ import org.noahsark.registration.domain.Service;
 import org.noahsark.registration.domain.User;
 import org.noahsark.registration.repository.Repository;
 
+import java.util.List;
+
 /**
  * Created by hadoop on 2021/4/10.
  */
@@ -26,6 +28,16 @@ public class RedisRepository implements Repository {
 
     @Override
     public void unRegisterService(String serviceId) {
+
+    }
+
+    @Override
+    public List<String> getExpireServices(int timeoutMillis) {
+        return null;
+    }
+
+    @Override
+    public void updateService(Service service) {
 
     }
 }

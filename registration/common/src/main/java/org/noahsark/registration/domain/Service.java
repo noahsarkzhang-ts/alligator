@@ -17,6 +17,8 @@ public class Service implements Subject,Comparable<Service> {
 
     private long loginTime;
 
+    private long lastPingTime;
+
     private String id;
 
     private String name;
@@ -80,6 +82,14 @@ public class Service implements Subject,Comparable<Service> {
 
     public void setLoad(int load) {
         this.load = load;
+    }
+
+    public long getLastPingTime() {
+        return lastPingTime;
+    }
+
+    public void setLastPingTime(long lastPingTime) {
+        this.lastPingTime = lastPingTime;
     }
 
     @Override

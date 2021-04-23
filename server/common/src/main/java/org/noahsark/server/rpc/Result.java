@@ -51,7 +51,7 @@ public class Result<R> implements Serializable {
     @Override
     public String toString() {
         return "Response{" +
-                ", code=" + code +
+                "code=" + code +
                 ", message='" + message + '\'' +
                 ", data=" + data +
                 '}';

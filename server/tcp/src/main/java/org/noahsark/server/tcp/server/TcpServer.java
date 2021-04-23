@@ -20,7 +20,7 @@ import io.netty.channel.socket.SocketChannel;
 import org.noahsark.server.remote.AbstractRemotingServer;
 import org.noahsark.server.tcp.processor.PingProcessor;
 
-public final class TcpServer extends AbstractRemotingServer {
+public class TcpServer extends AbstractRemotingServer {
 
   public TcpServer(String host, int port) {
     super(host,port);
@@ -35,6 +35,10 @@ public final class TcpServer extends AbstractRemotingServer {
 
   private void registerDefaultPorcessor() {
     this.registerProcessor(new PingProcessor());
+  }
+
+  private void unregisterDefaultPorcessor() {
+    this.unregisterProcessor(new PingProcessor());
   }
 
   public static void main(String[] args) {

@@ -7,12 +7,16 @@ import org.noahsark.registration.repository.Repository;
 import org.noahsark.server.processor.AbstractProcessor;
 import org.noahsark.server.rpc.Response;
 import org.noahsark.server.rpc.RpcContext;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 /**
  * Created by hadoop on 2021/4/10.
  */
+@Component
 public class LoginProcessor extends AbstractProcessor<User> {
 
+    @Autowired
     private Repository repository;
 
     @Override

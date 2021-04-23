@@ -14,27 +14,29 @@ import org.slf4j.LoggerFactory;
  */
 public class ClientBizServiceHandler extends SimpleChannelInboundHandler<RpcCommand> {
 
-  private static Logger log = LoggerFactory.getLogger(ClientBizServiceHandler.class);
+    private static Logger log = LoggerFactory.getLogger(ClientBizServiceHandler.class);
 
-  @Override
-  protected void channelRead0(ChannelHandlerContext ctx, RpcCommand msg) throws Exception {
+    @Override
+    protected void channelRead0(ChannelHandlerContext ctx, RpcCommand msg) throws Exception {
 
-    Connection connection = ctx.channel().attr(Connection.CONNECTION).get();
+        Connection connection = ctx.channel().attr(Connection.CONNECTION).get();
 
-    if (connection == null) {
+        if (connection == null) {
 
-      log.warn("No connection,requestId : {}", msg.getRequestId());
-      return;
+            log.warn("No connection,requestId : {}", msg.getRequestId());
+            return;
+        }
+
+        log.info("receive msg: {}", msg);
+
+        RpcPromise promise = connection.getPromise(msg.getRequestId());
+
+        if (promise != null) {
+            promise.setSuccess(msg.getPayload());
+            connection.removePromis(msg.getRequestId());
+
+        } else {
+            log.warn("promis is null : {}", msg.getRequestId());
+        }
     }
-
-    RpcPromise promise = connection.getPromise(msg.getRequestId());
-
-    if (promise != null) {
-      promise.setSuccess(msg.getPayload());
-      FutureManager.getInstance().removePromis(msg.getRequestId());
-
-    } else {
-      log.warn("promis is null : {}", msg.getRequestId());
-    }
-  }
 }

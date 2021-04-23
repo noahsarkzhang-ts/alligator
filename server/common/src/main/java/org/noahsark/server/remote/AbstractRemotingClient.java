@@ -9,6 +9,8 @@ import org.noahsark.client.future.CommandCallback;
 import org.noahsark.client.future.Connection;
 import org.noahsark.client.future.RpcPromise;
 import org.noahsark.client.manager.ConnectionManager;
+import org.noahsark.server.event.ClientConnectionEvent;
+import org.noahsark.server.eventbus.EventBus;
 import org.noahsark.server.rpc.Request;
 import org.noahsark.server.thread.ClientClearThread;
 import org.slf4j.Logger;
@@ -42,6 +44,8 @@ public abstract class AbstractRemotingClient implements RemotingClient {
     private Bootstrap bootstrap;
 
     private ClientClearThread clearThread;
+
+    private Thread thread;
 
     public AbstractRemotingClient() {
     }
@@ -123,17 +127,24 @@ public abstract class AbstractRemotingClient implements RemotingClient {
 
     @Override
     public void connect() {
-        synchronized (bootstrap) {
-            ChannelFuture future = bootstrap
-                .connect(this.current.getHost(), this.current.getPort());
-            future.addListener(getConnectionListener());
-            Channel channel = future.channel();
-            connection.setChannel(channel);
 
-            future.awaitUninterruptibly();
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                synchronized (bootstrap) {
+                    ChannelFuture future = bootstrap
+                            .connect(current.getHost(), current.getPort());
+                    future.addListener(getConnectionListener());
+                    Channel channel = future.channel();
+                    connection.setChannel(channel);
 
-        }
+                    future.awaitUninterruptibly();
+                }
+            }
+        };
 
+        thread = new Thread(runnable,"client-thread");
+        thread.start();
     }
 
     @Override
@@ -156,6 +167,14 @@ public abstract class AbstractRemotingClient implements RemotingClient {
         promise.invoke(this.connection,request,commandCallback,timeoutMillis);
 
         return promise;
+    }
+
+    public Object invokeSync(Request request, int timeoutMillis) {
+        RpcPromise promise = new RpcPromise();
+
+        Object result = promise.invokeSync(this.connection, request,timeoutMillis);
+
+        return result;
     }
 
     @Override
@@ -206,6 +225,8 @@ public abstract class AbstractRemotingClient implements RemotingClient {
             public void operationComplete(ChannelFuture future) throws Exception {
                 if (!future.isSuccess()) {
                     future.channel().pipeline().fireChannelInactive();
+                } else {
+                    EventBus.getInstance().post(new ClientConnectionEvent(null));
                 }
             }
         };

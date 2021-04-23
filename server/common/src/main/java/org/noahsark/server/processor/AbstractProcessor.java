@@ -36,6 +36,10 @@ public abstract class AbstractProcessor<T> implements Runnable {
         dispatcher.register(getProcessName(), this);
     }
 
+    public void unregister() {
+        dispatcher.unregister(getProcessName());
+    }
+
     public void process(RpcRequest request) {
         this.request = request;
         run();

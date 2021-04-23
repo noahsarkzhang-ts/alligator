@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Created by hadoop on 2021/4/5.
  */
-public class Connection {
+public class Connection implements PromisHolder{
 
     private static Logger log = LoggerFactory.getLogger(Connection.class);
 
@@ -18,7 +18,6 @@ public class Connection {
     private final ConcurrentHashMap<Integer, RpcPromise> futures = new ConcurrentHashMap<>(16);
 
     public static final AttributeKey<Connection> CONNECTION = AttributeKey.valueOf("connection");
-
 
     public Connection() {
     }
@@ -29,18 +28,22 @@ public class Connection {
         this.channel.attr(CONNECTION).set(this);
     }
 
+    @Override
     public RpcPromise getPromise(Integer requestId) {
         return futures.get(requestId);
     }
 
+    @Override
     public void registerPromise(Integer requestId, RpcPromise promise) {
         futures.put(requestId, promise);
     }
 
+    @Override
     public RpcPromise removePromis(Integer requestId) {
         return this.futures.remove(requestId);
     }
 
+    @Override
     public void removePromis(RpcPromise promise) {
         this.futures.remove(promise.getRequestId());
     }

@@ -43,6 +43,8 @@ public class PongHandler extends SimpleChannelInboundHandler<RpcCommand> {
                 .fromJsonObject(json,Void.class)));
 
             return;
+        } else {
+            ctx.fireChannelRead(msg);
         }
     }
 }

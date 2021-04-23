@@ -16,7 +16,6 @@ public class ApplicationStartListener implements ApplicationListener<Application
 
     private static Logger logger = LoggerFactory.getLogger(ApplicationStartListener.class);
 
-
     @Override
     public void onApplicationEvent(ApplicationStartedEvent applicationStartedEvent) {
         logger.info("Application start!");

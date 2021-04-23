@@ -12,6 +12,7 @@ import io.netty.util.concurrent.UnorderedThreadPoolEventExecutor;
 import java.time.Instant;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
+
 import org.noahsark.server.exception.InvokeExcption;
 import org.noahsark.server.exception.TimeoutException;
 import org.noahsark.server.remote.TimerHolder;
@@ -29,7 +30,7 @@ public class RpcPromise extends DefaultPromise<Object> implements Comparable<Rpc
     private static Logger log = LoggerFactory.getLogger(RpcPromise.class);
 
     private static final UnorderedThreadPoolEventExecutor EVENT_EXECUTOR = new UnorderedThreadPoolEventExecutor(
-        5);
+            5);
 
     private long timeStampMillis;
 
@@ -45,35 +46,32 @@ public class RpcPromise extends DefaultPromise<Object> implements Comparable<Rpc
 
     }
 
-    public void addCallback(Connection connection, Request request, CommandCallback callback) {
-        this.addListener(new GenericFutureListener<Future<? super Object>>() {
-            @Override
-            public void operationComplete(Future<? super Object> future) throws Exception {
+    public void addCallback(PromisHolder promisHolder, Request request, CommandCallback callback) {
+        this.addListener(future -> {
 
-                Object result = null;
+            Object result;
 
-                RpcPromise promise = (RpcPromise) future;
+            RpcPromise promise = (RpcPromise) future;
 
-                try {
-                    result = future.get();
+            try {
+                result = future.get();
 
-                    callback.callback(result);
+                callback.callback(result);
 
-                } catch (Throwable ex) {
-                    callback.failure(ex);
-                    log.warn("catch an ception.", ex);
-                } finally {
+            } catch (Throwable ex) {
+                callback.failure(ex);
+                log.warn("catch an ception.", ex);
+            } finally {
 
-                    promise.cancelTimeout();
-                    connection.removePromis(request.getRequestId());
-                }
+                promise.cancelTimeout();
+                promisHolder.removePromis(request.getRequestId());
             }
         });
     }
 
-    public Object invokeSync(Connection connection, Request request, int timeoutMillis) {
+    public Object invokeSync(PromisHolder promisHolder, Request request, int timeoutMillis) {
 
-        this.invoke(connection, request, null, timeoutMillis);
+        this.invoke(promisHolder, request, null, timeoutMillis);
 
         try {
             return this.get();
@@ -87,12 +85,12 @@ public class RpcPromise extends DefaultPromise<Object> implements Comparable<Rpc
     }
 
 
-    public void invoke(Connection connection, Request request, CommandCallback commandCallback,
-        int timeoutMillis) {
+    public void invoke(PromisHolder promisHolder, Request request, CommandCallback commandCallback,
+                       int timeoutMillis) {
 
-        connection.registerPromise(request.getRequestId(), this);
+        promisHolder.registerPromise(request.getRequestId(), this);
         if (commandCallback != null) {
-            addCallback(connection, request, commandCallback);
+            addCallback(promisHolder, request, commandCallback);
         }
 
         try {
@@ -101,7 +99,7 @@ public class RpcPromise extends DefaultPromise<Object> implements Comparable<Rpc
                 Timeout timeout = TimerHolder.getTimer().newTimeout(new TimerTask() {
                     @Override
                     public void run(Timeout timeout) throws Exception {
-                        RpcPromise promise = connection.removePromis(request.getRequestId());
+                        RpcPromise promise = promisHolder.removePromis(request.getRequestId());
 
                         if (promise != null) {
                             promise.setFailure(new TimeoutException());
@@ -112,30 +110,35 @@ public class RpcPromise extends DefaultPromise<Object> implements Comparable<Rpc
                 setTimeout(timeout);
             }
 
-            connection.getChannel().writeAndFlush(request).addListener(new ChannelFutureListener() {
+            if (promisHolder instanceof Connection) {
+                Connection connection = (Connection) promisHolder;
 
-                @Override
-                public void operationComplete(ChannelFuture cf) throws Exception {
-                    if (!cf.isSuccess()) {
-                        RpcPromise promise = connection.removePromis(request.getRequestId());
-                        if (promise != null) {
-                            promise.cancelTimeout();
-                            promise.setFailure(new InvokeExcption());
+                connection.getChannel().writeAndFlush(request).addListener(new ChannelFutureListener() {
+
+                    @Override
+                    public void operationComplete(ChannelFuture cf) throws Exception {
+                        if (!cf.isSuccess()) {
+                            RpcPromise promise = connection.removePromis(request.getRequestId());
+                            if (promise != null) {
+                                promise.cancelTimeout();
+                                promise.setFailure(new InvokeExcption());
+                            }
+                            log.error("Invoke send failed. The requestid is {}",
+                                    request.getRequestId(), cf.cause());
                         }
-                        log.error("Invoke send failed. The requestid is {}",
-                            request.getRequestId(), cf.cause());
                     }
-                }
 
-            });
+                });
+            }
+
         } catch (Exception ex) {
-            RpcPromise promise = connection.removePromis(request.getRequestId());
+            RpcPromise promise = promisHolder.removePromis(request.getRequestId());
             if (promise != null) {
                 promise.cancelTimeout();
                 promise.setFailure(new InvokeExcption());
             }
             log.error("Exception caught when sending invocation. The requestId is {}",
-                request.getRequestId(), ex);
+                    request.getRequestId(), ex);
         }
     }
 

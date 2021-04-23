@@ -32,4 +32,8 @@ public class Dispatcher {
         processors.put(name, processor);
     }
 
+    public void unregister(String name) {
+        processors.remove(name);
+    }
+
 }
