@@ -220,14 +220,11 @@ public abstract class AbstractRemotingClient implements RemotingClient {
     public abstract ServerInfo convert(String url);
 
     private ChannelFutureListener getConnectionListener() {
-        return new ChannelFutureListener() {
-            @Override
-            public void operationComplete(ChannelFuture future) throws Exception {
-                if (!future.isSuccess()) {
-                    future.channel().pipeline().fireChannelInactive();
-                } else {
-                    EventBus.getInstance().post(new ClientConnectionEvent(null));
-                }
+        return future -> {
+            if (!future.isSuccess()) {
+                future.channel().pipeline().fireChannelInactive();
+            } else {
+                EventBus.getInstance().post(new ClientConnectionEvent(null));
             }
         };
     }
