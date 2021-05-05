@@ -1,5 +1,6 @@
 package org.noahsark.server.tcp.server;
 
+import java.util.concurrent.TimeUnit;
 import org.junit.Test;
 
 /**
@@ -11,7 +12,7 @@ public class TcpServerTest {
 
     @Test
     public void tcpServerTest() {
-        String host = "192.168.9.103";
+        String host = "192.168.1.102";
         int port = 2222;
 
         final TcpServer tcpServer = new TcpServer(host, port);
@@ -25,6 +26,12 @@ public class TcpServerTest {
         });
 
         tcpServer.start();
+
+        try {
+            TimeUnit.SECONDS.sleep(120);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
 

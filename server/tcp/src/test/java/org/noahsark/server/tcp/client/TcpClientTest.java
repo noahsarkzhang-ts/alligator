@@ -15,7 +15,7 @@ public class TcpClientTest {
 
     @Test
     public void tcpClientTest() {
-        TcpClient tcpClient = new TcpClient("192.168.9.101", 2222);
+        TcpClient tcpClient = new TcpClient("192.168.1.102", 2222);
         tcpClient.connect();
 
         try {

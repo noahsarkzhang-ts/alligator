@@ -5,6 +5,7 @@ import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToMessageDecoder;
 import java.util.List;
+import org.noahsark.server.rpc.MultiRequest;
 import org.noahsark.server.rpc.RpcCommand;
 
 
@@ -17,7 +18,19 @@ import org.noahsark.server.rpc.RpcCommand;
 public class CommandDecoder extends MessageToMessageDecoder<ByteBuf> {
 
     @Override
-    protected void decode(ChannelHandlerContext ctx, ByteBuf msg, List<Object> out) throws Exception {
-        out.add(RpcCommand.decode(msg));
+    protected void decode(ChannelHandlerContext ctx, ByteBuf msg, List<Object> out)
+        throws Exception {
+
+        msg.markReaderIndex();
+        short headSize = msg.readShort();
+        msg.resetReaderIndex();
+
+        if (RpcCommand.RPC_COMMAND_SIZE == headSize) {
+            out.add(RpcCommand.decode(msg));
+        } else {
+            out.add(MultiRequest.decode(msg));
+        }
+
+
     }
 }

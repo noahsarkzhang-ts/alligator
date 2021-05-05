@@ -3,11 +3,14 @@ package org.noahsark.server.rpc;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
+import io.netty.util.CharsetUtil;
+import java.io.Serializable;
+import java.util.Map;
 import org.noahsark.server.serializer.Serializer;
 import org.noahsark.server.serializer.SerializerManager;
-
-import java.io.Serializable;
+import org.noahsark.server.util.JsonUtils;
 
 /**
  * @author: noahsark
@@ -16,24 +19,56 @@ import java.io.Serializable;
  */
 public class RpcCommand implements Serializable {
 
+    public static final short RPC_COMMAND_SIZE = 17;
+
+    /**
+     * 消息头长度，消息头有定长和不定长
+     */
+    private short headSize;
+
+    /**
+     * 请求id
+     */
     private int requestId;
 
+    /**
+     * 业务分类
+     */
     private int biz;
 
+    /**
+     * 命令id
+     */
     private int cmd;
 
+    /**
+     * 消息类型，1：请求，2：响应，3：oneway
+     */
     private byte type;
 
+    /**
+     * 接口版本
+     */
     private byte ver;
 
+    /**
+     * 序列化类型
+     */
     private byte serializer;
 
+    /**
+     * 消息内容
+     */
     private Object payload;
+
+    private Object attachment;
 
     public RpcCommand() {
     }
 
     public RpcCommand(Builder builder) {
+
+        this.headSize = RPC_COMMAND_SIZE;
         this.requestId = builder.requestId;
         this.biz = builder.biz;
         this.cmd = builder.cmd;
@@ -99,21 +134,27 @@ public class RpcCommand implements Serializable {
         this.payload = payload;
     }
 
+    public short getHeadSize() {
+        return headSize;
+    }
+
+    public void setHeadSize(short headSize) {
+        this.headSize = headSize;
+    }
+
+    public Object getAttachment() {
+        return attachment;
+    }
+
+    public void setAttachment(Object attachment) {
+        this.attachment = attachment;
+    }
+
     public static ByteBuf encode(ChannelHandlerContext ctx, RpcCommand command) {
 
         ByteBuf buf = ctx.alloc().buffer();
 
-        buf.writeInt(command.getRequestId());
-        buf.writeInt(command.getBiz());
-        buf.writeInt(command.getCmd());
-        buf.writeByte(command.getType());
-        buf.writeByte(command.getVer());
-        buf.writeByte(command.getSerializer());
-
-        Serializer serializer = SerializerManager.getInstance().getSerializer(command.getSerializer());
-        byte [] payload = serializer.encode(command.getPayload());
-
-        buf.writeBytes(payload);
+        encode(buf, command);
 
         return buf;
     }
@@ -122,25 +163,69 @@ public class RpcCommand implements Serializable {
 
         RpcCommand command = new RpcCommand();
 
-        command.setRequestId(msg.readInt());
-        command.setBiz(msg.readInt());
-        command.setCmd(msg.readInt());
-        command.setType(msg.readByte());
-        command.setVer(msg.readByte());
-        command.setSerializer(msg.readByte());
-
-        byte [] payload = new byte[msg.readableBytes()];
-        msg.readBytes(payload);
-
-        command.setPayload(payload);
+        decode(msg, command);
 
         return command;
+    }
+
+    public static RpcCommand decode(byte[] msg) {
+
+        RpcCommand command = new RpcCommand();
+        ByteBuf buf = Unpooled.wrappedBuffer(msg);
+
+        decode(buf, command);
+
+        return command;
+    }
+
+    public static void decode(ByteBuf buf, RpcCommand command) {
+
+        command.setHeadSize(buf.readShort());
+        command.setRequestId(buf.readInt());
+        command.setBiz(buf.readInt());
+        command.setCmd(buf.readInt());
+        command.setType(buf.readByte());
+        command.setVer(buf.readByte());
+        command.setSerializer(buf.readByte());
+
+        byte[] payload = new byte[buf.readableBytes()];
+        buf.readBytes(payload);
+
+        command.setPayload(payload);
+    }
+
+    public static byte[] encode(RpcCommand command) {
+
+        ByteBuf buf = Unpooled.buffer();
+
+        encode(buf, command);
+
+        return buf.array();
+    }
+
+    private static void encode(ByteBuf buf, RpcCommand command) {
+
+        buf.writeShort(RPC_COMMAND_SIZE);
+        buf.writeInt(command.getRequestId());
+        buf.writeInt(command.getBiz());
+        buf.writeInt(command.getCmd());
+        buf.writeByte(command.getType());
+        buf.writeByte(command.getVer());
+        buf.writeByte(command.getSerializer());
+
+        Serializer serializer = SerializerManager.getInstance()
+            .getSerializer(command.getSerializer());
+        byte[] payload = serializer.encode(command.getPayload());
+
+        buf.writeBytes(payload);
+
     }
 
     public static RpcCommand marshalFromJson(String json) {
         RpcCommand command = new RpcCommand();
 
         JsonObject data = new JsonParser().parse(json).getAsJsonObject();
+        command.setHeadSize(data.get("headSize").getAsShort());
         command.setRequestId(data.get("requestId").getAsInt());
         command.setBiz(data.get("biz").getAsInt());
         command.setCmd(data.get("cmd").getAsInt());
@@ -155,17 +240,19 @@ public class RpcCommand implements Serializable {
     @Override
     public String toString() {
         return "RpcCommand{" +
-                "requestId=" + requestId +
-                ", biz=" + biz +
-                ", cmd=" + cmd +
-                ", type=" + type +
-                ", ver=" + ver +
-                ", serializer=" + serializer +
-                ", payload=" + payload +
-                '}';
+            "headSize=" + headSize +
+            ", requestId=" + requestId +
+            ", biz=" + biz +
+            ", cmd=" + cmd +
+            ", type=" + type +
+            ", ver=" + ver +
+            ", serializer=" + serializer +
+            ", payload=" + payload +
+            '}';
     }
 
     public static class Builder {
+
         private int requestId;
 
         private int biz;

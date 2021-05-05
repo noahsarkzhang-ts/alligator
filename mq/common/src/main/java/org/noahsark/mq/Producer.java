@@ -5,12 +5,15 @@ package org.noahsark.mq;
  * @version:
  * @date: 2021/4/29
  */
-public interface Producer {
+public interface Producer<M extends Message,
+    C extends SendCallback, R extends SendResult> {
 
-    void send(Message msg, SendCallback sendCallback, long timeout);
+    void send(M msg, C sendCallback, long timeout);
 
-    SendResult send(Message msg);
+    R send(M msg);
 
-    void sendOneway(Message msg);
+    void sendOneway(M msg);
+
+    void shutdown();
 
 }

@@ -1,9 +1,5 @@
 package org.noahsark.server.rpc;
 
-import org.noahsark.server.constant.RpcCommandType;
-import org.noahsark.server.constant.RpcCommandVer;
-import org.noahsark.server.constant.SerializerType;
-
 import java.io.Serializable;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -14,23 +10,12 @@ public class Request extends RpcCommand implements Serializable {
 
     private static final AtomicInteger NEXT_ID = new AtomicInteger(1);
 
+
     public Request() {
-
-        this.setRequestId(nextId());
-        this.setType(RpcCommandType.REQUEST);
-        this.setVer(RpcCommandVer.V1);
-        this.setSerializer(SerializerType.JSON);
-
     }
 
     public Request(Builder builder) {
-
         super(builder.commandBuilder);
-
-        this.setRequestId(nextId());
-        this.setType(RpcCommandType.REQUEST);
-        this.setVer(RpcCommandVer.V1);
-        this.setSerializer(SerializerType.JSON);
     }
 
     public static final int nextId() {
@@ -51,6 +36,27 @@ public class Request extends RpcCommand implements Serializable {
             return this;
         }
 
+
+        public Builder requestId(int requestId) {
+            this.commandBuilder.requestId(requestId);
+            return this;
+        }
+
+        public Builder type(byte type) {
+            this.commandBuilder.type(type);
+            return this;
+        }
+
+        public Builder ver(byte ver) {
+            this.commandBuilder.ver(ver);
+            return this;
+        }
+
+        public Builder serializer(byte serializer) {
+            this.commandBuilder.serializer(serializer);
+            return this;
+        }
+
         public Builder payload(Object payload) {
             this.commandBuilder.payload(payload);
             return this;
@@ -60,4 +66,5 @@ public class Request extends RpcCommand implements Serializable {
             return new Request(this);
         }
     }
+
 }

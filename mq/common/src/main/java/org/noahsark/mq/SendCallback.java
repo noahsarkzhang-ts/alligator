@@ -5,9 +5,9 @@ package org.noahsark.mq;
  * @version:
  * @date: 2021/4/29
  */
-public interface SendCallback {
+public interface SendCallback<R extends SendResult> {
 
-    void onSuccess(SendResult var1);
+    void onSuccess(R var1);
 
     void onException(Throwable var1);
 }

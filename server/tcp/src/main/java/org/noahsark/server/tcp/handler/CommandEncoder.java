@@ -4,6 +4,7 @@ import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToMessageEncoder;
 import java.util.List;
+import org.noahsark.server.rpc.MultiRequest;
 import org.noahsark.server.rpc.RpcCommand;
 
 /**
@@ -15,7 +16,14 @@ import org.noahsark.server.rpc.RpcCommand;
 public class CommandEncoder extends MessageToMessageEncoder<RpcCommand> {
 
     @Override
-    protected void encode(ChannelHandlerContext ctx, RpcCommand msg, List<Object> out) throws Exception {
-        out.add(RpcCommand.encode(ctx,msg));
+    protected void encode(ChannelHandlerContext ctx, RpcCommand msg, List<Object> out)
+        throws Exception {
+
+        if (msg instanceof MultiRequest) {
+            out.add(MultiRequest.encode(ctx, msg));
+        } else {
+            out.add(RpcCommand.encode(ctx, msg));
+        }
+
     }
 }

@@ -3,6 +3,7 @@ package org.noahsark.client.future;
 import io.netty.channel.Channel;
 import io.netty.util.AttributeKey;
 import java.util.concurrent.ConcurrentHashMap;
+import org.noahsark.server.rpc.Request;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,6 +47,11 @@ public class Connection implements PromisHolder{
     @Override
     public void removePromis(RpcPromise promise) {
         this.futures.remove(promise.getRequestId());
+    }
+
+    @Override
+    public void write(Request request) {
+        this.getChannel().writeAndFlush(request);
     }
 
     public Channel getChannel() {

@@ -110,7 +110,8 @@ public class MemoryRepository implements Repository {
 
     @Override
     public void unRegisterService(String serviceId) {
-        Service service = serviceMap.get(serviceId);
+        Service service;
+        service = serviceMap.get(serviceId);
 
         serviceMap.remove(serviceId);
 

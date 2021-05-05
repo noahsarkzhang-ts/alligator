@@ -7,15 +7,17 @@ import java.util.Date;
 import java.util.Objects;
 import java.util.UUID;
 import org.noahsark.client.future.Connection;
+import org.noahsark.client.future.PromisHolder;
 
 /**
  * Created by hadoop on 2021/3/13.
  */
-public class Session {
+public class Session implements ChannelHolder {
 
     public static final String SESSION_KEY_NAME = "NOAHSARK_SESSION";
 
-    public static final AttributeKey<String> SESSION_KEY = AttributeKey.newInstance(SESSION_KEY_NAME);
+    public static final AttributeKey<String> SESSION_KEY = AttributeKey
+        .newInstance(SESSION_KEY_NAME);
 
     private String sessionId;
 
@@ -30,6 +32,34 @@ public class Session {
         this.lastAccessTime = new Date();
 
         this.connection = connection;
+    }
+
+    @Override
+    public void write(Object repsponse) {
+        this.connection.getChannel().writeAndFlush(repsponse);
+    }
+
+    @Override
+    public PromisHolder getPromisHolder() {
+        return connection;
+    }
+
+    public static Session getOrCreatedSession(Channel channel) {
+
+        String sessionId = channel.attr(SESSION_KEY).get();
+        Session session;
+
+        Connection connection = new Connection(channel);
+
+        if (sessionId == null) {
+            session = new Session(connection);
+            channel.attr(SESSION_KEY).set(session.getSessionId());
+            SessionManager.getInstance().addSession(session.getSessionId(), session);
+        } else {
+            session = SessionManager.getInstance().getSession(sessionId);
+        }
+
+        return session;
     }
 
     public Subject getSubject() {
@@ -56,10 +86,6 @@ public class Session {
         this.sessionId = sessionId;
     }
 
-    public Connection getConnection() {
-        return connection;
-    }
-
     public void setConnection(Connection connection) {
         this.connection = connection;
     }
@@ -68,23 +94,6 @@ public class Session {
         return connection.getChannel();
     }
 
-    public static Session getOrCreatedSession(Channel channel) {
-
-        String sessionId = channel.attr(SESSION_KEY).get();
-        Session session;
-
-        Connection connection = new Connection(channel);
-
-        if (sessionId == null) {
-            session = new Session(connection);
-            channel.attr(SESSION_KEY).set(session.getSessionId());
-            SessionManager.getInstance().addSession(session.getSessionId(), session);
-        } else {
-            session = SessionManager.getInstance().getSession(sessionId);
-        }
-
-        return session;
-    }
 
     @Override
     public boolean equals(Object o) {
@@ -102,4 +111,5 @@ public class Session {
     public int hashCode() {
         return Objects.hash(getSessionId());
     }
+
 }

@@ -5,11 +5,15 @@ package org.noahsark.mq;
  * @version:
  * @date: 2021/4/29
  */
-public interface Consumer {
+public interface Consumer<L extends MessageListener, T extends Topic> {
 
-    void registerMessageListener(MessageListener listener);
+    void registerMessageListener(L listener);
 
-    void subscribe(Topic topic);
+    void subscribe(T topic);
+
+    void start();
+
+    void shutdown();
 
 
 }

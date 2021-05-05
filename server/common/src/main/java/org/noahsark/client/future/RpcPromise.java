@@ -13,6 +13,7 @@ import java.time.Instant;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
+import javax.swing.Popup;
 import org.noahsark.server.exception.InvokeExcption;
 import org.noahsark.server.exception.TimeoutException;
 import org.noahsark.server.remote.TimerHolder;
@@ -129,6 +130,8 @@ public class RpcPromise extends DefaultPromise<Object> implements Comparable<Rpc
                     }
 
                 });
+            } else {
+                promisHolder.write(request);
             }
 
         } catch (Exception ex) {

@@ -2,7 +2,7 @@ package org.noahsark.server.rpc;
 
 import org.noahsark.client.future.CommandCallback;
 import org.noahsark.client.future.RpcPromise;
-import org.noahsark.server.session.Session;
+import org.noahsark.server.session.ChannelHolder;
 
 /**
  * @author: noahsark
@@ -11,7 +11,7 @@ import org.noahsark.server.session.Session;
  */
 public class RpcContext {
 
-    private Session session;
+    private ChannelHolder session;
 
     private RpcCommand command;
 
@@ -24,23 +24,23 @@ public class RpcContext {
     }
 
     public void sendResponse(Object repsponse) {
-        session.getChannel().writeAndFlush(repsponse);
+        session.write(repsponse);
     }
 
     public RpcPromise invoke(Request request, CommandCallback commandCallback, int timeoutMillis) {
 
         RpcPromise promise = new RpcPromise();
 
-        promise.invoke(this.getSession().getConnection(),request,commandCallback,timeoutMillis);
+        promise.invoke(this.getSession().getPromisHolder(),request,commandCallback,timeoutMillis);
 
         return promise;
     }
 
-    public Session getSession() {
+    public ChannelHolder getSession() {
         return session;
     }
 
-    public void setSession(Session session) {
+    public void setSession(ChannelHolder session) {
         this.session = session;
     }
 
@@ -53,11 +53,11 @@ public class RpcContext {
     }
 
     public static class Builder {
-        private Session session;
+        private ChannelHolder session;
 
         private RpcCommand command;
 
-        public Builder session(Session session) {
+        public Builder session(ChannelHolder session) {
             this.session = session;
             return this;
         }
