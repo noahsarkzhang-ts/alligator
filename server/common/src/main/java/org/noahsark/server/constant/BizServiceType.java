@@ -26,22 +26,22 @@ public class BizServiceType {
      */
 
     /**
-     *  websockets网关
+     * websockets网关
      */
     public static final int BIZ_GW_WS = 100;
 
     /**
-     *  TCP 网关
+     * TCP 网关
      */
     public static final int BIZ_GW_TCP = 101;
 
     /**
-     *  http 网关
+     * http 网关
      */
     public static final int BIZ_GW_HTTP = 102;
 
     /**
-     *  http2网关
+     * http2网关
      */
     public static final int BIZ_GW_HTTP2 = 103;
 }

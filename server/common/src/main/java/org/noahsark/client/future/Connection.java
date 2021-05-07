@@ -2,7 +2,10 @@ package org.noahsark.client.future;
 
 import io.netty.channel.Channel;
 import io.netty.util.AttributeKey;
+
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
+
 import org.noahsark.server.rpc.Request;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,9 +13,11 @@ import org.slf4j.LoggerFactory;
 /**
  * Created by hadoop on 2021/4/5.
  */
-public class Connection implements PromisHolder{
+public class Connection implements PromisHolder {
 
     private static Logger log = LoggerFactory.getLogger(Connection.class);
+
+    private AtomicInteger nextId = new AtomicInteger(1);
 
     private Channel channel;
 
@@ -28,6 +33,12 @@ public class Connection implements PromisHolder{
 
         this.channel.attr(CONNECTION).set(this);
     }
+
+    @Override
+    public int nextId() {
+        return nextId.getAndIncrement();
+    }
+
 
     @Override
     public RpcPromise getPromise(Integer requestId) {

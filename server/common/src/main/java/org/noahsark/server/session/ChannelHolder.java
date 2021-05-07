@@ -19,5 +19,16 @@ public interface ChannelHolder {
      */
     PromisHolder getPromisHolder();
 
+    /**
+     *  获取subject
+     * @return Subject
+     */
+    Subject getSubject();
+
+    /**
+     *  设置subject
+     */
+    void setSubject(Subject subject);
+
 }
 

@@ -7,6 +7,7 @@ import org.noahsark.registration.repository.Repository;
 import org.noahsark.server.processor.AbstractProcessor;
 import org.noahsark.server.rpc.Response;
 import org.noahsark.server.rpc.RpcContext;
+import org.noahsark.server.session.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -21,7 +22,8 @@ public class LoginProcessor extends AbstractProcessor<User> {
 
     @Override
     protected void execute(User request, RpcContext context) {
-        Service service = (Service) context.getSession().getSubject();
+        Session session = (Session) context.getSession();
+        Service service = (Service) session.getSubject();
 
         repository.login(request,service);
 

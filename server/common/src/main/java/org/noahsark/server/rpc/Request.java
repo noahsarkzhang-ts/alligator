@@ -1,5 +1,9 @@
 package org.noahsark.server.rpc;
 
+import org.noahsark.server.constant.RpcCommandType;
+import org.noahsark.server.constant.RpcCommandVer;
+import org.noahsark.server.constant.SerializerType;
+
 import java.io.Serializable;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -9,7 +13,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class Request extends RpcCommand implements Serializable {
 
     private static final AtomicInteger NEXT_ID = new AtomicInteger(1);
-
 
     public Request() {
     }
@@ -35,7 +38,6 @@ public class Request extends RpcCommand implements Serializable {
             this.commandBuilder.cmd(cmd);
             return this;
         }
-
 
         public Builder requestId(int requestId) {
             this.commandBuilder.requestId(requestId);
@@ -63,6 +65,11 @@ public class Request extends RpcCommand implements Serializable {
         }
 
         public Request build() {
+
+            this.commandBuilder.type(RpcCommandType.REQUEST);
+            this.commandBuilder.ver(RpcCommandVer.V1);
+            this.commandBuilder.serializer(SerializerType.JSON);
+
             return new Request(this);
         }
     }

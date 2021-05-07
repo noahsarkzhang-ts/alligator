@@ -12,7 +12,7 @@ import org.noahsark.server.rpc.Request;
  */
 public class RocketmqPromiseHolder implements PromisHolder {
 
-    public static final AtomicInteger NEXT_ID = new AtomicInteger(1);
+    private AtomicInteger nextId = new AtomicInteger(1);
 
     private RocketmqProducer producer;
 
@@ -44,9 +44,9 @@ public class RocketmqPromiseHolder implements PromisHolder {
         this.futures.remove(promise.getRequestId());
     }
 
-
-    public static int nextId() {
-        return NEXT_ID.getAndIncrement();
+    @Override
+    public int nextId() {
+        return nextId.getAndIncrement();
     }
 
     @Override

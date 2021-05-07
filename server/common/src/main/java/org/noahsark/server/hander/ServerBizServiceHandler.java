@@ -52,6 +52,8 @@ public class ServerBizServiceHandler extends SimpleChannelInboundHandler<RpcComm
 
         try {
 
+            log.info("receive a request: {}", command);
+
             Session session = Session.getOrCreatedSession(ctx.channel());
 
             RpcContext rpcContext = new RpcContext.Builder()

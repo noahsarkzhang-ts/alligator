@@ -17,55 +17,55 @@ import org.slf4j.LoggerFactory;
  */
 public class WebsocketDecoder extends SimpleChannelInboundHandler<WebSocketFrame> {
 
-  private static Logger log = LoggerFactory.getLogger(WebsocketDecoder.class);
+    private static Logger log = LoggerFactory.getLogger(WebsocketDecoder.class);
 
-  @Override
-  protected void channelRead0(ChannelHandlerContext ctx, WebSocketFrame msg) throws Exception {
-    Response response = null;
-    Result<Void> result = new Result<>();
-    String message = null;
+    @Override
+    protected void channelRead0(ChannelHandlerContext ctx, WebSocketFrame msg) throws Exception {
+        Response response = null;
+        Result<Void> result = new Result<>();
+        String message = null;
 
-    try {
+        try {
 
-      if (msg instanceof TextWebSocketFrame) {
-        // Send the uppercase string back.
-        String request = ((TextWebSocketFrame) msg).text();
-        log.info("receive request: {}", request);
+            if (msg instanceof TextWebSocketFrame) {
+                // Send the uppercase string back.
+                String request = ((TextWebSocketFrame) msg).text();
+                log.info("receive request: {}", request);
 
-        RpcCommand command = RpcCommand.marshalFromJson(request);
+                RpcCommand command = RpcCommand.marshalFromJson(request);
 
-        ctx.fireChannelRead(command);
+                ctx.fireChannelRead(command);
 
-        return;
+                return;
 
-        //ctx.channel().writeAndFlush(new TextWebSocketFrame(request.toUpperCase(Locale.US)));
-      } else {
-        message = "unsupported frame type: " + msg.getClass().getName();
-        throw new UnsupportedOperationException(message);
-      }
-    } catch (JsonSyntaxException e) {
-      result.setCode(1001);
-      result.setMessage("Format Error!");
+                //ctx.channel().writeAndFlush(new TextWebSocketFrame(request.toUpperCase(Locale.US)));
+            } else {
+                message = "unsupported frame type: " + msg.getClass().getName();
+                throw new UnsupportedOperationException(message);
+            }
+        } catch (JsonSyntaxException ex) {
+            result.setCode(1001);
+            result.setMessage("Format Error!");
 
-      response = new Response.Builder()
-          .requestId(0)
-          .biz(0)
-          .cmd(0)
-          .payload(result)
-          .build();
+            response = new Response.Builder()
+                    .requestId(0)
+                    .biz(0)
+                    .cmd(0)
+                    .payload(result)
+                    .build();
 
-    } catch (UnsupportedOperationException e) {
-      result.setCode(1002);
-      result.setMessage(message);
+        } catch (Exception ex) {
+            result.setCode(1002);
+            result.setMessage(message);
 
-      response = new Response.Builder()
-          .requestId(0)
-          .biz(0)
-          .cmd(0)
-          .payload(result)
-          .build();
+            response = new Response.Builder()
+                    .requestId(0)
+                    .biz(0)
+                    .cmd(0)
+                    .payload(result)
+                    .build();
+        }
+
+        ctx.channel().writeAndFlush(new TextWebSocketFrame(JsonUtils.toJson(response)));
     }
-
-    ctx.channel().writeAndFlush(new TextWebSocketFrame(JsonUtils.toJson(response)));
-  }
 }

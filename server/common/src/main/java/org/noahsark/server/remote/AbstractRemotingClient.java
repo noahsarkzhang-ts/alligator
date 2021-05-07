@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Created by hadoop on 2021/3/14.
@@ -164,6 +165,8 @@ public abstract class AbstractRemotingClient implements RemotingClient {
     public RpcPromise invoke(Request request, CommandCallback commandCallback, int timeoutMillis) {
 
         RpcPromise promise = new RpcPromise();
+        request.setRequestId(this.connection.nextId());
+
         promise.invoke(this.connection,request,commandCallback,timeoutMillis);
 
         return promise;
@@ -171,6 +174,7 @@ public abstract class AbstractRemotingClient implements RemotingClient {
 
     public Object invokeSync(Request request, int timeoutMillis) {
         RpcPromise promise = new RpcPromise();
+        request.setRequestId(this.connection.nextId());
 
         Object result = promise.invokeSync(this.connection, request,timeoutMillis);
 

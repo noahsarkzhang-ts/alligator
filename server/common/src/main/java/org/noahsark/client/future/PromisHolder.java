@@ -18,4 +18,6 @@ public interface PromisHolder  {
     void removePromis(RpcPromise promise);
 
     void write(Request request);
+
+    int nextId();
 }

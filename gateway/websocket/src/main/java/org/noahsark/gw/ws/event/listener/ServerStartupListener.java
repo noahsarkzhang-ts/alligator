@@ -3,8 +3,6 @@ package org.noahsark.gw.ws.event.listener;
 import org.noahsark.gw.ws.config.CommonConfig;
 import org.noahsark.gw.ws.context.ServerContext;
 import org.noahsark.registration.RegistrationClient;
-import org.noahsark.registration.domain.Service;
-import org.noahsark.server.constant.BizServiceType;
 import org.noahsark.server.event.ServerStartupEvent;
 import org.noahsark.server.eventbus.ApplicationListener;
 import org.noahsark.server.eventbus.EventBus;

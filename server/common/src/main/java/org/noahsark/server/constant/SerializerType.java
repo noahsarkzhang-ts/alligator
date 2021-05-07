@@ -9,5 +9,5 @@ public class SerializerType {
 
     public static final byte JSON = (byte) 0x01;
 
-    public static final byte PROBUFFER = (byte)0x02;
+    public static final byte PROBUFFER = (byte) 0x02;
 }

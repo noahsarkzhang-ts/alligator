@@ -62,10 +62,12 @@ public class Session implements ChannelHolder {
         return session;
     }
 
+    @Override
     public Subject getSubject() {
         return subject;
     }
 
+    @Override
     public void setSubject(Subject subject) {
         this.subject = subject;
     }

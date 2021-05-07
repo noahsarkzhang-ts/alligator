@@ -264,6 +264,14 @@ public class MultiRequest extends Request {
 
             return this;
         }
+
+        public MultiRequest build() {
+            this.requestBuilder.type(RpcCommandType.REQUEST);
+            this.requestBuilder.ver(RpcCommandVer.V1);
+            this.requestBuilder.serializer(SerializerType.JSON);
+
+            return new MultiRequest(this);
+        }
     }
 
     private static class Ping {
