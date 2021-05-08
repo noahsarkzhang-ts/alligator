@@ -1,10 +1,7 @@
 package org.noahsark.gw.ws.processor.user;
 
-import java.util.UUID;
-
 import org.noahsark.client.future.CommandCallback;
 import org.noahsark.gw.ws.context.ServerContext;
-import org.noahsark.gw.ws.event.listener.ClientConnectionListener;
 import org.noahsark.registration.RegistrationClient;
 import org.noahsark.registration.domain.User;
 import org.noahsark.server.processor.AbstractProcessor;
@@ -15,6 +12,8 @@ import org.noahsark.server.util.JsonUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+
+import java.util.UUID;
 
 /**
  * Created by hadoop on 2021/3/13.
@@ -55,7 +54,6 @@ public class UserLoginProcessor extends AbstractProcessor<UserLoginInfo> {
 
             }
         });
-
 
     }
 

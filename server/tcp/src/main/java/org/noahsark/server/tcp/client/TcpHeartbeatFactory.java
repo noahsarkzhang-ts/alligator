@@ -24,7 +24,7 @@ public class TcpHeartbeatFactory implements HeartbeatFactory<RpcCommand> {
             payload = payloadGenerator.getPayload();
         } else {
             Ping hearBeat = new Ping();
-            hearBeat.setLoad(10);
+            hearBeat.setLoad(0);
 
             payload = hearBeat;
         }
