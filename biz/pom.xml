@@ -1,55 +1,66 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <parent>
+    <artifactId>alligator-all</artifactId>
+    <groupId>org.noahsark</groupId>
+    <version>1.0-SNAPSHOT</version>
+  </parent>
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>org.noahsark</groupId>
-  <artifactId>alligator-all</artifactId>
+  <artifactId>alligator-biz</artifactId>
   <packaging>pom</packaging>
-  <version>1.0-SNAPSHOT</version>
 
-  <modules>
-    <!--<module>remoting</module>
-    <module>nameserver</module>-->
-    <module>server</module>
-    <module>gateway</module>
-    <module>registration</module>
-    <module>mq</module>
-    <module>biz</module>
-  </modules>
-
-  <name>alligator-all</name>
+  <name>alligator-biz</name>
   <!-- FIXME change it to the project's website -->
   <url>http://www.example.com</url>
+  <modules>
+    <module>online</module>
+  </modules>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
-    <netty.version>4.1.58.Final</netty.version>
-    <junit.version>4.13.1</junit.version>
+    <spring-boot.version>2.2.5.RELEASE</spring-boot.version>
+    <spring.version>5.2.4.RELEASE</spring.version>
   </properties>
-
-  <dependencies>
-
-  </dependencies>
 
   <dependencyManagement>
     <dependencies>
-      <dependency>
-        <groupId>io.netty</groupId>
-        <artifactId>netty-all</artifactId>
-        <version>${netty.version}</version>
-      </dependency>
 
       <dependency>
-        <groupId>junit</groupId>
-        <artifactId>junit</artifactId>
-        <version>${junit.version}</version>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-test</artifactId>
+        <version>${spring-boot.version}</version>
         <scope>test</scope>
       </dependency>
 
+      <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter</artifactId>
+        <version>${spring-boot.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-aop</artifactId>
+        <version>${spring-boot.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-beans</artifactId>
+        <version>${spring.version}</version>
+      </dependency>
+
+
+      <dependency>
+        <artifactId>slf4j-api</artifactId>
+        <groupId>org.slf4j</groupId>
+        <version>1.7.26</version>
+      </dependency>
     </dependencies>
   </dependencyManagement>
 
@@ -86,6 +97,7 @@
           <artifactId>maven-deploy-plugin</artifactId>
           <version>2.8.2</version>
         </plugin>
+        <!-- site lifecycle, see https://maven.apache.org/ref/current/maven-core/lifecycles.html#site_Lifecycle -->
         <plugin>
           <artifactId>maven-site-plugin</artifactId>
           <version>3.7.1</version>
