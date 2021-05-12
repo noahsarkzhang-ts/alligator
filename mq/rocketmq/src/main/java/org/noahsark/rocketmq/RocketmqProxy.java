@@ -130,6 +130,12 @@ public class RocketmqProxy {
             return this;
         }
 
+        public Builder topic(RocketmqTopic topic) {
+            this.topics.add(topic);
+
+            return this;
+        }
+
         public RocketmqProxy build() {
             return new RocketmqProxy(this);
         }

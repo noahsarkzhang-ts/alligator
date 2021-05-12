@@ -1,0 +1,14 @@
+common:
+  mqProxy:
+    nameSrv: 120.79.235.83:9876
+    producerGroup: online-produce-1
+    consumerGroup: online-consumer-1
+    topic: TopicTest
+  regServer:
+    host: 192.168.68.25
+    port: 9090
+
+logging:
+  config: classpath:config/logback-spring.xml
+  file:
+    name: logs/ws-online.log

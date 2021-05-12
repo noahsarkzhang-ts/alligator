@@ -1,6 +1,8 @@
 package org.noahsark.server.rpc;
 
+import com.google.gson.JsonObject;
 import io.netty.buffer.ByteBuf;
+import io.netty.buffer.ByteBufUtil;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.util.CharsetUtil;
@@ -91,7 +93,7 @@ public class MultiRequest extends Request {
         command.setHeadSize(headSize);
 
         ByteBuf header = buf.slice(2, headSize - 2);
-        ByteBuf body = buf.slice(headSize, buf.readableBytes() - headSize);
+        ByteBuf body = buf.slice(headSize, buf.readableBytes() - headSize + 2);
 
         command.setRequestId(header.readInt());
         command.setBiz(header.readInt());
@@ -118,7 +120,10 @@ public class MultiRequest extends Request {
 
         encode(buf, command);
 
-        return buf.array();
+        byte [] data = new byte[buf.readableBytes()];
+        buf.readBytes(data);
+
+        return data;
     }
 
     private static void encode(ByteBuf buf, MultiRequest command) {
@@ -143,9 +148,18 @@ public class MultiRequest extends Request {
             buf.writeBytes(bprops);
         }
 
-        Serializer serializer = SerializerManager.getInstance()
-            .getSerializer(command.getSerializer());
-        byte[] payload = serializer.encode(command.getPayload());
+        Object obj = command.getPayload();
+        byte[] payload;
+
+        if (obj instanceof JsonObject) {
+            payload = obj.toString().getBytes();
+        } else if (obj instanceof byte []) {
+            payload = (byte []) obj;
+        } else {
+            Serializer serializer = SerializerManager.getInstance()
+                    .getSerializer(command.getSerializer());
+            payload = serializer.encode(obj);
+        }
 
         buf.writeBytes(payload);
     }
@@ -196,10 +210,10 @@ public class MultiRequest extends Request {
     @Override
     public String toString() {
         return "MultiRequest{" +
-            "props=" + props +
-            ", topic='" + topic + '\'' +
-            ", tartgetIds=" + targetIds +
-            '}';
+                "props=" + props +
+                ", topic='" + topic + '\'' +
+                ", targetIds=" + targetIds +
+                "} " + super.toString();
     }
 
     public static class Builder {
@@ -240,6 +254,11 @@ public class MultiRequest extends Request {
 
         public Builder serializer(byte serializer) {
             this.requestBuilder.serializer(serializer);
+            return this;
+        }
+
+        public Builder payload(Object payload) {
+            this.requestBuilder.payload(payload);
             return this;
         }
 
@@ -295,6 +314,40 @@ public class MultiRequest extends Request {
     }
 
     public static void main(String[] args) {
+        testMulitCode();
+    }
+
+    private static void testMulitCode() {
+        String sData = "{\"headSize\":17,\"requestId\":100,\"biz\":201,\"cmd\":1,\"type\":1,\"ver\":1,\"serializer\":1,\"payload\":{\"userId\":\"1001\",\"type\":1}}";
+
+        RpcCommand command = RpcCommand.marshalFromJson(sData);
+
+        System.out.println("command = " + command);
+
+        MultiRequest multiRequest = new MultiRequest.Builder()
+                .biz(command.getBiz())
+                .cmd(command.getCmd())
+                .serializer(command.getSerializer())
+                .type(command.getType())
+                .ver(command.getVer())
+                .payload(command.getPayload())
+                .topic("TopicTest-1")
+                .build();
+
+        System.out.println("multiRequest = " + multiRequest);
+
+        byte [] bData = MultiRequest.encode(multiRequest);
+
+        System.out.println("ByteBufUtil.hexDump(bData) = " + ByteBufUtil.hexDump(bData));
+        
+        MultiRequest multiRequest2 = MultiRequest.decode(bData);
+
+        System.out.println("multiRequest2 = " + multiRequest2);
+        System.out.println("payload = " + ByteBufUtil.hexDump((byte[]) multiRequest2.getPayload()));
+        System.out.println("payload = " + new String((byte[]) multiRequest2.getPayload()));
+    }
+
+    private static void test() {
         MultiRequest command = new MultiRequest();
 
         command.setRequestId(1);
@@ -326,6 +379,8 @@ public class MultiRequest extends Request {
         System.out.println("command:" + mqCommand);
 
         System.out.println("ping:" + new String((byte[]) mqCommand.getPayload()));
+
+
     }
 }
 

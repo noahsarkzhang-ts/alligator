@@ -1,6 +1,7 @@
 package org.noahsark.rocketmq;
 
 import org.noahsark.client.future.PromisHolder;
+import org.noahsark.client.future.RpcPromise;
 import org.noahsark.server.rpc.Response;
 import org.noahsark.server.rpc.RpcCommand;
 import org.noahsark.server.session.ChannelHolder;
@@ -25,8 +26,10 @@ public class RocketmqChannelHolder implements ChannelHolder {
     }
 
     @Override
-    public void write(Object response) {
-        RocketmqMessage msg = new RocketmqMessage();
+    public void write(RpcCommand response) {
+
+        this.promisHolder.write(response);
+        /*RocketmqMessage msg = new RocketmqMessage();
         Response resp = (Response) response;
 
         RocketmqTopic topic = (RocketmqTopic) resp.getAttachment();
@@ -38,7 +41,7 @@ public class RocketmqChannelHolder implements ChannelHolder {
         byte[] body = RpcCommand.encode(resp);
         msg.setContent(body);
 
-        producer.send(msg);
+        producer.send(msg);*/
 
     }
 

@@ -74,4 +74,8 @@ public class Request extends RpcCommand implements Serializable {
         }
     }
 
+    @Override
+    public String toString() {
+        return "Request{} " + super.toString();
+    }
 }

@@ -77,27 +77,39 @@ public class Response extends RpcCommand implements Serializable {
 
     public static Response buildCommonResponse(RpcCommand request, int code, String message) {
         Result<Void> result = new Result.Builder<Void>()
-            .code(code)
-            .message(message)
-            .build();
+                .code(code)
+                .message(message)
+                .build();
 
         Response command = new Response.Builder()
-            .requestId(request.getRequestId())
-            .biz(request.getBiz())
-            .cmd(request.getCmd())
-            .payload(result)
-            .build();
+                .requestId(request.getRequestId())
+                .biz(request.getBiz())
+                .cmd(request.getCmd())
+                .payload(result)
+                .build();
 
         return command;
     }
 
-    public static <T> Response buildResponse(RpcCommand request, T t ,int code, String message) {
+    public static <T> Response buildResponse(RpcCommand request, T t, int code, String message) {
 
         Result<T> result = new Result.Builder<T>()
                 .code(code)
                 .message(message)
                 .data(t)
                 .build();
+
+        Response command = new Response.Builder()
+                .requestId(request.getRequestId())
+                .biz(request.getBiz())
+                .cmd(request.getCmd())
+                .payload(result)
+                .build();
+
+        return command;
+    }
+
+    public static Response buildResponseFromResult(RpcCommand request, Object result, int code, String message) {
 
         Response command = new Response.Builder()
                 .requestId(request.getRequestId())

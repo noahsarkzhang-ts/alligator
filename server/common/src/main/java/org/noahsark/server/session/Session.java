@@ -8,6 +8,8 @@ import java.util.Objects;
 import java.util.UUID;
 import org.noahsark.client.future.Connection;
 import org.noahsark.client.future.PromisHolder;
+import org.noahsark.client.future.RpcPromise;
+import org.noahsark.server.rpc.RpcCommand;
 
 /**
  * Created by hadoop on 2021/3/13.
@@ -35,7 +37,7 @@ public class Session implements ChannelHolder {
     }
 
     @Override
-    public void write(Object repsponse) {
+    public void write(RpcCommand repsponse) {
         this.connection.getChannel().writeAndFlush(repsponse);
     }
 

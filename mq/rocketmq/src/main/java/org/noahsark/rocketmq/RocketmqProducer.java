@@ -28,6 +28,7 @@ public class RocketmqProducer implements Producer<RocketmqMessage,
             producer = new DefaultMQProducer(GROUP_NAME);
 
             producer.setNamesrvAddr(namesrvAddr);
+            producer.setVipChannelEnabled(false);
             producer.start();
         } catch (Exception ex) {
             logger.error("catch an excepion.", ex);

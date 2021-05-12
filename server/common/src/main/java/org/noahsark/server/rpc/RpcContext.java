@@ -23,7 +23,7 @@ public class RpcContext {
         this.session = builder.session;
     }
 
-    public void sendResponse(Object repsponse) {
+    public void sendResponse(RpcCommand repsponse) {
         session.write(repsponse);
     }
 

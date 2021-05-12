@@ -1,6 +1,6 @@
 package org.noahsark.client.future;
 
-import org.noahsark.server.rpc.Request;
+import org.noahsark.server.rpc.RpcCommand;
 
 /**
  * @author: noahsark
@@ -17,7 +17,7 @@ public interface PromisHolder  {
 
     void removePromis(RpcPromise promise);
 
-    void write(Request request);
+    void write(RpcCommand command);
 
     int nextId();
 }

@@ -58,8 +58,6 @@ public class ClientConnectionListener extends ApplicationListener<ClientConnecti
                 logger.warn("registerService catch an exception!", cause);
             }
         });
-
-
     }
 
     @PostConstruct

@@ -44,4 +44,9 @@ public class BizServiceType {
      * http2网关
      */
     public static final int BIZ_GW_HTTP2 = 103;
+
+    /**
+     *  在线服务
+     */
+    public static final int BIZ_ONLINE = 201;
 }

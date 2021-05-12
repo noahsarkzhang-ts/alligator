@@ -1,6 +1,8 @@
 package org.noahsark.server.session;
 
 import org.noahsark.client.future.PromisHolder;
+import org.noahsark.client.future.RpcPromise;
+import org.noahsark.server.rpc.RpcCommand;
 
 /**
  * Created by hadoop on 2021/5/4.
@@ -11,7 +13,7 @@ public interface ChannelHolder {
      *  向通道中写入数据
      * @param response 响应结果
      */
-    void write(Object response);
+    void write(RpcCommand response);
 
     /**
      * 获取promisHolder结构

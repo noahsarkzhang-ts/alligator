@@ -91,9 +91,17 @@ public class ServerBizServiceHandler extends SimpleChannelInboundHandler<RpcComm
                     if (processor != null) {
                         processor.process(rpcRequest);
                     } else {
-                        log.warn("No processor: {}", processName);
-                    }
 
+                        // 使用默认的处理器
+                        processName = -1 + ":" + -1;
+                        processor = Dispatcher.getInstance().getProcessor(processName);
+
+                        if (processor != null) {
+                            processor.process(rpcRequest);
+                        } else {
+                            log.warn("No processor: {}", processName);
+                        }
+                    }
 
                 });
             }

@@ -200,7 +200,11 @@ public class RpcCommand implements Serializable {
 
         encode(buf, command);
 
-        return buf.array();
+        byte [] data = new byte[buf.readableBytes()];
+        buf.readBytes(data);
+
+        return data;
+
     }
 
     private static void encode(ByteBuf buf, RpcCommand command) {
@@ -247,7 +251,7 @@ public class RpcCommand implements Serializable {
             ", type=" + type +
             ", ver=" + ver +
             ", serializer=" + serializer +
-            ", payload=" + payload +
+            ", payload=" + payload.toString() +
             '}';
     }
 

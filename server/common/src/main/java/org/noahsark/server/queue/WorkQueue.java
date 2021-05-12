@@ -103,7 +103,6 @@ public class WorkQueue {
 
             while (!this.isStopped()) {
                 try {
-                    // RpcRequest request = this.queue.take();
 
                     Runnable task = this.queue.take();
                     task.run();

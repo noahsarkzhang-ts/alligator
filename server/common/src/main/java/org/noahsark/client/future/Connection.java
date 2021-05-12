@@ -7,6 +7,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.noahsark.server.rpc.Request;
+import org.noahsark.server.rpc.RpcCommand;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -61,8 +62,8 @@ public class Connection implements PromisHolder {
     }
 
     @Override
-    public void write(Request request) {
-        this.getChannel().writeAndFlush(request);
+    public void write(RpcCommand command) {
+        this.getChannel().writeAndFlush(command);
     }
 
     public Channel getChannel() {
