@@ -18,9 +18,10 @@ public class WebSocketClientTest {
 
     @Test
     public void clientTest() {
-        String url = System.getProperty("url", "ws://192.168.9.103:9090/websocket");
+        String url = System.getProperty("url", "ws://192.168.68.25:9091/websocket");
 
         WebSocketClient client = new WebSocketClient(url);
+        client.registerProcessor(new InviteUserProcessor());
         client.connect();
 
         try {
@@ -33,12 +34,13 @@ public class WebSocketClientTest {
             };
 
             WebSocketServerTest.UserInfo userInfo = new WebSocketServerTest.UserInfo();
+            userInfo.setUserId("1002");
             userInfo.setUserName("allen");
             userInfo.setPassword("pwd");
 
             Request request = new Request.Builder()
                 .biz(1)
-                .cmd(1000)
+                .cmd(1)
                 .payload(userInfo)
                 .build();
 
@@ -53,6 +55,8 @@ public class WebSocketClientTest {
                     cause.printStackTrace();
                 }
             },3000);
+
+
 
            /* for (String request: requests) {
                 System.out.println("request = " + request);

@@ -27,15 +27,6 @@ public class RpcContext {
         session.write(repsponse);
     }
 
-    public RpcPromise invoke(Request request, CommandCallback commandCallback, int timeoutMillis) {
-
-        RpcPromise promise = new RpcPromise();
-
-        promise.invoke(this.getSession().getPromisHolder(),request,commandCallback,timeoutMillis);
-
-        return promise;
-    }
-
     public ChannelHolder getSession() {
         return session;
     }

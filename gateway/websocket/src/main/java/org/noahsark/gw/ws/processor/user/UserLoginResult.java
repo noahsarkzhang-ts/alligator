@@ -5,14 +5,14 @@ package org.noahsark.gw.ws.processor.user;
  */
 public class UserLoginResult {
 
-  private String token;
+    private String token;
 
 
     public String getToken() {
-      return token;
+        return token;
     }
 
     public void setToken(String token) {
-      this.token = token;
+        this.token = token;
     }
 }

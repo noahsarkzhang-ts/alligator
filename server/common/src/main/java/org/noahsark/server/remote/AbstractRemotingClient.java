@@ -11,6 +11,8 @@ import org.noahsark.client.future.RpcPromise;
 import org.noahsark.client.manager.ConnectionManager;
 import org.noahsark.server.event.ClientConnectionEvent;
 import org.noahsark.server.eventbus.EventBus;
+import org.noahsark.server.processor.AbstractProcessor;
+import org.noahsark.server.queue.WorkQueue;
 import org.noahsark.server.rpc.Request;
 import org.noahsark.server.thread.ClientClearThread;
 import org.slf4j.Logger;
@@ -35,6 +37,8 @@ public abstract class AbstractRemotingClient implements RemotingClient {
     private EventLoopGroup group;
 
     private Map<RemoteOption<?>, Object> clientOptions = new HashMap<>();
+
+    private WorkQueue workQueue;
 
     protected ConnectionManager connectionManager;
 
@@ -96,6 +100,12 @@ public abstract class AbstractRemotingClient implements RemotingClient {
         try {
             preInit();
 
+            if (!this.existOption(RemoteOption.THREAD_NUM_OF_QUEUE)) {
+                this.option(RemoteOption.THREAD_NUM_OF_QUEUE, 5);
+            }
+
+            initWorkQueue();
+
             connection = new Connection();
 
             clearThread = new ClientClearThread();
@@ -105,16 +115,24 @@ public abstract class AbstractRemotingClient implements RemotingClient {
 
             bootstrap = new Bootstrap();
             bootstrap.group(group)
-                .channel(NioSocketChannel.class)
-                .handler(getChannelInitializer(this));
+                    .channel(NioSocketChannel.class)
+                    .handler(getChannelInitializer(this));
 
         } catch (Exception ex) {
             log.warn("catch an exception.", ex);
         }
     }
 
+    private void initWorkQueue() {
+        this.workQueue = new WorkQueue();
+        this.workQueue.setMaxQueueNum(this.option(RemoteOption.CAPACITY_OF_QUEUE));
+        this.workQueue.setMaxThreadNum(this.option(RemoteOption.THREAD_NUM_OF_QUEUE));
+
+        this.workQueue.init();
+    }
+
     protected abstract ChannelInitializer<SocketChannel> getChannelInitializer(
-        AbstractRemotingClient server);
+            AbstractRemotingClient server);
 
     public <T> void option(RemoteOption<T> option, T value) {
         this.clientOptions.put(option, value);
@@ -123,28 +141,29 @@ public abstract class AbstractRemotingClient implements RemotingClient {
 
     public <T> T option(RemoteOption<T> option) {
         return this.clientOptions.containsKey(option) ? (T) this.clientOptions.get(option)
-            : option.getDefaultValue();
+                : option.getDefaultValue();
+    }
+
+    public <T> boolean existOption(RemoteOption<T> option) {
+        return this.clientOptions.containsKey(option);
     }
 
     @Override
     public void connect() {
 
-        Runnable runnable = new Runnable() {
-            @Override
-            public void run() {
-                synchronized (bootstrap) {
-                    ChannelFuture future = bootstrap
-                            .connect(current.getHost(), current.getPort());
-                    future.addListener(getConnectionListener());
-                    Channel channel = future.channel();
-                    connection.setChannel(channel);
+        Runnable runnable = () -> {
+            synchronized (bootstrap) {
+                ChannelFuture future = bootstrap
+                        .connect(current.getHost(), current.getPort());
+                future.addListener(getConnectionListener());
+                Channel channel = future.channel();
+                connection.setChannel(channel);
 
-                    future.awaitUninterruptibly();
-                }
+                future.awaitUninterruptibly();
             }
         };
 
-        thread = new Thread(runnable,"client-thread");
+        thread = new Thread(runnable, "client-thread-");
         thread.start();
     }
 
@@ -167,7 +186,7 @@ public abstract class AbstractRemotingClient implements RemotingClient {
         RpcPromise promise = new RpcPromise();
         request.setRequestId(this.connection.nextId());
 
-        promise.invoke(this.connection,request,commandCallback,timeoutMillis);
+        promise.invoke(this.connection, request, commandCallback, timeoutMillis);
 
         return promise;
     }
@@ -176,7 +195,7 @@ public abstract class AbstractRemotingClient implements RemotingClient {
         RpcPromise promise = new RpcPromise();
         request.setRequestId(this.connection.nextId());
 
-        Object result = promise.invokeSync(this.connection, request,timeoutMillis);
+        Object result = promise.invokeSync(this.connection, request, timeoutMillis);
 
         return result;
     }
@@ -194,12 +213,11 @@ public abstract class AbstractRemotingClient implements RemotingClient {
             this.current = serverInfo;
 
             log.info("toggle to new server: {} : {}",
-                serverInfo.getHost(), serverInfo.getPort());
+                    serverInfo.getHost(), serverInfo.getPort());
 
             this.connect();
         } else {
 
-            // TODO
             log.info("No server to toggle,reset servers.");
             serverManager.reset();
 
@@ -214,6 +232,10 @@ public abstract class AbstractRemotingClient implements RemotingClient {
 
     }
 
+    public WorkQueue getWorkQueue() {
+        return this.workQueue;
+    }
+
     @Override
     public ServerInfo getServerInfo() {
         return this.current;
@@ -222,6 +244,14 @@ public abstract class AbstractRemotingClient implements RemotingClient {
     protected abstract void preInit();
 
     public abstract ServerInfo convert(String url);
+
+    public void registerProcessor(AbstractProcessor<?> processor) {
+        processor.register();
+    }
+
+    public void unregisterProcessor(AbstractProcessor<?> processor) {
+        processor.unregister();
+    }
 
     private ChannelFutureListener getConnectionListener() {
         return future -> {
@@ -232,4 +262,6 @@ public abstract class AbstractRemotingClient implements RemotingClient {
             }
         };
     }
+
+
 }

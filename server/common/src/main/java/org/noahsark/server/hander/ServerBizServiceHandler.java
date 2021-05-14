@@ -17,6 +17,8 @@ package org.noahsark.server.hander;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
+import org.noahsark.client.future.Connection;
+import org.noahsark.server.constant.RpcCommandType;
 import org.noahsark.server.dispatcher.Dispatcher;
 import org.noahsark.server.processor.AbstractProcessor;
 import org.noahsark.server.queue.WorkQueue;
@@ -45,83 +47,22 @@ public class ServerBizServiceHandler extends SimpleChannelInboundHandler<RpcComm
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, RpcCommand command) throws Exception {
-        // ping and pong frames already handled
-
-        Response response = null;
-        Result<Void> result = new Result<>();
 
         try {
-
             log.info("receive a request: {}", command);
-
             Session session = Session.getOrCreatedSession(ctx.channel());
+            Connection connection = session.getConnection();
 
-            RpcContext rpcContext = new RpcContext.Builder()
-                    .command(command)
-                    .session(session)
-                    .build();
-
-            RpcRequest rpcRequest = new RpcRequest.Builder()
-                    .request(command)
-                    .context(rpcContext)
-                    .build();
-
-            if (workQueue.isBusy()) {
-                log.info("server is busy: {}", JsonUtils.toJson(command));
-
-                result.setCode(1000);
-                result.setMessage("server is busy");
-
-                response = new Response.Builder()
-                        .requestId(command.getRequestId())
-                        .biz(command.getBiz())
-                        .cmd(command.getCmd())
-                        .payload(result)
-                        .build();
-
-                ctx.channel().writeAndFlush(response);
-
+            if (command.getType() == RpcCommandType.REQUEST) {
+                RequestHandler.processRequest(ctx, command, workQueue, session);
             } else {
-                workQueue.add(() -> {
-                    String processName = command.getBiz() + ":" + command.getCmd();
-                    log.info("processName: {}", processName);
-
-                    AbstractProcessor processor = Dispatcher.getInstance().getProcessor(processName);
-
-                    if (processor != null) {
-                        processor.process(rpcRequest);
-                    } else {
-
-                        // 使用默认的处理器
-                        processName = -1 + ":" + -1;
-                        processor = Dispatcher.getInstance().getProcessor(processName);
-
-                        if (processor != null) {
-                            processor.process(rpcRequest);
-                        } else {
-                            log.warn("No processor: {}", processName);
-                        }
-                    }
-
-                });
+                RequestHandler.processResponse(connection, command);
             }
 
-            return;
-
         } catch (Exception ex) {
-            result.setCode(1003);
-            result.setMessage("System exception!");
-
-            response = new Response.Builder()
-                    .requestId(0)
-                    .biz(0)
-                    .cmd(0)
-                    .payload(result)
-                    .build();
-
+            log.warn("catch an exception:{}", ex);
         }
 
-        ctx.channel().writeAndFlush(response);
     }
 
     public WorkQueue getWorkQueue() {

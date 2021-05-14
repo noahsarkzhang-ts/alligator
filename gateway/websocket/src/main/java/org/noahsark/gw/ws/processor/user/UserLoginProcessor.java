@@ -2,12 +2,15 @@ package org.noahsark.gw.ws.processor.user;
 
 import org.noahsark.client.future.CommandCallback;
 import org.noahsark.gw.ws.context.ServerContext;
+import org.noahsark.gw.ws.user.UserManager;
+import org.noahsark.gw.ws.user.UserSubject;
 import org.noahsark.registration.RegistrationClient;
 import org.noahsark.registration.domain.User;
 import org.noahsark.server.processor.AbstractProcessor;
 import org.noahsark.server.rpc.Response;
 import org.noahsark.server.rpc.Result;
 import org.noahsark.server.rpc.RpcContext;
+import org.noahsark.server.session.Session;
 import org.noahsark.server.util.JsonUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,7 +33,7 @@ public class UserLoginProcessor extends AbstractProcessor<UserLoginInfo> {
         RegistrationClient regClient = ServerContext.regClient;
 
         User user = new User();
-        user.setUserId("123");
+        user.setUserId(request.getUserId());
         user.setLoginTime(System.currentTimeMillis());
 
         regClient.loginAsync(user, new CommandCallback() {
@@ -55,6 +58,14 @@ public class UserLoginProcessor extends AbstractProcessor<UserLoginInfo> {
             }
         });
 
+        // 将用户添加到会话中
+        UserSubject subject = new UserSubject();
+        subject.setUserId(request.getUserId());
+        Session session = (Session) context.getSession();
+        session.setSubject(subject);
+
+        UserManager.getInstance().putSession(request.getUserId(),session);
+
     }
 
     @Override
@@ -69,7 +80,7 @@ public class UserLoginProcessor extends AbstractProcessor<UserLoginInfo> {
 
     @Override
     protected int getCmd() {
-        return 1000;
+        return 1;
     }
 
 }

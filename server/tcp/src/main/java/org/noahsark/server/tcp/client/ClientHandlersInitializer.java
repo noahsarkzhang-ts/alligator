@@ -8,6 +8,8 @@ import io.netty.handler.codec.LengthFieldPrepender;
 import io.netty.handler.timeout.IdleStateHandler;
 import org.noahsark.server.hander.ClientBizServiceHandler;
 import org.noahsark.server.hander.ClientIdleStateTrigger;
+import org.noahsark.server.queue.WorkQueue;
+import org.noahsark.server.remote.AbstractRemotingClient;
 import org.noahsark.server.remote.ReconnectHandler;
 import org.noahsark.server.remote.RemotingClient;
 import org.noahsark.server.tcp.handler.CommandDecoder;
@@ -16,12 +18,16 @@ import org.noahsark.server.tcp.handler.PongHandler;
 
 public class ClientHandlersInitializer extends ChannelInitializer<SocketChannel> {
 
-    private RemotingClient client;
+    private AbstractRemotingClient client;
 
     private ReconnectHandler reconnectHandler;
 
-    public ClientHandlersInitializer(RemotingClient client) {
+    private WorkQueue workQueue;
+
+    public ClientHandlersInitializer(AbstractRemotingClient client) {
         this.client = client;
+
+        this.workQueue = client.getWorkQueue();
 
         reconnectHandler = new ReconnectHandler(this.client);
     }
@@ -39,6 +45,6 @@ public class ClientHandlersInitializer extends ChannelInitializer<SocketChannel>
         pipeline.addLast(new CommandDecoder());
         pipeline.addLast(new CommandEncoder());
         pipeline.addLast(new PongHandler(client));
-        pipeline.addLast(new ClientBizServiceHandler());
+        pipeline.addLast(new ClientBizServiceHandler(this.workQueue));
     }
 }

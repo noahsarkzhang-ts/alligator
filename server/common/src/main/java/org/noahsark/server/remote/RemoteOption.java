@@ -1,6 +1,8 @@
 package org.noahsark.server.remote;
 
 
+import java.util.Objects;
+
 /**
  * Created by hadoop on 2021/3/21.
  */
@@ -47,7 +49,7 @@ public class RemoteOption<T> {
 
     RemoteOption<?> that = (RemoteOption<?>) o;
 
-    return name != null ? name.equals(that.name) : that.name == null;
+    return Objects.equals(name, that.name);
   }
 
   @Override

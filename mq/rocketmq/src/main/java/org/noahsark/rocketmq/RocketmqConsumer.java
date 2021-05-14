@@ -129,7 +129,15 @@ public class RocketmqConsumer implements Consumer<RocketmqMessageListener, Rocke
                                 if (processor != null) {
                                     processor.process(rpcRequest);
                                 } else {
-                                    logger.warn("No processor: {}", processName);
+                                    // 使用默认的处理器
+                                    processName = -1 + ":" + -1;
+                                    processor = Dispatcher.getInstance().getProcessor(processName);
+
+                                    if (processor != null) {
+                                        processor.process(rpcRequest);
+                                    } else {
+                                        logger.warn("No processor: {}", processName);
+                                    }
                                 }
                             } else { // 处理响应
                                 RpcPromise promise = proxy.getPromiseHolder().getPromise(command.getRequestId());

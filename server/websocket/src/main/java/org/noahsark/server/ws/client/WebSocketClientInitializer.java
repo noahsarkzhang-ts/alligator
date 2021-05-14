@@ -12,6 +12,7 @@ import io.netty.handler.codec.http.websocketx.extensions.compression.WebSocketCl
 import io.netty.handler.timeout.IdleStateHandler;
 
 import org.noahsark.server.hander.ClientBizServiceHandler;
+import org.noahsark.server.queue.WorkQueue;
 import org.noahsark.server.remote.AbstractRemotingClient;
 import org.noahsark.server.hander.ClientIdleStateTrigger;
 import org.noahsark.server.remote.ReconnectHandler;
@@ -24,13 +25,16 @@ import org.noahsark.server.ws.handler.WebsocketEncoder;
  */
 public class WebSocketClientInitializer extends ChannelInitializer<SocketChannel> {
 
-    private final RemotingClient client;
+    private final AbstractRemotingClient client;
 
     private ReconnectHandler reconnectHandler;
 
+    private WorkQueue workQueue;
 
-    public WebSocketClientInitializer(RemotingClient client) {
+
+    public WebSocketClientInitializer(AbstractRemotingClient client) {
         this.client = client;
+        this.workQueue = client.getWorkQueue();
 
         this.reconnectHandler = new ReconnectHandler(this.client);
     }
@@ -50,7 +54,7 @@ public class WebSocketClientInitializer extends ChannelInitializer<SocketChannel
             WebSocketClientHandshakerFactory.newHandshaker(
                 this.client.getServerInfo().getUri(), WebSocketVersion.V13, null,
                 true, new DefaultHttpHeaders()), this.client));
-        pipeline.addLast(new ClientBizServiceHandler());
+        pipeline.addLast(new ClientBizServiceHandler(this.workQueue));
 
     }
 

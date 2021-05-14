@@ -98,7 +98,7 @@ public class RocketmqPromiseHolder implements PromisHolder {
         msg.setTag(topic.getTag());
         msg.setKey(topic.getKey());
 
-        byte[] body = null;
+        byte[] body;
 
         if (command instanceof MultiRequest) {
             body = MultiRequest.encode((MultiRequest) command);

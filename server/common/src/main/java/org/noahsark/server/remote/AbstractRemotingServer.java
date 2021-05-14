@@ -74,34 +74,31 @@ public abstract class AbstractRemotingServer implements RemotingServer {
     @Override
     public void start() {
 
-        Runnable runnable = new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    ServerBootstrap bootstrap = new ServerBootstrap();
-                    bootstrap.group(bossGroup, workerGroup)
-                            .channel(NioServerSocketChannel.class)
-                            .handler(new LoggingHandler(LogLevel.INFO))
-                            .childHandler(serverInitializer);
+        Runnable runnable = () -> {
+            try {
+                ServerBootstrap bootstrap = new ServerBootstrap();
+                bootstrap.group(bossGroup, workerGroup)
+                        .channel(NioServerSocketChannel.class)
+                        .handler(new LoggingHandler(LogLevel.INFO))
+                        .childHandler(serverInitializer);
 
-                    InetSocketAddress address = new InetSocketAddress(host, port);
+                InetSocketAddress address = new InetSocketAddress(host, port);
 
-                    ChannelFuture channelFuture = bootstrap.bind(address).sync();
-                    channelFuture.addListener(getStartListener());
+                ChannelFuture channelFuture = bootstrap.bind(address).sync();
+                channelFuture.addListener(getStartListener());
 
-                    channel = channelFuture.channel();
+                channel = channelFuture.channel();
 
-                    channel.closeFuture().sync();
-                } catch (Exception ex) {
-                    log.warn("Catch an exception.", ex);
-                } finally {
-                    bossGroup.shutdownGracefully();
-                    workerGroup.shutdownGracefully();
-                }
+                channel.closeFuture().sync();
+            } catch (Exception ex) {
+                log.warn("Catch an exception.", ex);
+            } finally {
+                bossGroup.shutdownGracefully();
+                workerGroup.shutdownGracefully();
             }
         };
 
-        thread = new Thread(runnable,"server-thread");
+        thread = new Thread(runnable, "server-thread");
 
         thread.start();
     }
@@ -144,12 +141,9 @@ public abstract class AbstractRemotingServer implements RemotingServer {
     }
 
     private ChannelFutureListener getStartListener() {
-        return new ChannelFutureListener() {
-            @Override
-            public void operationComplete(ChannelFuture future) throws Exception {
-                if (future.isSuccess()) {
-                    EventBus.getInstance().post(new ServerStartupEvent(null));
-                }
+        return future -> {
+            if (future.isSuccess()) {
+                EventBus.getInstance().post(new ServerStartupEvent(null));
             }
         };
     }

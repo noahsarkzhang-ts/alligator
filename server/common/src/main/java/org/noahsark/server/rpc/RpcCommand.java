@@ -7,6 +7,7 @@ import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.util.CharsetUtil;
 import java.io.Serializable;
+import java.nio.charset.Charset;
 import java.util.Map;
 import org.noahsark.server.serializer.Serializer;
 import org.noahsark.server.serializer.SerializerManager;
@@ -236,7 +237,7 @@ public class RpcCommand implements Serializable {
         command.setType(data.get("type").getAsByte());
         command.setVer(data.get("ver").getAsByte());
         command.setSerializer(data.get("serializer").getAsByte());
-        command.setPayload(data.get("payload").getAsJsonObject());
+        command.setPayload(data.get("payload").getAsJsonObject().toString().getBytes(CharsetUtil.UTF_8));
 
         return command;
     }

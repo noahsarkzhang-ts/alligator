@@ -46,7 +46,17 @@ public class BizServiceType {
     public static final int BIZ_GW_HTTP2 = 103;
 
     /**
+     *  200-300 业务类服务
+     */
+
+    /**
      *  在线服务
      */
+
     public static final int BIZ_ONLINE = 201;
+
+    /**
+     *  客户端 300-400
+     */
+    public static final int BIZ_CLIENT = 300;
 }

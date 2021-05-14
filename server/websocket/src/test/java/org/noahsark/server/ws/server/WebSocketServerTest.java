@@ -41,6 +41,9 @@ public class WebSocketServerTest {
     }
 
     public static class UserInfo {
+
+        private String userId;
+
         private String userName;
 
         private String password;
@@ -59,6 +62,14 @@ public class WebSocketServerTest {
 
         public void setPassword(String password) {
             this.password = password;
+        }
+
+        public String getUserId() {
+            return userId;
+        }
+
+        public void setUserId(String userId) {
+            this.userId = userId;
         }
     }
 

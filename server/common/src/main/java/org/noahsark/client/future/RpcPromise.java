@@ -80,9 +80,7 @@ public class RpcPromise extends DefaultPromise<Object> implements Comparable<Rpc
         } catch (Exception ex) {
             log.warn("catch an exception. ", ex);
         }
-
         return null;
-
     }
 
 

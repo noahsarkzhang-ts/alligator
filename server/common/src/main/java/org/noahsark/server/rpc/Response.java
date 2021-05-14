@@ -109,7 +109,7 @@ public class Response extends RpcCommand implements Serializable {
         return command;
     }
 
-    public static Response buildResponseFromResult(RpcCommand request, Object result, int code, String message) {
+    public static Response buildResponseFromResult(RpcCommand request, Object result) {
 
         Response command = new Response.Builder()
                 .requestId(request.getRequestId())
