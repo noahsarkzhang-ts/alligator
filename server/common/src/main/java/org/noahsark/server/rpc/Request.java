@@ -14,6 +14,8 @@ public class Request extends RpcCommand implements Serializable {
 
     private static final AtomicInteger NEXT_ID = new AtomicInteger(1);
 
+    protected int fanout = 1;
+
     public Request() {
     }
 
@@ -77,5 +79,13 @@ public class Request extends RpcCommand implements Serializable {
     @Override
     public String toString() {
         return "Request{} " + super.toString();
+    }
+
+    public int getFanout() {
+        return fanout;
+    }
+
+    public void setFanout(int fanout) {
+        this.fanout = fanout;
     }
 }

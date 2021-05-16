@@ -2,11 +2,8 @@ package org.noahsark.client.future;
 
 import io.netty.channel.Channel;
 import io.netty.util.AttributeKey;
-
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
-
-import org.noahsark.server.rpc.Request;
 import org.noahsark.server.rpc.RpcCommand;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,12 +50,22 @@ public class Connection implements PromisHolder {
 
     @Override
     public RpcPromise removePromis(Integer requestId) {
-        return this.futures.remove(requestId);
+
+        RpcPromise promise = futures.get(requestId);
+
+        if (promise.decrementAndGetFanout() <= 0 ) {
+            this.futures.remove(requestId);
+        }
+
+        return promise;
     }
 
     @Override
     public void removePromis(RpcPromise promise) {
-        this.futures.remove(promise.getRequestId());
+
+        if (promise.decrementAndGetFanout() <= 0 ) {
+            this.futures.remove(promise.getRequestId());
+        }
     }
 
     @Override

@@ -39,22 +39,28 @@ public class RocketmqPromiseHolder implements PromisHolder {
 
     @Override
     public void registerPromise(Integer requestId, RpcPromise promise) {
-        logger.info("register promis:{}:{}", requestId, promise.getRequestId());
         futures.put(requestId, promise);
     }
 
     @Override
     public RpcPromise removePromis(Integer requestId) {
-        logger.info("remove promis:{}", requestId);
 
-        return this.futures.remove(requestId);
+        RpcPromise promise = futures.get(requestId);
+
+        if (promise.decrementAndGetFanout() <= 0 ) {
+            this.futures.remove(requestId);
+        }
+
+        return promise;
     }
 
     @Override
     public void removePromis(RpcPromise promise) {
-        logger.info("remove promis:{}", promise.getRequestId());
 
-        this.futures.remove(promise.getRequestId());
+        if (promise.decrementAndGetFanout() <= 0 ) {
+            this.futures.remove(promise.getRequestId());
+        }
+
     }
 
     @Override

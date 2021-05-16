@@ -79,6 +79,8 @@ public class InviteProcessor extends AbstractProcessor<InviteInfo> {
 
             @Override
             public void failure(Throwable cause) {
+                log.warn("Invoke catch an exception!",cause);
+
                 context.sendResponse(Response.buildCommonResponse(context.getCommand(),
                         -1, "failed"));
             }

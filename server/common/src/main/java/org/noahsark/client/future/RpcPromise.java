@@ -37,6 +37,8 @@ public class RpcPromise extends DefaultPromise<Object> implements Comparable<Rpc
 
     private int requestId;
 
+    private int fanout = 1;
+
     private Timeout timeout;
 
     public RpcPromise() {
@@ -87,10 +89,14 @@ public class RpcPromise extends DefaultPromise<Object> implements Comparable<Rpc
     public void invoke(PromisHolder promisHolder, Request request, CommandCallback commandCallback,
                        int timeoutMillis) {
 
+
         promisHolder.registerPromise(request.getRequestId(), this);
         if (commandCallback != null) {
             addCallback(promisHolder, request, commandCallback);
         }
+
+        this.requestId = request.getRequestId();
+        this.fanout = request.getFanout();
 
         try {
             //add timeout
@@ -142,6 +148,11 @@ public class RpcPromise extends DefaultPromise<Object> implements Comparable<Rpc
                     request.getRequestId(), ex);
         }
     }
+
+    public int decrementAndGetFanout() {
+        return --fanout;
+    }
+
 
     public long getTimeStampMillis() {
         return timeStampMillis;

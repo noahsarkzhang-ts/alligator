@@ -54,6 +54,8 @@ public class MultiRequest extends Request {
         this.props = builder.props;
         this.topic = builder.topic;
         this.targetIds = builder.targetIds;
+
+        this.fanout = targetIds.size();
     }
 
     public static ByteBuf encode(ChannelHandlerContext ctx, RpcCommand command) {
