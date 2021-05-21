@@ -1,8 +1,9 @@
 package org.noahsark.server.rpc;
 
-import org.noahsark.client.future.CommandCallback;
 import org.noahsark.client.future.RpcPromise;
 import org.noahsark.server.session.ChannelHolder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author: noahsark
@@ -10,6 +11,8 @@ import org.noahsark.server.session.ChannelHolder;
  * @date: 2020/12/3
  */
 public class RpcContext {
+
+    private static Logger log = LoggerFactory.getLogger(RpcPromise.class);
 
     private ChannelHolder session;
 
@@ -24,6 +27,8 @@ public class RpcContext {
     }
 
     public void sendResponse(RpcCommand repsponse) {
+        log.info("send response:{}", repsponse);
+
         session.write(repsponse);
     }
 

@@ -36,4 +36,13 @@ public class RocketmqTopic implements Topic {
     public void setKey(String key) {
         this.key = key;
     }
+
+    @Override
+    public String toString() {
+        return "RocketmqTopic{" +
+                "topic='" + topic + '\'' +
+                ", tag='" + tag + '\'' +
+                ", key='" + key + '\'' +
+                '}';
+    }
 }

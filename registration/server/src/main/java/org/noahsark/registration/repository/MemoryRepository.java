@@ -27,27 +27,27 @@ public class MemoryRepository implements Repository {
     private Map<String, User> userMap = new HashMap<>();
 
     /**
-     *  service id --> service
+     * service id --> service
      */
     private Map<String, Service> serviceMap = new HashMap<>();
 
     /**
-     *  user id --> service id
+     * user id --> service id
      */
     private Map<String, String> user2Servie = new HashMap<>();
 
     /**
-     *  service id --> user id list
+     * service id --> user id list
      */
     private Map<String, List<String>> serviceUsers = new HashMap<>();
 
     /**
-     *  biz id --> service id list
+     * biz id --> service id list
      */
     private Map<Integer, List<String>> bizServices = new HashMap<>();
 
     /**
-     *  ordered service list
+     * ordered service list
      */
     private PriorityQueue<Service> queue = new PriorityQueue<>();
 
@@ -103,7 +103,6 @@ public class MemoryRepository implements Repository {
 
             bizServices.put(service.getBiz(), services);
         }
-
         queue.add(service);
 
     }
@@ -136,6 +135,23 @@ public class MemoryRepository implements Repository {
 
         queue.remove(service);
 
+    }
+
+    @Override
+    public List<Service> getServicesByBiz(int biz) {
+
+        List<Service> services = new ArrayList<>();
+        List<String> serviceIds = bizServices.get(biz);
+
+        serviceIds.stream().forEach(serviceId -> services.add(serviceMap.get(serviceId)));
+
+        return services;
+    }
+
+    @Override
+    public Service getServiceByUser(String userId) {
+
+        return serviceMap.get(user2Servie.get(userId));
     }
 
     @Override
@@ -175,6 +191,6 @@ public class MemoryRepository implements Repository {
         queue.remove(service);
         queue.add(service);
 
-        serviceMap.put(service.getId(),service);
+        serviceMap.put(service.getId(), service);
     }
 }

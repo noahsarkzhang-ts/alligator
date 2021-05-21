@@ -1,5 +1,7 @@
 package org.noahsark.biz.online.context;
 
+import org.noahsark.registration.RegistrationClient;
+import org.noahsark.registration.UserServiceCache;
 import org.noahsark.rocketmq.RocketmqProxy;
 
 /**
@@ -10,5 +12,9 @@ import org.noahsark.rocketmq.RocketmqProxy;
 public final class ServerContext {
 
     public static RocketmqProxy mqProxy;
+
+    public static RegistrationClient regClient;
+
+    public static UserServiceCache userServiceCache;
 
 }

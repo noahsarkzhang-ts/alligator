@@ -14,6 +14,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 import javax.swing.Popup;
+
 import org.noahsark.server.exception.InvokeExcption;
 import org.noahsark.server.exception.TimeoutException;
 import org.noahsark.server.remote.TimerHolder;
@@ -65,7 +66,6 @@ public class RpcPromise extends DefaultPromise<Object> implements Comparable<Rpc
                 callback.failure(ex);
                 log.warn("catch an ception.", ex);
             } finally {
-
                 promise.cancelTimeout();
                 promisHolder.removePromis(request.getRequestId());
             }
@@ -123,13 +123,11 @@ public class RpcPromise extends DefaultPromise<Object> implements Comparable<Rpc
                     @Override
                     public void operationComplete(ChannelFuture cf) throws Exception {
                         if (!cf.isSuccess()) {
-                            RpcPromise promise = connection.removePromis(request.getRequestId());
+                            RpcPromise promise = connection.getPromise(request.getRequestId());
                             if (promise != null) {
-                                promise.cancelTimeout();
                                 promise.setFailure(new InvokeExcption());
                             }
-                            log.error("Invoke send failed. The requestid is {}",
-                                    request.getRequestId(), cf.cause());
+                            log.error("Invoke send failed. The requestid is {} " + request.getRequestId(), cf.cause());
                         }
                     }
 
@@ -139,13 +137,12 @@ public class RpcPromise extends DefaultPromise<Object> implements Comparable<Rpc
             }
 
         } catch (Exception ex) {
+            log.error("Exception caught when sending invocation. The requestId is " + request.getRequestId(), ex);
+
             RpcPromise promise = promisHolder.removePromis(request.getRequestId());
             if (promise != null) {
-                promise.cancelTimeout();
                 promise.setFailure(new InvokeExcption());
             }
-            log.error("Exception caught when sending invocation. The requestId is {}",
-                    request.getRequestId(), ex);
         }
     }
 
@@ -181,6 +178,8 @@ public class RpcPromise extends DefaultPromise<Object> implements Comparable<Rpc
     public void cancelTimeout() {
         if (this.timeout != null) {
             this.timeout.cancel();
+
+            this.timeout = null;
         }
     }
 

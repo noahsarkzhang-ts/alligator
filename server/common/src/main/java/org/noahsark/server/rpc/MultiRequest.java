@@ -25,8 +25,6 @@ import org.noahsark.server.util.JsonUtils;
  */
 public class MultiRequest extends Request {
 
-    private static final int RPC_COMMAND_SIZE = 16;
-
     /**
      * 扩展字段
      * 包括：
@@ -55,7 +53,9 @@ public class MultiRequest extends Request {
         this.topic = builder.topic;
         this.targetIds = builder.targetIds;
 
-        this.fanout = targetIds.size();
+        if (targetIds != null && targetIds.size() > 0) {
+            this.fanout = targetIds.size();
+        }
     }
 
     public static ByteBuf encode(ChannelHandlerContext ctx, RpcCommand command) {

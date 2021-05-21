@@ -5,10 +5,17 @@ common:
   serverConfig:
     host: 192.168.68.25
     port: 9091
+    zone: 1
+    id: gw-ws-01
+    name: gw-ws-01
   regServer:
     host: 192.168.68.25
     port: 9090
-    topic: topic-reg-server
+  mqProxy:
+    nameSrv: 120.79.235.83:9876
+    producerGroup: online-produce-1
+    consumerGroup: online-consumer-1
+    topic: TopicTest-1
 
 logging:
   config: classpath:config/logback-spring.xml

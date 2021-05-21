@@ -47,7 +47,7 @@ public class RocketmqPromiseHolder implements PromisHolder {
 
         RpcPromise promise = futures.get(requestId);
 
-        if (promise.decrementAndGetFanout() <= 0 ) {
+        if (promise.decrementAndGetFanout() <= 0) {
             this.futures.remove(requestId);
         }
 
@@ -57,7 +57,7 @@ public class RocketmqPromiseHolder implements PromisHolder {
     @Override
     public void removePromis(RpcPromise promise) {
 
-        if (promise.decrementAndGetFanout() <= 0 ) {
+        if (promise.decrementAndGetFanout() <= 0) {
             this.futures.remove(promise.getRequestId());
         }
 
@@ -83,14 +83,12 @@ public class RocketmqPromiseHolder implements PromisHolder {
 
             @Override
             public void onException(Throwable var1) {
+                logger.error("send command fail!", var1);
 
                 RpcPromise promise = RocketmqPromiseHolder.this.removePromis(command.getRequestId());
                 if (promise != null) {
-                    promise.cancelTimeout();
                     promise.setFailure(new InvokeExcption());
                 }
-                logger.error("Invoke send failed. The requestid is {}",
-                        command.getRequestId(), var1.getCause());
 
             }
         }, 3000);

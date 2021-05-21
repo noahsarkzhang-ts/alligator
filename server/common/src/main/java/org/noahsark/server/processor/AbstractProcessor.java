@@ -65,17 +65,15 @@ public abstract class AbstractProcessor<T> implements Runnable {
             if (!Void.class.equals(getParamsClass())) {
 
                 Serializer serializer = SerializerManager.getInstance()
-                    .getSerializer(rpcRequest.getRequest().getSerializer());
+                        .getSerializer(rpcRequest.getRequest().getSerializer());
 
                 if (params instanceof JsonElement) {
                     request = JsonUtils.fromJson((JsonElement) params, getParamsClass());
                 } else if (params.getClass().isArray()) {
-                    log.info("body: {}", new String((byte[]) params));
-                    log.info("size: {}",((byte[]) params).length);
                     request = serializer.decode((byte[]) params, getParamsClass());
                 }
 
-                log.info("request: {}", JsonUtils.toJson(request));
+                log.info("receive a request: {}", rpcRequest);
             }
 
             execute(request, rpcRequest.getContext());

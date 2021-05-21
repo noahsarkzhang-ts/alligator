@@ -4,9 +4,7 @@ import io.netty.util.CharsetUtil;
 import org.noahsark.client.future.CommandCallback;
 import org.noahsark.client.future.RpcPromise;
 import org.noahsark.registration.constant.RegistrationConstants;
-import org.noahsark.registration.domain.Id;
-import org.noahsark.registration.domain.Service;
-import org.noahsark.registration.domain.User;
+import org.noahsark.registration.domain.*;
 import org.noahsark.server.rpc.Request;
 import org.noahsark.server.rpc.Result;
 import org.noahsark.server.tcp.client.TcpClient;
@@ -33,7 +31,7 @@ public class RegistrationClient extends TcpClient {
 
     public Result<Void> login(User user) {
 
-        Result<Void> result = commonInvoke(user, RegistrationConstants.BIZ_TYPE, RegistrationConstants.CMD_LOGIN);
+        Result<Void> result = commonInvoke(user, Void.class, RegistrationConstants.BIZ_TYPE, RegistrationConstants.CMD_LOGIN);
 
         return result;
     }
@@ -44,7 +42,7 @@ public class RegistrationClient extends TcpClient {
 
     public Result<Void> logout(Id userId) {
 
-        Result<Void> result = commonInvoke(userId, RegistrationConstants.BIZ_TYPE, RegistrationConstants.CMD_LOGOUT);
+        Result<Void> result = commonInvoke(userId, Void.class, RegistrationConstants.BIZ_TYPE, RegistrationConstants.CMD_LOGOUT);
 
         return result;
     }
@@ -54,7 +52,7 @@ public class RegistrationClient extends TcpClient {
     }
 
     public Result<Void> registerService(Service service) {
-        Result<Void> result = commonInvoke(service, RegistrationConstants.BIZ_TYPE, RegistrationConstants.CMD_REGISTER_SERVICE);
+        Result<Void> result = commonInvoke(service, Void.class, RegistrationConstants.BIZ_TYPE, RegistrationConstants.CMD_REGISTER_SERVICE);
 
         return result;
     }
@@ -64,13 +62,34 @@ public class RegistrationClient extends TcpClient {
     }
 
     public Result<Void> unRegisterService(Id serviceId) {
-        Result<Void> result = commonInvoke(serviceId, RegistrationConstants.BIZ_TYPE, RegistrationConstants.CMD_UNREGISTER_SERVICE);
+        Result<Void> result = commonInvoke(serviceId, Void.class, RegistrationConstants.BIZ_TYPE, RegistrationConstants.CMD_UNREGISTER_SERVICE);
 
         return result;
     }
 
     public RpcPromise unRegisterService(Id serviceId, CommandCallback callback) {
         return commonInvokeAsync(serviceId, RegistrationConstants.BIZ_TYPE, RegistrationConstants.CMD_UNREGISTER_SERVICE, callback);
+    }
+
+    public Result<CandidateService> serviceLookup(ServiceQuery query) {
+
+        Result<CandidateService> result = commonInvoke(query, CandidateService.class, RegistrationConstants.BIZ_TYPE, RegistrationConstants.CMD_LOOKUP_BIZ);
+
+        return result;
+    }
+
+    public RpcPromise serviceLookupAsync(ServiceQuery query, CommandCallback callback) {
+        return commonInvokeAsync(query, RegistrationConstants.BIZ_TYPE, RegistrationConstants.CMD_LOOKUP_BIZ, callback);
+    }
+
+    public Result<CandidateService> userLookup(UserQuery query) {
+        Result<CandidateService> result = commonInvoke(query, CandidateService.class, RegistrationConstants.BIZ_TYPE, RegistrationConstants.CMD_LOOKUP_USER);
+
+        return result;
+    }
+
+    public RpcPromise userLookupAsync(UserQuery query, CommandCallback callback) {
+        return commonInvokeAsync(query, RegistrationConstants.BIZ_TYPE, RegistrationConstants.CMD_LOOKUP_USER, callback);
     }
 
     private RpcPromise commonInvokeAsync(Object payload, int biz, int cmd, CommandCallback commandCallback) {
@@ -84,7 +103,7 @@ public class RegistrationClient extends TcpClient {
         return invoke(request, commandCallback, 3000);
     }
 
-    private Result<Void> commonInvoke(Object payload, int biz, int cmd) {
+    private <T> Result<T> commonInvoke(Object payload, Class<T> type, int biz, int cmd) {
         Request request = new Request.Builder()
                 .biz(biz)
                 .cmd(cmd)
@@ -92,12 +111,12 @@ public class RegistrationClient extends TcpClient {
                 .build();
 
         Object object = invokeSync(request, 30000);
-        Result<Void> result = null;
+        Result<T> result = null;
 
         if (object != null) {
             String json = new String((byte[]) object, CharsetUtil.UTF_8);
 
-            result = JsonUtils.fromJsonObject(json, Void.class);
+            result = JsonUtils.fromJsonObject(json, type);
         }
 
         return result;

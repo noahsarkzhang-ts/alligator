@@ -2,9 +2,10 @@ package org.noahsark.biz.online.processor.user;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import io.netty.buffer.ByteBufUtil;
+import org.noahsark.biz.online.config.CommonConfig;
 import org.noahsark.biz.online.context.ServerContext;
 import org.noahsark.client.future.CommandCallback;
+import org.noahsark.registration.domain.CandidateService;
 import org.noahsark.rocketmq.RocketmqProxy;
 import org.noahsark.rocketmq.RocketmqTopic;
 import org.noahsark.server.constant.BizServiceType;
@@ -14,6 +15,7 @@ import org.noahsark.server.rpc.Response;
 import org.noahsark.server.rpc.RpcContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -29,64 +31,78 @@ public class InviteProcessor extends AbstractProcessor<InviteInfo> {
 
     private static Logger log = LoggerFactory.getLogger(InviteProcessor.class);
 
+    @Autowired
+    private CommonConfig commonConfig;
+
     @Override
     protected void execute(InviteInfo request, RpcContext context) {
 
-        MultiRequest command = (MultiRequest) context.getCommand();
-        log.info("receive a request: {}", command);
+        try {
+            MultiRequest command = (MultiRequest) context.getCommand();
+            log.info("receive a request: {}", command);
 
-        List<String> targetIds = new ArrayList<>();
-        targetIds.add(request.getUserId());
+            List<String> targetIds = new ArrayList<>();
+            targetIds.add(request.getUserId());
 
+            // TODO 业务操作
+            // 向用户发起请求
 
-        // 获取用户所在服务器 userid:TopicTest
-        MultiRequest multiRequest = new MultiRequest.Builder()
-                .biz(BizServiceType.BIZ_CLIENT)
-                .cmd(command.getCmd())
-                .serializer(command.getSerializer())
-                .type(command.getType())
-                .ver(command.getVer())
-                .payload(command.getPayload())
-                .topic("TopicTest")
-                .targetIds(targetIds)
-                .build();
+            // 获取用户所在服务器
+            CandidateService service = ServerContext.userServiceCache.get(request.getUserId());
 
-        log.info("send a request: {}", multiRequest);
+            MultiRequest multiRequest = new MultiRequest.Builder()
+                    .biz(BizServiceType.BIZ_CLIENT)
+                    .cmd(command.getCmd())
+                    .serializer(command.getSerializer())
+                    .type(command.getType())
+                    .ver(command.getVer())
+                    .payload(command.getPayload())
+                    .topic(commonConfig.getMqProxy().getTopic())
+                    .targetIds(targetIds)
+                    .build();
 
-        RocketmqProxy proxy = ServerContext.mqProxy;
+            log.info("send a request: {}", multiRequest);
 
-        RocketmqTopic topic = new RocketmqTopic();
-        topic.setTopic("TopicTest-1");
-        proxy.sendAsync(topic, multiRequest, new CommandCallback() {
-            @Override
-            public void callback(Object result) {
+            RocketmqProxy proxy = ServerContext.mqProxy;
 
-                String sPayload = new String((byte[]) result);
-                JsonObject paylpad = new JsonParser().parse(sPayload).getAsJsonObject();
-                log.info("receive a response: {}", paylpad);
+            RocketmqTopic topic = new RocketmqTopic();
+            topic.setTopic(service.getTopic());
+            proxy.sendAsync(topic, multiRequest, new CommandCallback() {
+                @Override
+                public void callback(Object result) {
 
-                InviteResult inviteResult = new InviteResult();
-                inviteResult.setStatus((byte) 1);
+                    String sPayload = new String((byte[]) result);
+                    log.info("receive a response: {}", sPayload);
+                    JsonObject paylpad = new JsonParser().parse(sPayload).getAsJsonObject();
+                    log.info("receive a response: {}", paylpad);
 
-                RocketmqTopic topic = new RocketmqTopic();
-                topic.setTopic(command.getTopic());
+                    InviteResult inviteResult = new InviteResult();
+                    inviteResult.setStatus((byte) 1);
 
-                Response response = Response.buildResponse(command, inviteResult, 0, "success");
-                response.setAttachment(topic);
+                    RocketmqTopic topic = new RocketmqTopic();
+                    topic.setTopic(command.getTopic());
 
-                context.sendResponse(response);
-            }
+                    Response response = Response.buildResponse(command, inviteResult, 0, "success");
+                    response.setAttachment(topic);
 
-            @Override
-            public void failure(Throwable cause) {
-                log.warn("Invoke catch an exception!",cause);
+                    context.sendResponse(response);
+                }
 
-                context.sendResponse(Response.buildCommonResponse(context.getCommand(),
-                        -1, "failed"));
-            }
-        }, 3000);
+                @Override
+                public void failure(Throwable cause) {
+                    log.warn("Invoke catch an exception!", cause);
 
-        // TODO 业务操作
+                    context.sendResponse(Response.buildCommonResponse(context.getCommand(),
+                            -1, "failed"));
+                }
+            }, 3000);
+
+        } catch (Exception ex) {
+            log.warn("Invoke catch an exception!", ex);
+
+            context.sendResponse(Response.buildCommonResponse(context.getCommand(),
+                    -1, "failed"));
+        }
 
     }
 

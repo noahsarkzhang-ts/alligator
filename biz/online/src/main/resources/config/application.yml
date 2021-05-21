@@ -1,4 +1,8 @@
 common:
+  serverConfig:
+    zone: 1
+    id: gw-online-01
+    name: gw-online-01
   mqProxy:
     nameSrv: 120.79.235.83:9876
     producerGroup: online-produce-1

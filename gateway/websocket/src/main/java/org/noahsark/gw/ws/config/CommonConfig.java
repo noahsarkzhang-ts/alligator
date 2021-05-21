@@ -18,6 +18,8 @@ public class CommonConfig {
 
     private RegServer regServer;
 
+    private MqProxy mqProxy;
+
     public static class WorkQueueConfig {
 
         private int maxQueueNum;
@@ -46,6 +48,12 @@ public class CommonConfig {
 
         private int port;
 
+        private int zone;
+
+        private String id;
+
+        private String name;
+
         public String getHost() {
             return host;
         }
@@ -60,6 +68,30 @@ public class CommonConfig {
 
         public void setPort(int port) {
             this.port = port;
+        }
+
+        public int getZone() {
+            return zone;
+        }
+
+        public void setZone(int zone) {
+            this.zone = zone;
+        }
+
+        public String getId() {
+            return id;
+        }
+
+        public void setId(String id) {
+            this.id = id;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
         }
     }
 
@@ -85,6 +117,48 @@ public class CommonConfig {
         }
     }
 
+    public  static class MqProxy {
+        private String nameSrv;
+
+        private String producerGroup;
+
+        private String consumerGroup;
+
+        private String topic;
+
+        public String getNameSrv() {
+            return nameSrv;
+        }
+
+        public void setNameSrv(String nameSrv) {
+            this.nameSrv = nameSrv;
+        }
+
+        public String getProducerGroup() {
+            return producerGroup;
+        }
+
+        public void setProducerGroup(String producerGroup) {
+            this.producerGroup = producerGroup;
+        }
+
+        public String getConsumerGroup() {
+            return consumerGroup;
+        }
+
+        public void setConsumerGroup(String consumerGroup) {
+            this.consumerGroup = consumerGroup;
+        }
+
+        public String getTopic() {
+            return topic;
+        }
+
+        public void setTopic(String topic) {
+            this.topic = topic;
+        }
+    }
+
     public WorkQueueConfig getWorkQueue() {
         return workQueue;
     }
@@ -107,5 +181,13 @@ public class CommonConfig {
 
     public void setRegServer(RegServer regServer) {
         this.regServer = regServer;
+    }
+
+    public MqProxy getMqProxy() {
+        return mqProxy;
+    }
+
+    public void setMqProxy(MqProxy mqProxy) {
+        this.mqProxy = mqProxy;
     }
 }

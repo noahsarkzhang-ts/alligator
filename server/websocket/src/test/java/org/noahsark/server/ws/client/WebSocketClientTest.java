@@ -54,7 +54,7 @@ public class WebSocketClientTest {
                 public void failure(Throwable cause) {
                     cause.printStackTrace();
                 }
-            },3000);
+            },300000);
 
 
 
@@ -63,7 +63,7 @@ public class WebSocketClientTest {
                 client.sendMessage(request);
             }*/
 
-            TimeUnit.SECONDS.sleep(120);
+            TimeUnit.HOURS.sleep(1);
 
             /*BufferedReader console = new BufferedReader(new InputStreamReader(System.in));
             while (true) {

@@ -1,8 +1,8 @@
 package org.noahsark.registration.domain;
 
-import java.util.Map;
-import org.noahsark.client.future.RpcPromise;
 import org.noahsark.server.session.Subject;
+
+import java.util.Map;
 
 /**
  * @author: noahsark
@@ -22,6 +22,10 @@ public class Service implements Subject,Comparable<Service> {
     private String id;
 
     private String name;
+
+    private String address;
+
+    private String topic;
 
     private int load;
 
@@ -91,6 +95,23 @@ public class Service implements Subject,Comparable<Service> {
     public void setLastPingTime(long lastPingTime) {
         this.lastPingTime = lastPingTime;
     }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public String getTopic() {
+        return topic;
+    }
+
+    public void setTopic(String topic) {
+        this.topic = topic;
+    }
+
 
     @Override
     public int compareTo(Service o) {

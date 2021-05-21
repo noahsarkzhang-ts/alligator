@@ -101,7 +101,7 @@ public class RequestHandler {
 
         if (promise != null) {
             promise.setSuccess(command.getPayload());
-            connection.removePromis(command.getRequestId());
+            // connection.removePromis(command.getRequestId());
 
         } else {
             log.warn("promis is null : {}", command.getRequestId());

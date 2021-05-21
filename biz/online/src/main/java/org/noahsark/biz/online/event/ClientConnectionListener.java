@@ -1,11 +1,11 @@
-package org.noahsark.gw.ws.event.listener;
+package org.noahsark.biz.online.event;
 
+import org.noahsark.biz.online.config.CommonConfig;
+import org.noahsark.biz.online.context.ServerContext;
+import org.noahsark.biz.online.ping.OnlinePingPayloadGenerator;
 import org.noahsark.client.future.CommandCallback;
-import org.noahsark.gw.ws.config.CommonConfig;
-import org.noahsark.gw.ws.context.ServerContext;
-import org.noahsark.gw.ws.ping.WebsocketPingPayloadGenerator;
-import org.noahsark.registration.BizServiceCache;
 import org.noahsark.registration.RegistrationClient;
+import org.noahsark.registration.UserServiceCache;
 import org.noahsark.registration.domain.Service;
 import org.noahsark.server.constant.BizServiceType;
 import org.noahsark.server.event.ClientConnectionEvent;
@@ -37,17 +37,23 @@ public class ClientConnectionListener extends ApplicationListener<ClientConnecti
     public void onApplicationEvent(ClientConnectionEvent event) {
 
         Service service = new Service();
-        service.setLoad(0);
-        service.setId(config.getServerConfig().getId());
-        service.setBiz(BizServiceType.BIZ_GW_WS);
+        service.setBiz(BizServiceType.BIZ_ONLINE);
         service.setZone(config.getServerConfig().getZone());
         service.setName(config.getServerConfig().getName());
+        service.setLoad(0);
+        service.setId(config.getServerConfig().getId());
         service.setTopic(config.getMqProxy().getTopic());
 
         RegistrationClient regClient = ServerContext.regClient;
-        regClient.registerPingPayloadGenerator(new WebsocketPingPayloadGenerator());
+        regClient.registerPingPayloadGenerator(new OnlinePingPayloadGenerator());
 
         regClient.registerServiceAsync(service, new CommandCallback() {
+
+            @Override
+            public void failure(Throwable cause) {
+                logger.warn("registerService catch an exception!", cause);
+            }
+
             @Override
             public void callback(Object result) {
                 Result<Void> response = JsonUtils.fromCommonObject((byte[]) result);
@@ -55,14 +61,11 @@ public class ClientConnectionListener extends ApplicationListener<ClientConnecti
                 logger.info("result: {}", response);
             }
 
-            @Override
-            public void failure(Throwable cause) {
-                logger.warn("registerService catch an exception!", cause);
-            }
         });
 
-        BizServiceCache bizServiceCache = new BizServiceCache(regClient);
-        ServerContext.bizServiceCache = bizServiceCache;
+        UserServiceCache cache = new UserServiceCache(regClient);
+        ServerContext.userServiceCache = cache;
+
     }
 
     @PostConstruct

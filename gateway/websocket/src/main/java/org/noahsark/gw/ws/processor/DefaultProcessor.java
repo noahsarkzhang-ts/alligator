@@ -1,10 +1,11 @@
 package org.noahsark.gw.ws.processor;
 
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import org.noahsark.client.future.CommandCallback;
+import org.noahsark.gw.ws.config.CommonConfig;
 import org.noahsark.gw.ws.context.ServerContext;
 import org.noahsark.gw.ws.user.UserManager;
+import org.noahsark.registration.BizServiceCache;
+import org.noahsark.registration.domain.CandidateService;
 import org.noahsark.rocketmq.RocketmqProxy;
 import org.noahsark.rocketmq.RocketmqTopic;
 import org.noahsark.server.processor.AbstractProcessor;
@@ -12,6 +13,7 @@ import org.noahsark.server.rpc.*;
 import org.noahsark.server.session.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -25,6 +27,9 @@ import java.util.List;
 public class DefaultProcessor extends AbstractProcessor<Void> {
 
     private Logger logger = LoggerFactory.getLogger(DefaultProcessor.class);
+
+    @Autowired
+    private CommonConfig config;
 
     @Override
     protected void execute(Void request, RpcContext context) {
@@ -60,90 +65,112 @@ public class DefaultProcessor extends AbstractProcessor<Void> {
         }
 
         targetIds.stream().forEach(userId -> {
-            Session session = UserManager.getInstance().getSession(userId);
+            try {
+                Session session = UserManager.getInstance().getSession(userId);
 
-            if (session == null) {
-                logger.info("userId not online:{}", userId);
+                if (session == null) {
+                    logger.info("userId not online:{}", userId);
+                }
+
+                Request downRequest = new Request.Builder()
+                        .biz(request.getBiz())
+                        .cmd(request.getCmd())
+                        .serializer(request.getSerializer())
+                        .type(request.getType())
+                        .ver(request.getVer())
+                        .payload(request.getPayload())
+                        .build();
+
+                logger.info("send a downstream:{}", downRequest);
+
+                session.invoke(downRequest, new CommandCallback() {
+                    @Override
+                    public void callback(Object result) {
+
+                        RocketmqTopic topic = new RocketmqTopic();
+                        topic.setTopic(request.getTopic());
+
+                        Response response = Response.buildResponseFromResult(request, result);
+                        response.setAttachment(topic);
+
+                        context.sendResponse(response);
+                    }
+
+                    @Override
+                    public void failure(Throwable cause) {
+                        logger.warn("catch an exception.", cause);
+
+                        context.sendResponse(Response.buildCommonResponse(context.getCommand(),
+                                -1, "failed"));
+                    }
+                }, 6000);
+            } catch (Exception ex) {
+                logger.warn("catch an exception.", ex);
+
+                context.sendResponse(Response.buildCommonResponse(context.getCommand(),
+                        -1, "failed"));
             }
-           /* String sPayload = new String((byte[]) request.getPayload());
-            JsonObject paylpad = new JsonParser().parse(sPayload).getAsJsonObject();
-            logger.info("payload:{}", sPayload);*/
-
-            Request downRequest = new Request.Builder()
-                    .biz(request.getBiz())
-                    .cmd(request.getCmd())
-                    .serializer(request.getSerializer())
-                    .type(request.getType())
-                    .ver(request.getVer())
-                    .payload(request.getPayload())
-                    .build();
-
-            logger.info("send a downstream:{}", downRequest);
-
-            session.invoke(downRequest, new CommandCallback() {
-                @Override
-                public void callback(Object result) {
-
-                    RocketmqTopic topic = new RocketmqTopic();
-                    topic.setTopic(request.getTopic());
-
-                    Response response = Response.buildResponseFromResult(request, result);
-                    response.setAttachment(topic);
-
-                    context.sendResponse(response);
-                }
-
-                @Override
-                public void failure(Throwable cause) {
-                    logger.warn("catch an exception.", cause);
-                }
-            }, 6000);
 
         });
 
     }
 
     public void upstream(RpcContext context) {
-        RpcCommand command = context.getCommand();
+        try {
+            RpcCommand command = context.getCommand();
 
-        // TODO
-        // 根据 biz 从注册中心获取 topc
+            // TODO
+            // 根据 biz 从注册中心获取 topc
+            BizServiceCache cache = ServerContext.bizServiceCache;
+            CandidateService service = cache.get(command.getBiz());
 
-        MultiRequest multiRequest = new MultiRequest.Builder()
-                .biz(command.getBiz())
-                .cmd(command.getCmd())
-                .serializer(command.getSerializer())
-                .type(command.getType())
-                .ver(command.getVer())
-                .payload(command.getPayload())
-                .topic("TopicTest-1")
-                .build();
+            MultiRequest multiRequest = new MultiRequest.Builder()
+                    .biz(command.getBiz())
+                    .cmd(command.getCmd())
+                    .serializer(command.getSerializer())
+                    .type(command.getType())
+                    .ver(command.getVer())
+                    .payload(command.getPayload())
+                    .topic(config.getMqProxy().getTopic())
+                    .build();
 
-        logger.info("send a request: {}", multiRequest);
-        logger.info("payload: {}", command.getPayload());
+            logger.info("send a request: {}", multiRequest);
+            //logger.info("payload: {}", command.getPayload());
 
-        RocketmqProxy proxy = ServerContext.mqProxy;
+            RocketmqProxy proxy = ServerContext.mqProxy;
 
-        RocketmqTopic topic = new RocketmqTopic();
-        topic.setTopic("TopicTest");
-        proxy.sendAsync(topic, multiRequest, new CommandCallback() {
-            @Override
-            public void callback(Object result) {
+            RocketmqTopic topic = new RocketmqTopic();
+            topic.setTopic(service.getTopic());
 
-                /*String sPayload = new String((byte[]) result);
-                JsonObject paylpad = new JsonParser().parse(sPayload).getAsJsonObject();
-                logger.info("receive a response: {}", paylpad);*/
+            logger.info("toptic is: {}", topic);
 
-                // 2. 响应
-                context.sendResponse(Response.buildResponseFromResult(context.getCommand(), result));
-            }
+            proxy.sendAsync(topic, multiRequest, new CommandCallback() {
+                @Override
+                public void callback(Object result) {
 
-            @Override
-            public void failure(Throwable cause) {
-                context.sendResponse(Response.buildCommonResponse(context.getCommand(),
-                        -1, "failed"));
-            }
-        }, 3000);
+                    /*String sPayload = new String((byte[]) result);
+                    JsonObject paylpad = new JsonParser().parse(sPayload).getAsJsonObject();
+                    logger.info("receive a response: {}", paylpad);*/
+
+                    // 2. 响应
+                    context.sendResponse(Response.buildResponseFromResult(context.getCommand(), result));
+                }
+
+                @Override
+                public void failure(Throwable cause) {
+
+                    logger.warn("Invoke catch an exception!", cause);
+
+                    context.sendResponse(Response.buildCommonResponse(context.getCommand(),
+                            -1, "failed"));
+                }
+            }, 3000);
+        } catch (Exception ex) {
+            logger.warn("Invoke catch an exception!", ex);
+
+            context.sendResponse(Response.buildCommonResponse(context.getCommand(),
+                    -1, "failed"));
+        }
     }
 
     @Override

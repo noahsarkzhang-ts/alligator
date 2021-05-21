@@ -16,6 +16,8 @@ public class CommonConfig {
 
     private RegServer regServer;
 
+    private ServerConfig serverConfig;
+
     public static class RegServer {
         private String host;
 
@@ -80,6 +82,70 @@ public class CommonConfig {
         }
     }
 
+    public static class ServerConfig {
+
+        private String host;
+
+        private int port;
+
+        private String topic;
+
+        private int zone;
+
+        private String id;
+
+        private String name;
+
+        public String getHost() {
+            return host;
+        }
+
+        public void setHost(String host) {
+            this.host = host;
+        }
+
+        public int getPort() {
+            return port;
+        }
+
+        public void setPort(int port) {
+            this.port = port;
+        }
+
+        public String getTopic() {
+            return topic;
+        }
+
+        public void setTopic(String topic) {
+            this.topic = topic;
+        }
+
+        public int getZone() {
+            return zone;
+        }
+
+        public void setZone(int zone) {
+            this.zone = zone;
+        }
+
+        public String getId() {
+            return id;
+        }
+
+        public void setId(String id) {
+            this.id = id;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+    }
+
+
     public MqProxy getMqProxy() {
         return mqProxy;
     }
@@ -94,5 +160,13 @@ public class CommonConfig {
 
     public void setRegServer(RegServer regServer) {
         this.regServer = regServer;
+    }
+
+    public ServerConfig getServerConfig() {
+        return serverConfig;
+    }
+
+    public void setServerConfig(ServerConfig serverConfig) {
+        this.serverConfig = serverConfig;
     }
 }

@@ -6,9 +6,11 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.util.CharsetUtil;
+
 import java.io.Serializable;
 import java.nio.charset.Charset;
 import java.util.Map;
+
 import org.noahsark.server.serializer.Serializer;
 import org.noahsark.server.serializer.SerializerManager;
 import org.noahsark.server.util.JsonUtils;
@@ -201,7 +203,7 @@ public class RpcCommand implements Serializable {
 
         encode(buf, command);
 
-        byte [] data = new byte[buf.readableBytes()];
+        byte[] data = new byte[buf.readableBytes()];
         buf.readBytes(data);
 
         return data;
@@ -218,9 +220,15 @@ public class RpcCommand implements Serializable {
         buf.writeByte(command.getVer());
         buf.writeByte(command.getSerializer());
 
-        Serializer serializer = SerializerManager.getInstance()
-            .getSerializer(command.getSerializer());
-        byte[] payload = serializer.encode(command.getPayload());
+        byte[] payload;
+
+        if (! (command.getPayload() instanceof byte [])) {
+            Serializer serializer = SerializerManager.getInstance()
+                    .getSerializer(command.getSerializer());
+            payload = serializer.encode(command.getPayload());
+        } else {
+            payload = (byte[]) command.getPayload();
+        }
 
         buf.writeBytes(payload);
 
@@ -245,15 +253,15 @@ public class RpcCommand implements Serializable {
     @Override
     public String toString() {
         return "RpcCommand{" +
-            "headSize=" + headSize +
-            ", requestId=" + requestId +
-            ", biz=" + biz +
-            ", cmd=" + cmd +
-            ", type=" + type +
-            ", ver=" + ver +
-            ", serializer=" + serializer +
-            ", payload=" + payload.toString() +
-            '}';
+                "headSize=" + headSize +
+                ", requestId=" + requestId +
+                ", biz=" + biz +
+                ", cmd=" + cmd +
+                ", type=" + type +
+                ", ver=" + ver +
+                ", serializer=" + serializer +
+                ", payload=" + ((payload instanceof byte[]) ? new JsonParser().parse(new String((byte[]) payload)).getAsJsonObject() : payload) +
+                '}';
     }
 
     public static class Builder {

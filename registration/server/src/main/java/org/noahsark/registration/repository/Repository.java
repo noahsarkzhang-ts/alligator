@@ -18,6 +18,10 @@ public interface Repository {
 
     void unRegisterService(String serviceId);
 
+    List<Service> getServicesByBiz(int biz);
+
+    Service getServiceByUser(String userId);
+
     List<String> getExpireServices(int timeoutMillis);
 
     void updateService(Service service);

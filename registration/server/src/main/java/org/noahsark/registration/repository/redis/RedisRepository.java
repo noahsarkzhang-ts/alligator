@@ -32,6 +32,16 @@ public class RedisRepository implements Repository {
     }
 
     @Override
+    public List<Service> getServicesByBiz(int biz) {
+        return null;
+    }
+
+    @Override
+    public Service getServiceByUser(String userId) {
+        return null;
+    }
+
+    @Override
     public List<String> getExpireServices(int timeoutMillis) {
         return null;
     }
