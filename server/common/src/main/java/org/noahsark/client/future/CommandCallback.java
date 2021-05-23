@@ -7,19 +7,7 @@ package org.noahsark.client.future;
  */
 public interface CommandCallback {
 
-    public static final CommandCallback DEFAUTL_CALLBACK = new CommandCallback() {
-        @Override
-        public void callback(Object result) {
+    void callback(Object result,int currentFanout, int fanout);
 
-        }
-
-        @Override
-        public void failure(Throwable cause) {
-
-        }
-    };
-
-    void callback(Object result);
-
-    void failure(Throwable cause);
+    void failure(Throwable cause, int currentFanout, int fanout);
 }

@@ -73,19 +73,19 @@ public class DefaultProcessor extends AbstractProcessor<Void> {
                 }
 
                 Request downRequest = new Request.Builder()
-                        .biz(request.getBiz())
-                        .cmd(request.getCmd())
-                        .serializer(request.getSerializer())
-                        .type(request.getType())
-                        .ver(request.getVer())
-                        .payload(request.getPayload())
-                        .build();
+                    .biz(request.getBiz())
+                    .cmd(request.getCmd())
+                    .serializer(request.getSerializer())
+                    .type(request.getType())
+                    .ver(request.getVer())
+                    .payload(request.getPayload())
+                    .build();
 
                 logger.info("send a downstream:{}", downRequest);
 
                 session.invoke(downRequest, new CommandCallback() {
                     @Override
-                    public void callback(Object result) {
+                    public void callback(Object result, int currentFanout, int fanout) {
 
                         RocketmqTopic topic = new RocketmqTopic();
                         topic.setTopic(request.getTopic());
@@ -97,18 +97,18 @@ public class DefaultProcessor extends AbstractProcessor<Void> {
                     }
 
                     @Override
-                    public void failure(Throwable cause) {
+                    public void failure(Throwable cause, int currentFanout, int fanout) {
                         logger.warn("catch an exception.", cause);
 
                         context.sendResponse(Response.buildCommonResponse(context.getCommand(),
-                                -1, "failed"));
+                            -1, "failed"));
                     }
                 }, 6000);
             } catch (Exception ex) {
                 logger.warn("catch an exception.", ex);
 
                 context.sendResponse(Response.buildCommonResponse(context.getCommand(),
-                        -1, "failed"));
+                    -1, "failed"));
             }
 
         });
@@ -125,14 +125,14 @@ public class DefaultProcessor extends AbstractProcessor<Void> {
             CandidateService service = cache.get(command.getBiz());
 
             MultiRequest multiRequest = new MultiRequest.Builder()
-                    .biz(command.getBiz())
-                    .cmd(command.getCmd())
-                    .serializer(command.getSerializer())
-                    .type(command.getType())
-                    .ver(command.getVer())
-                    .payload(command.getPayload())
-                    .topic(config.getMqProxy().getTopic())
-                    .build();
+                .biz(command.getBiz())
+                .cmd(command.getCmd())
+                .serializer(command.getSerializer())
+                .type(command.getType())
+                .ver(command.getVer())
+                .payload(command.getPayload())
+                .topic(config.getMqProxy().getTopic())
+                .build();
 
             logger.info("send a request: {}", multiRequest);
             //logger.info("payload: {}", command.getPayload());
@@ -146,30 +146,31 @@ public class DefaultProcessor extends AbstractProcessor<Void> {
 
             proxy.sendAsync(topic, multiRequest, new CommandCallback() {
                 @Override
-                public void callback(Object result) {
+                public void callback(Object result, int currentFanout, int fanout) {
 
                     /*String sPayload = new String((byte[]) result);
                     JsonObject paylpad = new JsonParser().parse(sPayload).getAsJsonObject();
                     logger.info("receive a response: {}", paylpad);*/
 
                     // 2. 响应
-                    context.sendResponse(Response.buildResponseFromResult(context.getCommand(), result));
+                    context.sendResponse(
+                        Response.buildResponseFromResult(context.getCommand(), result));
                 }
 
                 @Override
-                public void failure(Throwable cause) {
+                public void failure(Throwable cause,int currentFanout, int fanout) {
 
                     logger.warn("Invoke catch an exception!", cause);
 
                     context.sendResponse(Response.buildCommonResponse(context.getCommand(),
-                            -1, "failed"));
+                        -1, "failed"));
                 }
-            }, 3000);
+            }, 10000);
         } catch (Exception ex) {
             logger.warn("Invoke catch an exception!", ex);
 
             context.sendResponse(Response.buildCommonResponse(context.getCommand(),
-                    -1, "failed"));
+                -1, "failed"));
         }
     }
 

@@ -49,14 +49,14 @@ public class ClientConnectionListener extends ApplicationListener<ClientConnecti
 
         regClient.registerServiceAsync(service, new CommandCallback() {
             @Override
-            public void callback(Object result) {
+            public void callback(Object result, int currentFanout, int fanout) {
                 Result<Void> response = JsonUtils.fromCommonObject((byte[]) result);
 
                 logger.info("result: {}", response);
             }
 
             @Override
-            public void failure(Throwable cause) {
+            public void failure(Throwable cause, int currentFanout, int fanout) {
                 logger.warn("registerService catch an exception!", cause);
             }
         });

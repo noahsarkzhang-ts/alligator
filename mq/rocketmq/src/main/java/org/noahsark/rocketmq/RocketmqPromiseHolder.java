@@ -4,7 +4,6 @@ import org.noahsark.client.future.PromisHolder;
 import org.noahsark.client.future.RpcPromise;
 import org.noahsark.server.exception.InvokeExcption;
 import org.noahsark.server.rpc.MultiRequest;
-import org.noahsark.server.rpc.Request;
 import org.noahsark.server.rpc.RpcCommand;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,7 +46,7 @@ public class RocketmqPromiseHolder implements PromisHolder {
 
         RpcPromise promise = futures.get(requestId);
 
-        if (promise.decrementAndGetFanout() <= 0) {
+        if (promise.isRemoving()) {
             this.futures.remove(requestId);
         }
 
@@ -57,7 +56,7 @@ public class RocketmqPromiseHolder implements PromisHolder {
     @Override
     public void removePromis(RpcPromise promise) {
 
-        if (promise.decrementAndGetFanout() <= 0) {
+        if (promise.isRemoving()) {
             this.futures.remove(promise.getRequestId());
         }
 
@@ -85,7 +84,8 @@ public class RocketmqPromiseHolder implements PromisHolder {
             public void onException(Throwable var1) {
                 logger.error("send command fail!", var1);
 
-                RpcPromise promise = RocketmqPromiseHolder.this.removePromis(command.getRequestId());
+                RpcPromise promise = RocketmqPromiseHolder.this
+                    .removePromis(command.getRequestId());
                 if (promise != null) {
                     promise.setFailure(new InvokeExcption());
                 }

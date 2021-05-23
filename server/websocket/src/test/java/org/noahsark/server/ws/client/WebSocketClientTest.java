@@ -16,9 +16,40 @@ import java.util.concurrent.TimeUnit;
  */
 public class WebSocketClientTest {
 
+
     @Test
     public void clientTest() {
-        String url = System.getProperty("url", "ws://192.168.68.25:9091/websocket");
+        WebSocketServerTest.UserInfo userInfo = new WebSocketServerTest.UserInfo();
+        userInfo.setUserId("1002");
+        userInfo.setUserName("allen");
+        userInfo.setPassword("pwd");
+
+        singalServer(userInfo);
+
+        userInfo = new WebSocketServerTest.UserInfo();
+        userInfo.setUserId("1003");
+        userInfo.setUserName("allen");
+        userInfo.setPassword("pwd");
+
+        singalServer(userInfo);
+
+    }
+
+    @Test
+    public void testClient() {
+        WebSocketServerTest.UserInfo userInfo = new WebSocketServerTest.UserInfo();
+
+
+        userInfo = new WebSocketServerTest.UserInfo();
+        userInfo.setUserId("1003");
+        userInfo.setUserName("allen");
+        userInfo.setPassword("pwd");
+
+        singalServer(userInfo);
+    }
+
+    private void singalServer(WebSocketServerTest.UserInfo userInfo) {
+        String url = System.getProperty("url", "ws://192.168.1.102:9091/websocket");
 
         WebSocketClient client = new WebSocketClient(url);
         client.registerProcessor(new InviteUserProcessor());
@@ -28,16 +59,6 @@ public class WebSocketClientTest {
 
             TimeUnit.SECONDS.sleep(2);
 
-            String[] requests = {
-                "{\"biz\":1,\"cmd\":1000,\"requestId\":1,\"version\":\"V1.0\",\"payload\":{\"userName\":\"allan\",\"password\":\"test\"}}",
-                "Hello World!"
-            };
-
-            WebSocketServerTest.UserInfo userInfo = new WebSocketServerTest.UserInfo();
-            userInfo.setUserId("1002");
-            userInfo.setUserName("allen");
-            userInfo.setPassword("pwd");
-
             Request request = new Request.Builder()
                 .biz(1)
                 .cmd(1)
@@ -46,48 +67,25 @@ public class WebSocketClientTest {
 
             client.invoke(request, new CommandCallback() {
                 @Override
-                public void callback(Object result) {
+                public void callback(Object result, int currentFanout, int fanout) {
                     System.out.println("result = " + result);
                 }
 
                 @Override
-                public void failure(Throwable cause) {
+                public void failure(Throwable cause, int currentFanout, int fanout) {
                     cause.printStackTrace();
                 }
-            },300000);
-
-
-
-           /* for (String request: requests) {
-                System.out.println("request = " + request);
-                client.sendMessage(request);
-            }*/
+            }, 300000);
 
             TimeUnit.HOURS.sleep(1);
 
-            /*BufferedReader console = new BufferedReader(new InputStreamReader(System.in));
-            while (true) {
-                String msg = console.readLine();
-                if (msg == null) {
-                    break;
-                } else if ("bye".equals(msg.toLowerCase())) {
-                    client.sendMessage(new CloseWebSocketFrame());
-                    client.shutdown();
-                    break;
-                } else if ("ping".equals(msg.toLowerCase())) {
-                    WebSocketFrame frame = new PingWebSocketFrame(
-                            Unpooled.wrappedBuffer(new byte[]{8, 1, 8, 1}));
-                    client.sendMessage(frame);
-                } else {
-                    client.sendMessage(msg);
-                }
-            }*/
         } catch (Exception ex) {
             ex.printStackTrace();
         } finally {
             client.shutdown();
         }
     }
+
 
     @Test
     public void multiServerTest() {

@@ -58,7 +58,7 @@ public class Connection implements PromisHolder {
 
         RpcPromise promise = futures.get(requestId);
 
-        if (promise.decrementAndGetFanout() <= 0) {
+        if (promise.isRemoving()) {
             this.futures.remove(requestId);
 
         }
@@ -70,7 +70,7 @@ public class Connection implements PromisHolder {
     public void removePromis(RpcPromise promise) {
         log.info("remove promise: {}", promise.getRequestId());
 
-        if (promise.decrementAndGetFanout() <= 0) {
+        if (promise.isRemoving()) {
             this.futures.remove(promise.getRequestId());
         }
     }

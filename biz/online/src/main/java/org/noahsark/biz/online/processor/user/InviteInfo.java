@@ -1,5 +1,7 @@
 package org.noahsark.biz.online.processor.user;
 
+import java.util.List;
+
 /**
  * @author: noahsark
  * @version:
@@ -7,16 +9,16 @@ package org.noahsark.biz.online.processor.user;
  */
 public class InviteInfo {
 
-    private String userId;
+    private List<String> userIds;
 
     private byte type;
 
-    public String getUserId() {
-        return userId;
+    public List<String> getUserIds() {
+        return userIds;
     }
 
-    public void setUserId(String userId) {
-        this.userId = userId;
+    public void setUserIds(List<String> userIds) {
+        this.userIds = userIds;
     }
 
     public byte getType() {

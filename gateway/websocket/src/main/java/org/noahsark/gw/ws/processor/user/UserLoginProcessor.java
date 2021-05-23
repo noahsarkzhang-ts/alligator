@@ -38,7 +38,7 @@ public class UserLoginProcessor extends AbstractProcessor<UserLoginInfo> {
 
         regClient.loginAsync(user, new CommandCallback() {
             @Override
-            public void callback(Object result) {
+            public void callback(Object result, int currentFanout, int fanout) {
 
                 Result<Void> result1 = JsonUtils.fromCommonObject((byte[]) result);
 
@@ -48,12 +48,12 @@ public class UserLoginProcessor extends AbstractProcessor<UserLoginInfo> {
                 userLoginResult.setToken(UUID.randomUUID().toString());
 
                 context.sendResponse(Response.buildResponse(context.getCommand(),
-                        userLoginResult, 0, "success"));
+                    userLoginResult, 0, "success"));
 
             }
 
             @Override
-            public void failure(Throwable cause) {
+            public void failure(Throwable cause, int currentFanout, int fanout) {
 
             }
         });
@@ -64,7 +64,7 @@ public class UserLoginProcessor extends AbstractProcessor<UserLoginInfo> {
         Session session = (Session) context.getSession();
         session.setSubject(subject);
 
-        UserManager.getInstance().putSession(request.getUserId(),session);
+        UserManager.getInstance().putSession(request.getUserId(), session);
 
     }
 

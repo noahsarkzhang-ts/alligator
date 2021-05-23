@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @author: noahsark
+ * @author: noahsarks
  * @version:
  * @date: 2021/5/11
  */
@@ -42,24 +42,23 @@ public class InviteProcessor extends AbstractProcessor<InviteInfo> {
             log.info("receive a request: {}", command);
 
             List<String> targetIds = new ArrayList<>();
-            targetIds.add(request.getUserId());
-
+            targetIds.addAll(request.getUserIds());
             // TODO 业务操作
             // 向用户发起请求
 
-            // 获取用户所在服务器
-            CandidateService service = ServerContext.userServiceCache.get(request.getUserId());
+            // 获取用户所在服务器,假定用户都在一台服务器上
+            CandidateService service = ServerContext.userServiceCache.get(targetIds.get(0));
 
             MultiRequest multiRequest = new MultiRequest.Builder()
-                    .biz(BizServiceType.BIZ_CLIENT)
-                    .cmd(command.getCmd())
-                    .serializer(command.getSerializer())
-                    .type(command.getType())
-                    .ver(command.getVer())
-                    .payload(command.getPayload())
-                    .topic(commonConfig.getMqProxy().getTopic())
-                    .targetIds(targetIds)
-                    .build();
+                .biz(BizServiceType.BIZ_CLIENT)
+                .cmd(command.getCmd())
+                .serializer(command.getSerializer())
+                .type(command.getType())
+                .ver(command.getVer())
+                .payload(command.getPayload())
+                .topic(commonConfig.getMqProxy().getTopic())
+                .targetIds(targetIds)
+                .build();
 
             log.info("send a request: {}", multiRequest);
 
@@ -69,12 +68,22 @@ public class InviteProcessor extends AbstractProcessor<InviteInfo> {
             topic.setTopic(service.getTopic());
             proxy.sendAsync(topic, multiRequest, new CommandCallback() {
                 @Override
-                public void callback(Object result) {
+                public void callback(Object result, int currentFanout, int fanout) {
 
-                    String sPayload = new String((byte[]) result);
-                    log.info("receive a response: {}", sPayload);
-                    JsonObject paylpad = new JsonParser().parse(sPayload).getAsJsonObject();
-                    log.info("receive a response: {}", paylpad);
+                    log.info("currentFanout:{},fanout:{}", currentFanout,fanout);
+
+                    List<Object> results = new ArrayList<>();
+                    if (result instanceof List) {
+                        results = (List<Object>) result;
+                    }
+
+                    log.info("receive responses size: {}", results.size());
+
+                    results.stream().forEach(rs -> {
+                        String sPayload = new String((byte[]) rs);
+                        JsonObject paylpad = new JsonParser().parse(sPayload).getAsJsonObject();
+                        log.info("receive a response: {}", paylpad);
+                    });
 
                     InviteResult inviteResult = new InviteResult();
                     inviteResult.setStatus((byte) 1);
@@ -89,11 +98,12 @@ public class InviteProcessor extends AbstractProcessor<InviteInfo> {
                 }
 
                 @Override
-                public void failure(Throwable cause) {
+                public void failure(Throwable cause, int currentFanout, int fanout) {
                     log.warn("Invoke catch an exception!", cause);
+                    log.info("currentFanout:{},fanout:{}", currentFanout,fanout);
 
                     context.sendResponse(Response.buildCommonResponse(context.getCommand(),
-                            -1, "failed"));
+                        -1, "failed"));
                 }
             }, 3000);
 
@@ -101,7 +111,7 @@ public class InviteProcessor extends AbstractProcessor<InviteInfo> {
             log.warn("Invoke catch an exception!", ex);
 
             context.sendResponse(Response.buildCommonResponse(context.getCommand(),
-                    -1, "failed"));
+                -1, "failed"));
         }
 
     }
