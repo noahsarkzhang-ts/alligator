@@ -7,6 +7,6 @@ common:
     port: 9090
 
 logging:
-  config: classpath:config/logback-spring.xml
+  config: classpath:configuration/logback-spring.xml
   file:
     name: logs/registration.log

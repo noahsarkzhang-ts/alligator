@@ -1,0 +1,8 @@
+server:
+  address: 192.168.68.25
+  port: 9093
+
+logging:
+  config: classpath:config/logback-spring.xml
+  file:
+    name: logs/gw-http.log
