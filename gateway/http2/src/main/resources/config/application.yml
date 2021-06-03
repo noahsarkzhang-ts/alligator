@@ -1,0 +1,13 @@
+server:
+  port: 8443
+  http2:
+    enabled: true
+  ssl:
+    key-store: classpath:config/geektime-h2.p12
+    key-store-type: PKCS12
+    key-store-password: geektime
+
+logging:
+  config: classpath:config/logback-spring.xml
+  file:
+    name: logs/gw-http2.log

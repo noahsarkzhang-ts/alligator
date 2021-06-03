@@ -59,7 +59,7 @@ public class WorkQueue {
 
             this.queue.add(task);
         } else {
-            log.warn("event request size[{}] enough, so drop this request {}", this.queue.size(), queue.toString());
+            log.warn("busevent request size[{}] enough, so drop this request {}", this.queue.size(), queue.toString());
         }
     }
 

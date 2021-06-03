@@ -76,25 +76,25 @@ public final class WebSocketServerBenchmarkPage {
                 "if (window.WebSocket) {" + NEWLINE +
                 "  socket = new WebSocket(\"" + webSocketLocation + "\");" + NEWLINE +
                 "  socket.binaryType = 'arraybuffer';" + NEWLINE +
-                "  socket.onmessage = function(event) {" + NEWLINE +
+                "  socket.onmessage = function(busevent) {" + NEWLINE +
                 "    if (verifiyResponses) {" + NEWLINE +
                 "        if (isBinary) {" + NEWLINE +
-                "            if (!(event.data instanceof ArrayBuffer) || " + NEWLINE +
-                "                  event.data.byteLength != benchData.byteLength) {" + NEWLINE +
-                "                onInvalidResponse(benchData, event.data);" + NEWLINE +
+                "            if (!(busevent.data instanceof ArrayBuffer) || " + NEWLINE +
+                "                  busevent.data.byteLength != benchData.byteLength) {" + NEWLINE +
+                "                onInvalidResponse(benchData, busevent.data);" + NEWLINE +
                 "                return;" + NEWLINE +
                 "            } else {" + NEWLINE +
-                "                var v = new Uint8Array(event.data);" + NEWLINE +
+                "                var v = new Uint8Array(busevent.data);" + NEWLINE +
                 "                for (var j = 0; j < benchData.byteLength; j++) {" + NEWLINE +
                 "                    if (v[j] != benchData[j]) {" + NEWLINE +
-                "                        onInvalidResponse(benchData, event.data);" + NEWLINE +
+                "                        onInvalidResponse(benchData, busevent.data);" + NEWLINE +
                 "                        return;" + NEWLINE +
                 "                    }" + NEWLINE +
                 "                }" + NEWLINE +
                 "            }" + NEWLINE +
                 "        } else {" + NEWLINE +
-                "            if (event.data != benchData) {" + NEWLINE +
-                "                onInvalidResponse(benchData, event.data);" + NEWLINE +
+                "            if (busevent.data != benchData) {" + NEWLINE +
+                "                onInvalidResponse(benchData, busevent.data);" + NEWLINE +
                 "                return;" + NEWLINE +
                 "            }" + NEWLINE +
                 "        }" + NEWLINE +
@@ -106,10 +106,10 @@ public final class WebSocketServerBenchmarkPage {
                 "        socket.send(benchData);" + NEWLINE +
                 "    }" + NEWLINE +
                 "  };" + NEWLINE +
-                "  socket.onopen = function(event) {" + NEWLINE +
+                "  socket.onopen = function(busevent) {" + NEWLINE +
                 "    connectionLabel.innerHTML = \"Connected\";" + NEWLINE +
                 "  };" + NEWLINE +
-                "  socket.onclose = function(event) {" + NEWLINE +
+                "  socket.onclose = function(busevent) {" + NEWLINE +
                 "    benchRunning = false;" + NEWLINE +
                 "    connectionLabel.innerHTML = \"Disconnected\";" + NEWLINE +
                 "  };" + NEWLINE +

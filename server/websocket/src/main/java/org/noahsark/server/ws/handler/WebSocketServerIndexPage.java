@@ -37,15 +37,15 @@ public final class WebSocketServerIndexPage {
                 '}' + NEWLINE +
                 "if (window.WebSocket) {" + NEWLINE +
                 "  socket = new WebSocket(\"" + webSocketLocation + "\");" + NEWLINE +
-                "  socket.onmessage = function(event) {" + NEWLINE +
+                "  socket.onmessage = function(busevent) {" + NEWLINE +
                 "    var ta = document.getElementById('responseText');" + NEWLINE +
-                "    ta.value = ta.value + '\\n' + event.data" + NEWLINE +
+                "    ta.value = ta.value + '\\n' + busevent.data" + NEWLINE +
                 "  };" + NEWLINE +
-                "  socket.onopen = function(event) {" + NEWLINE +
+                "  socket.onopen = function(busevent) {" + NEWLINE +
                 "    var ta = document.getElementById('responseText');" + NEWLINE +
                 "    ta.value = \"Web Socket opened!\";" + NEWLINE +
                 "  };" + NEWLINE +
-                "  socket.onclose = function(event) {" + NEWLINE +
+                "  socket.onclose = function(busevent) {" + NEWLINE +
                 "    var ta = document.getElementById('responseText');" + NEWLINE +
                 "    ta.value = ta.value + \"Web Socket closed\"; " + NEWLINE +
                 "  };" + NEWLINE +

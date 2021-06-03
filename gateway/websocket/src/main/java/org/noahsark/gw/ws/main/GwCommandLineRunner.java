@@ -1,10 +1,7 @@
 package org.noahsark.gw.ws.main;
 
-import org.noahsark.gw.ws.config.CommonConfig;
-import org.noahsark.gw.ws.context.ServerContext;
-import org.noahsark.registration.domain.Service;
-import org.noahsark.server.constant.BizServiceType;
-import org.noahsark.server.eventbus.EventBus;
+import org.noahsark.gw.config.CommonConfig;
+import org.noahsark.gw.context.ServerContext;
 import org.noahsark.server.remote.RemoteOption;
 import org.noahsark.server.ws.server.WebSocketServer;
 import org.slf4j.Logger;
@@ -37,12 +34,7 @@ public class GwCommandLineRunner implements CommandLineRunner {
 
         webSocketServer.init();
 
-        Runtime.getRuntime().addShutdownHook(new Thread() {
-            @Override
-            public void run() {
-                webSocketServer.shutdown();
-            }
-        });
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> webSocketServer.shutdown()));
 
         ServerContext.server = webSocketServer;
 

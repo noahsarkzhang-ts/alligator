@@ -110,16 +110,16 @@ public abstract class NettyRemotingAbstract {
     }
 
     /**
-     * Custom channel event listener.
+     * Custom channel busevent listener.
      *
-     * @return custom channel event listener if defined; null otherwise.
+     * @return custom channel busevent listener if defined; null otherwise.
      */
     public abstract ChannelEventListener getChannelEventListener();
 
     /**
-     * Put a netty event to the executor.
+     * Put a netty busevent to the executor.
      *
-     * @param event Netty event instance.
+     * @param event Netty busevent instance.
      */
     public void putNettyEvent(final NettyEvent event) {
         this.nettyEventExecutor.putNettyEvent(event);
@@ -352,7 +352,7 @@ public abstract class NettyRemotingAbstract {
      * This method specifies thread pool to use while invoking callback methods.
      *
      * @return Dedicated thread pool instance if specified; or null if the callback is supposed to be executed in the
-     * netty event-loop thread.
+     * netty busevent-loop thread.
      */
     public abstract ExecutorService getCallbackExecutor();
 
@@ -553,7 +553,7 @@ public abstract class NettyRemotingAbstract {
             if (this.eventQueue.size() <= maxSize) {
                 this.eventQueue.add(event);
             } else {
-                log.warn("event queue size[{}] enough, so drop this event {}", this.eventQueue.size(), event.toString());
+                log.warn("busevent queue size[{}] enough, so drop this busevent {}", this.eventQueue.size(), event.toString());
             }
         }
 
