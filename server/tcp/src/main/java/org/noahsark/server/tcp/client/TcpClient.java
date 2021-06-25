@@ -4,13 +4,12 @@ import io.netty.channel.ChannelInitializer;
 import io.netty.channel.socket.SocketChannel;
 import java.util.List;
 import org.noahsark.client.heartbeat.PingPayloadGenerator;
+import org.noahsark.client.heartbeat.CommonHeartbeatFactory;
 import org.noahsark.client.manager.ConnectionManager;
 import org.noahsark.server.remote.AbstractRemotingClient;
 import org.noahsark.server.remote.ExponentialBackOffRetry;
 import org.noahsark.server.remote.ServerInfo;
 import org.noahsark.server.rpc.RpcCommand;
-
-import java.net.URI;
 
 public class TcpClient extends AbstractRemotingClient {
 
@@ -36,7 +35,7 @@ public class TcpClient extends AbstractRemotingClient {
     protected void preInit() {
 
         ConnectionManager connectionManager = new ConnectionManager();
-        connectionManager.setHeartbeatFactory(new TcpHeartbeatFactory());
+        connectionManager.setHeartbeatFactory(new CommonHeartbeatFactory());
         connectionManager
             .setRetryPolicy(new ExponentialBackOffRetry(1000, 4, 60 * 1000));
 

@@ -1,10 +1,9 @@
-package org.noahsark.server.tcp.processor;
+package org.noahsark.server.processor;
 
-import org.noahsark.server.processor.AbstractProcessor;
 import org.noahsark.server.rpc.RpcCommand;
 import org.noahsark.server.rpc.RpcContext;
-import org.noahsark.server.tcp.client.TcpHeartbeatFactory;
-import org.noahsark.server.tcp.common.Ping;
+import org.noahsark.client.heartbeat.CommonHeartbeatFactory;
+import org.noahsark.client.ping.Ping;
 import org.noahsark.server.util.JsonUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,7 +20,7 @@ public class PingProcessor extends AbstractProcessor<Ping> {
     protected void execute(Ping request, RpcContext context) {
         log.info("Receive a ping message: {}", JsonUtils.toJson(request));
 
-        RpcCommand command = TcpHeartbeatFactory.getPong(context.getCommand());
+        RpcCommand command = CommonHeartbeatFactory.getPong(context.getCommand());
 
         context.sendResponse(command);
     }

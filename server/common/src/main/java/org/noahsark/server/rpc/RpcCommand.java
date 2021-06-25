@@ -64,6 +64,9 @@ public class RpcCommand implements Serializable {
      */
     private Object payload;
 
+    /**
+     * 附加字段
+     */
     private Object attachment;
 
     public RpcCommand() {

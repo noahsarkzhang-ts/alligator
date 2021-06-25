@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>online client</title>
+    <style type="text/css">
+
+        #user-login {
+            margin: auto;
+            width: 300px;
+            padding-top: 50px;
+        }
+
+        #login-form #loginButton {
+            margin-left: 115px;
+            width: 177px;
+        }
+
+        label {
+            display: inline-block;
+            width: 100px;
+            text-align: right;
+            text-align-last: right;
+            margin-right: 10px;
+        }
+
+        #customers {
+            font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+            width: 90%;
+            border-collapse: collapse;
+        }
+
+        #customers td, #customers th {
+            font-size: 1em;
+            border: 1px solid;
+            padding: 3px 7px 2px 7px;
+        }
+
+        #customers th {
+            font-size: 1.1em;
+            text-align: left;
+            padding-top: 5px;
+            padding-bottom: 4px;
+        }
+
+    </style>
+</head>
+<body>
+<div id="user-login">
+    <form id="login-form" name="loginForm" onsubmit="return false;">
+        <label for="userId">User Id:</label> <input type="text" id="userId" name="userId" required="required"> <br>
+        <label for="userName">User name:</label> <input type="text" id="userName" name="userName" required="required"> <br>
+        <label for="password">password:</label> <input type="password" id="password" name="password" required="required"> <br>
+        <input type="button" id="loginButton" value="login" onclick="login()" >
+    </form>
+</div>
+
+<div id="online" style="width:800px;display: none">
+    <div id="hname">
+        <h1 style="margin-bottom:10px;text-align:center;">在线邀请</h1>
+    </div>
+    <div id="menu" style="width:300px;float:left;">
+        <strong>在线列表</strong>
+        <table id="customers">
+            <tr>
+                <th>用户id</th>
+                <th>用户名称</th>
+                <th>在线状态</th>
+            </tr>
+            <tr>
+                <td>10001</td>
+                <td>Allen</td>
+                <td>online</td>
+            </tr>
+            <tr>
+                <td>10002</td>
+                <td>double</td>
+                <td>online</td>
+            </tr>
+
+        </table>
+    </div>
+    <div id="content" style="width:500px;float:right;">
+        <form onsubmit="return false;" id="formMessage" name="formMessage">
+            <textarea type="text" name="message" id="message" style="width:100%;height:150px;">Hello, World!</textarea>
+            <br>
+            <input type="button" value="Send Web Socket Data"
+                   onclick="send(document.getElementById('message').value)">
+            <h3>Business Output</h3>
+            <textarea id="responseText" style="width:100%;height:300px;"></textarea>
+            <h3>Ping/Pong Output</h3>
+            <textarea id="pingText" style="width:100%;height:300px;"></textarea>
+        </form>
+    </div>
+
+    <div id="bool" style="clear:both;text-align:center;">
+        作者：noahsark
+    </div>
+</div>
+
+<script type="text/javascript">
+    var socket;
+    if (!window.WebSocket) {
+        window.WebSocket = window.MozWebSocket;
+    }
+    if (window.WebSocket) {
+        socket = new WebSocket("ws://192.168.68.25:9091/websocket");
+        socket.onmessage = function (busevent) {
+            var msg = busevent.data;
+            var data = JSON.parse(msg);
+            dispatcher(data);
+        };
+        socket.onopen = function (busevent) {
+            var ta = document.getElementById('responseText');
+            ta.value = "Web Socket opened!";
+            heartbeat();
+        };
+        socket.onclose = function (busevent) {
+            var ta = document.getElementById('responseText');
+            ta.value = ta.value + "Web Socket closed";
+        };
+    } else {
+        alert("Your browser does not support Web Socket.");
+    }
+
+    var requestId = 1;
+
+    var handles = {};
+    handles["2:1"] = loginRep;
+
+    function loginRep(data) {
+        var payload = data.payload;
+
+        if (payload.code == 0 ) {
+            display("online");
+            unDisplay("user-login");
+        } else {
+            alert("login fail!!")
+        }
+    }
+
+    function send(message) {
+        if (!window.WebSocket) {
+            return;
+        }
+        if (socket.readyState == WebSocket.OPEN) {
+            socket.send(message);
+        } else {
+            alert("The socket is not open.");
+        }
+    }
+
+    function login() {
+        var userId = document.forms["loginForm"]["userId"].value;
+        var userName = document.forms["loginForm"]["userName"].value;
+        var password = document.forms["loginForm"]["password"].value;
+
+        if (userId == null || userId == "") {
+            alert("userId 不能为空！");
+            return;
+        }
+
+        if (userName == null || userName == "") {
+            alert("userName 不能为空！");
+            return;
+        }
+
+        if (password == null || password == "") {
+            alert("password 不能为空！");
+            return;
+        }
+
+        var cmd = buildLoginCmd(userId, userName, password);
+        console.log(cmd);
+        socket.send(cmd);
+    }
+
+    function display(id) {
+        var target = document.getElementById(id);
+
+        if (target.style.display == "none") {
+            target.style.display = "";
+        }
+    }
+
+    function unDisplay(id) {
+        var target = document.getElementById(id);
+
+        if (target.style.display == "") {
+            target.style.display = "none";
+        }
+    }
+
+    function heartbeat() {
+        if (!socket) {
+            return;
+        }
+        if (socket.readyState !== WebSocket.OPEN) {
+            return;
+        }
+
+        socket.send(buildPingCmd());
+        setTimeout(heartbeat, 5000);
+    }
+
+    function buildPingCmd() {
+        var ping = {
+            load: 1
+        };
+
+        var cmd = {
+            headSize: 17,
+            requestId: 0,
+            biz: 1,
+            cmd: 1,
+            type: 1,
+            ver: 1,
+            serializer: 1,
+            payload: ping
+        };
+
+        return JSON.stringify(cmd);
+    }
+
+    function buildLoginCmd(userId, userName, password) {
+        var user = {
+            userId: userId,
+            userName: userName,
+            password: password
+        };
+
+        var cmd = {
+            headSize: 17,
+            requestId: requestId++,
+            biz: 2,
+            cmd: 1,
+            type: 1,
+            ver: 1,
+            serializer: 1,
+            payload: user
+        };
+
+        return JSON.stringify(cmd);
+    }
+
+    function dispatcher(data) {
+        var cmdKey = data.biz + ":" + data.cmd;
+        if (cmdKey == "1:1") {
+            var ta = document.getElementById('pingText');
+
+            ta.value = ta.value + '\n' + JSON.stringify(data);
+
+            return;
+        }
+
+        var handle = handles[cmdKey];
+        if (handle != null) {
+            handle(data);
+
+            var ta = document.getElementById('responseText');
+            ta.value = ta.value + '\n' + JSON.stringify(data);
+
+        } else {
+            var ta = document.getElementById('responseText');
+            ta.value = ta.value + '\n' +   JSON.stringify(data)
+                +  '\n'+  cmdKey + ": no handle!!!";
+        }
+    }
+
+</script>
+</body>
+</html>

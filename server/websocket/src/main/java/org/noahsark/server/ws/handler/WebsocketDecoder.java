@@ -44,6 +44,8 @@ public class WebsocketDecoder extends SimpleChannelInboundHandler<WebSocketFrame
                 throw new UnsupportedOperationException(message);
             }
         } catch (JsonSyntaxException ex) {
+            log.error("catch an exception: ", ex);
+
             result.setCode(1001);
             result.setMessage("Format Error!");
 
@@ -55,6 +57,7 @@ public class WebsocketDecoder extends SimpleChannelInboundHandler<WebSocketFrame
                     .build();
 
         } catch (Exception ex) {
+            log.error("catch an exception: ", ex);
             result.setCode(1002);
             result.setMessage(message);
 

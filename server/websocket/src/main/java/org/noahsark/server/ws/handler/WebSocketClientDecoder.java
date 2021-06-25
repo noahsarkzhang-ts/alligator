@@ -56,7 +56,7 @@ public class WebSocketClientDecoder extends SimpleChannelInboundHandler<Object> 
     private ChannelPromise handshakeFuture;
     private RemotingClient client;
 
-    public WebSocketClientDecoder(WebSocketClientHandshaker handshaker,RemotingClient client) {
+    public WebSocketClientDecoder(WebSocketClientHandshaker handshaker, RemotingClient client) {
         this.handshaker = handshaker;
         this.client = client;
     }

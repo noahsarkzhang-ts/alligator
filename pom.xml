@@ -17,6 +17,7 @@
     <module>registration</module>
     <module>mq</module>
     <module>biz</module>
+    <module>client</module>
   </modules>
 
   <name>alligator-all</name>

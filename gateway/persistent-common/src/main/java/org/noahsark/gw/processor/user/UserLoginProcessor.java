@@ -75,7 +75,7 @@ public class UserLoginProcessor extends AbstractProcessor<UserLoginInfo> {
 
     @Override
     protected int getBiz() {
-        return 1;
+        return 2;
     }
 
     @Override

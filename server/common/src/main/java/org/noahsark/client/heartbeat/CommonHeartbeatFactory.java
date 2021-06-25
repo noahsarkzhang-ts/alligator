@@ -1,18 +1,16 @@
-package org.noahsark.server.tcp.client;
+package org.noahsark.client.heartbeat;
 
-import org.noahsark.client.heartbeat.HeartbeatFactory;
-import org.noahsark.client.heartbeat.PingPayloadGenerator;
+import org.noahsark.client.ping.Ping;
 import org.noahsark.server.constant.RpcCommandType;
 import org.noahsark.server.constant.RpcCommandVer;
 import org.noahsark.server.constant.SerializerType;
 import org.noahsark.server.rpc.Result;
 import org.noahsark.server.rpc.RpcCommand;
-import org.noahsark.server.tcp.common.Ping;
 
 /**
  * Created by hadoop on 2021/4/3.
  */
-public class TcpHeartbeatFactory implements HeartbeatFactory<RpcCommand> {
+public class CommonHeartbeatFactory implements HeartbeatFactory<RpcCommand> {
 
     private PingPayloadGenerator payloadGenerator;
 

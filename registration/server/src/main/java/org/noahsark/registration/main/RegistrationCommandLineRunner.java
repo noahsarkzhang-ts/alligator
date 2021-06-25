@@ -4,7 +4,6 @@ import org.noahsark.registration.config.CommonConfig;
 import org.noahsark.registration.server.RegistrationServer;
 import org.noahsark.server.processor.AbstractProcessor;
 import org.noahsark.server.remote.RemoteOption;
-import org.noahsark.server.tcp.processor.PingProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
