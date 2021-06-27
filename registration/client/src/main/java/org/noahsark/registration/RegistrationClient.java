@@ -82,6 +82,13 @@ public class RegistrationClient extends TcpClient {
         return commonInvokeAsync(query, RegistrationConstants.BIZ_TYPE, RegistrationConstants.CMD_LOOKUP_BIZ, callback);
     }
 
+    public Result<List<CandidateService>> getAllService(ServiceQuery query) {
+
+        Result<List<CandidateService>>  result = commonArrayInvoke(query, CandidateService.class, RegistrationConstants.BIZ_TYPE, RegistrationConstants.CMD_GET_ALL_SERVICE_BIZ);
+
+        return result;
+    }
+
     public Result<CandidateService> userLookup(UserQuery query) {
         Result<CandidateService> result = commonInvoke(query, CandidateService.class, RegistrationConstants.BIZ_TYPE, RegistrationConstants.CMD_LOOKUP_USER);
 
@@ -117,6 +124,25 @@ public class RegistrationClient extends TcpClient {
             String json = new String((byte[]) object, CharsetUtil.UTF_8);
 
             result = JsonUtils.fromJsonObject(json, type);
+        }
+
+        return result;
+    }
+
+    private <T> Result<List<T>> commonArrayInvoke(Object payload, Class<T> type, int biz, int cmd) {
+        Request request = new Request.Builder()
+            .biz(biz)
+            .cmd(cmd)
+            .payload(payload)
+            .build();
+
+        Object object = invokeSync(request, 30000);
+        Result<List<T>> result = null;
+
+        if (object != null) {
+            String json = new String((byte[]) object, CharsetUtil.UTF_8);
+
+            result = JsonUtils.fromJsonArray(json,type);
         }
 
         return result;

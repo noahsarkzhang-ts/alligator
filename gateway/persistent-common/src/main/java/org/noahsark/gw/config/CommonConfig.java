@@ -20,6 +20,8 @@ public class CommonConfig {
 
     private MqProxy mqProxy;
 
+    private UserEvent userEvent;
+
     public static class WorkQueueConfig {
 
         private int maxQueueNum;
@@ -149,6 +151,18 @@ public class CommonConfig {
         public void setConsumerGroup(String consumerGroup) {
             this.consumerGroup = consumerGroup;
         }
+
+        public String getTopic() {
+            return topic;
+        }
+
+        public void setTopic(String topic) {
+            this.topic = topic;
+        }
+    }
+
+    public static class UserEvent {
+        private String topic;
 
         public String getTopic() {
             return topic;

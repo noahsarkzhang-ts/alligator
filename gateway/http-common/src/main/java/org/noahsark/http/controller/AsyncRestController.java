@@ -30,7 +30,7 @@ public class AsyncRestController {
     private ThreadPoolTaskExecutor asyncTaskExecutor;
 
     @GetMapping("/hello")
-    public WebAsyncTask sayHello(@RequestParam(defaultValue = "Demo user") String name) {
+    public WebAsyncTask sayHello(@RequestParam(defaultValue = "Demo inviter") String name) {
         logger.info("receive a request,thread: {},param :{}", Thread.currentThread().getId(), name);
 
         WebAsyncTask<Response> task = new WebAsyncTask<>(Constants.INTERFACE_TIMEOUT_MS, asyncTaskExecutor, () -> {

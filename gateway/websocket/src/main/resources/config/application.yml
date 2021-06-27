@@ -16,6 +16,8 @@ common:
     producerGroup: online-produce-1
     consumerGroup: online-consumer-1
     topic: TopicTest-1
+  userEvent:
+    topic: UserEvent
 
 logging:
   config: classpath:config/logback-spring.xml

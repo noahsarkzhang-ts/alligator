@@ -42,7 +42,7 @@ public class UserLoginProcessor extends AbstractProcessor<UserLoginInfo> {
 
                 Result<Void> result1 = JsonUtils.fromCommonObject((byte[]) result);
 
-                logger.info("user login: {}", result1);
+                logger.info("inviter login: {}", result1);
 
                 UserLoginResult userLoginResult = new UserLoginResult();
                 userLoginResult.setToken(UUID.randomUUID().toString());

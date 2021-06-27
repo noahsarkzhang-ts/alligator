@@ -6,11 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.PriorityQueue;
-
-import org.noahsark.client.future.RpcPromise;
 import org.noahsark.registration.domain.Service;
 import org.noahsark.registration.domain.User;
-import org.noahsark.server.exception.TimeoutException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,10 +16,10 @@ import org.slf4j.LoggerFactory;
  */
 public class MemoryRepository implements Repository {
 
-    private static Logger log = LoggerFactory.getLogger(RpcPromise.class);
+    private static Logger log = LoggerFactory.getLogger(MemoryRepository.class);
 
     /**
-     * 用户id --> user
+     * 用户id --> inviter
      */
     private Map<String, User> userMap = new HashMap<>();
 
@@ -32,12 +29,12 @@ public class MemoryRepository implements Repository {
     private Map<String, Service> serviceMap = new HashMap<>();
 
     /**
-     * user id --> service id
+     * inviter id --> service id
      */
     private Map<String, String> user2Servie = new HashMap<>();
 
     /**
-     * service id --> user id list
+     * service id --> inviter id list
      */
     private Map<String, List<String>> serviceUsers = new HashMap<>();
 

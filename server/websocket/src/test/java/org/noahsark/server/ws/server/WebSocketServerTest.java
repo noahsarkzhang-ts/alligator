@@ -22,7 +22,7 @@ public class WebSocketServerTest {
         int port = 9090;
 
         // 请求
-        // request = {"className":"user","method":"login","requestId":1,"version":"V1.0","payload":{"userName":"allan","password":"test"}}
+        // request = {"className":"inviter","method":"login","requestId":1,"version":"V1.0","payload":{"userName":"allan","password":"test"}}
 
         final WebSocketServer webSocketServer = new WebSocketServer(host, port);
         webSocketServer.init();

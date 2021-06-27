@@ -78,7 +78,7 @@ public class RocketmqProxy {
         return result;
     }
 
-    public void sendOneway(RocketmqTopic topic, Request request, int timeoutMillis) {
+    public void sendOneway(RocketmqTopic topic, Request request) {
         request.setRequestId(promiseHolder.nextId());
 
         RocketmqMessage msg = new RocketmqMessage();

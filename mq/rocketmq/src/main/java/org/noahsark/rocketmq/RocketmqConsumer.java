@@ -2,11 +2,9 @@ package org.noahsark.rocketmq;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-
 import org.apache.rocketmq.client.consumer.DefaultMQPushConsumer;
 import org.apache.rocketmq.client.consumer.listener.ConsumeConcurrentlyStatus;
 import org.apache.rocketmq.client.consumer.listener.MessageListenerConcurrently;
@@ -20,8 +18,6 @@ import org.noahsark.server.rpc.MultiRequest;
 import org.noahsark.server.rpc.RpcCommand;
 import org.noahsark.server.rpc.RpcContext;
 import org.noahsark.server.rpc.RpcRequest;
-import org.noahsark.server.session.Session;
-import org.noahsark.server.util.JsonUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -89,77 +85,79 @@ public class RocketmqConsumer implements Consumer<RocketmqMessageListener, Rocke
             });
 
             consumer.registerMessageListener(
-                    (MessageListenerConcurrently) (list, consumeConcurrentlyContext) -> {
+                (MessageListenerConcurrently) (list, consumeConcurrentlyContext) -> {
 
-                        list.stream().forEach(messageExt -> {
-                            try {
-                                byte[] body = messageExt.getBody();
+                    list.stream().forEach(messageExt -> {
+                        try {
+                            byte[] body = messageExt.getBody();
 
-                                ByteBuf buf = Unpooled.wrappedBuffer(body);
+                            ByteBuf buf = Unpooled.wrappedBuffer(body);
 
-                                buf.markReaderIndex();
-                                short headSize = buf.readShort();
-                                buf.resetReaderIndex();
+                            buf.markReaderIndex();
+                            short headSize = buf.readShort();
+                            buf.resetReaderIndex();
 
-                                RpcCommand command = null;
+                            RpcCommand command = null;
 
-                                if (headSize == RpcCommand.RPC_COMMAND_SIZE) {
-                                    command = RpcCommand.decode(buf);
+                            if (headSize == RpcCommand.RPC_COMMAND_SIZE) {
+                                command = RpcCommand.decode(buf);
+                            } else {
+                                command = MultiRequest.decode(buf);
+                            }
+
+                            logger.info("receive a command: {}", command);
+
+                            if (!(command.getType() == RpcCommandType.RESPONSE)) { // 处理请求
+                                RocketmqChannelHolder channelHolder = proxy.getChannelHolder();
+
+                                RpcContext rpcContext = new RpcContext.Builder()
+                                    .command(command)
+                                    .session(channelHolder)
+                                    .build();
+
+                                RpcRequest rpcRequest = new RpcRequest.Builder()
+                                    .request(command)
+                                    .context(rpcContext)
+                                    .build();
+
+                                String processName = command.getBiz() + ":" + command.getCmd();
+                                logger.info("processName: {}", processName);
+
+                                AbstractProcessor processor = Dispatcher.getInstance()
+                                    .getProcessor(processName);
+
+                                if (processor != null) {
+                                    processor.process(rpcRequest);
                                 } else {
-                                    command = MultiRequest.decode(buf);
-                                }
-
-                                logger.info("receive a command: {}", command);
-
-                                if (!(command.getType() == RpcCommandType.RESPONSE)) { // 处理请求
-                                    RocketmqChannelHolder channelHolder = proxy.getChannelHolder();
-
-                                    RpcContext rpcContext = new RpcContext.Builder()
-                                            .command(command)
-                                            .session(channelHolder)
-                                            .build();
-
-                                    RpcRequest rpcRequest = new RpcRequest.Builder()
-                                            .request(command)
-                                            .context(rpcContext)
-                                            .build();
-
-                                    String processName = command.getBiz() + ":" + command.getCmd();
-                                    logger.info("processName: {}", processName);
-
-                                    AbstractProcessor processor = Dispatcher.getInstance().getProcessor(processName);
+                                    // 使用默认的处理器
+                                    processName = -1 + ":" + -1;
+                                    processor = Dispatcher.getInstance().getProcessor(processName);
 
                                     if (processor != null) {
                                         processor.process(rpcRequest);
                                     } else {
-                                        // 使用默认的处理器
-                                        processName = -1 + ":" + -1;
-                                        processor = Dispatcher.getInstance().getProcessor(processName);
-
-                                        if (processor != null) {
-                                            processor.process(rpcRequest);
-                                        } else {
-                                            logger.warn("No processor: {}", processName);
-                                        }
-                                    }
-                                } else { // 处理响应
-                                    RpcPromise promise = proxy.getPromiseHolder().getPromise(command.getRequestId());
-
-                                    if (promise != null) {
-                                        promise.setSuccess(command.getPayload());
-
-                                    } else {
-                                        logger.warn("promis is null : {}", command.getRequestId());
+                                        logger.warn("No processor: {}", processName);
                                     }
                                 }
+                            } else { // 处理响应
+                                RpcPromise promise = proxy.getPromiseHolder()
+                                    .getPromise(command.getRequestId());
 
-                            } catch (Exception ex) {
-                                logger.error("catch an exception.", ex);
+                                if (promise != null) {
+                                    promise.setSuccess(command.getPayload());
+
+                                } else {
+                                    logger.warn("promis is null : {}", command.getRequestId());
+                                }
                             }
-                        });
 
-                        return ConsumeConcurrentlyStatus.CONSUME_SUCCESS;
+                        } catch (Exception ex) {
+                            logger.error("catch an exception.", ex);
+                        }
                     });
+
+                    return ConsumeConcurrentlyStatus.CONSUME_SUCCESS;
+                });
 
             consumer.start();
 

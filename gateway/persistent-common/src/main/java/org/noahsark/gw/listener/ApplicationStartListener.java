@@ -1,10 +1,14 @@
 package org.noahsark.gw.listener;
 
+import java.util.ArrayList;
+import java.util.List;
+import org.noahsark.gw.config.CommonConfig;
 import org.noahsark.gw.context.ServerContext;
 import org.noahsark.rocketmq.RocketmqProxy;
 import org.noahsark.rocketmq.RocketmqTopic;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationStartedEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;
@@ -19,18 +23,24 @@ public class ApplicationStartListener implements ApplicationListener<Application
 
     private static Logger logger = LoggerFactory.getLogger(ApplicationStartListener.class);
 
+    @Autowired
+    private CommonConfig config;
+
+
     @Override
     public void onApplicationEvent(ApplicationStartedEvent applicationStartedEvent) {
 
-        RocketmqTopic topic = new RocketmqTopic();
-        topic.setTopic("TopicTest-1");
+        List<RocketmqTopic> topics = new ArrayList<>();
+        RocketmqTopic gwTopic = new RocketmqTopic();
+        gwTopic.setTopic(config.getMqProxy().getTopic());
+        topics.add(gwTopic);
 
-        String nameSrv = "120.79.235.83:9876";
-        String producerGroup = "gw-ws-produce1";
-        String consumerGroup = "gw-ws-cousumer1";
+        String nameSrv = config.getMqProxy().getNameSrv();
+        String consumerGroup = config.getMqProxy().getConsumerGroup();
+        String producerGroup = config.getMqProxy().getProducerGroup();
 
         RocketmqProxy rocketmqProxy = new RocketmqProxy.Builder()
-                .topic(topic)
+                .topics(topics)
                 .consumerGroup(consumerGroup)
                 .producerGroup(producerGroup)
                 .namesrvAddr(nameSrv)

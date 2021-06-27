@@ -1,5 +1,7 @@
 package org.noahsark.registration.processor;
 
+import java.util.ArrayList;
+import java.util.List;
 import org.noahsark.registration.constant.RegistrationConstants;
 import org.noahsark.registration.domain.CandidateService;
 import org.noahsark.registration.domain.Service;
@@ -14,33 +16,38 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
-
 /**
- * Created by hadoop on 2021/4/11.
+ * Created by hadoop on 2021/6/27.
  */
 @Component
-public class ServiceLookupingProcessor extends AbstractProcessor<ServiceQuery> {
+public class GetAllServiceProcessor  extends AbstractProcessor<ServiceQuery> {
 
-    private static Logger logger = LoggerFactory.getLogger(ServiceLookupingProcessor.class);
+    private static Logger logger = LoggerFactory.getLogger(GetAllServiceProcessor.class);
 
     @Autowired
     private Repository repository;
 
     @Override
     protected void execute(ServiceQuery request, RpcContext context) {
+
         logger.info("receive query service request: {}" , JsonUtils.toJson(request));
 
         List<Service> serviceList = repository.getServicesByBiz(request.getBiz());
 
-        // TODO 暂时返回第一个服务
-        CandidateService candidateService = new CandidateService();
-        Service service = serviceList.get(0);
-        candidateService.setAddress(service.getAddress());
-        candidateService.setTopic(service.getTopic());
+        List<CandidateService> candidateServices = new ArrayList<>();
+        serviceList.stream().forEach(service -> {
+            CandidateService candidateService = new CandidateService();
+
+            candidateService.setAddress(service.getAddress());
+            candidateService.setTopic(service.getTopic());
+
+            candidateServices.add(candidateService);
+        });
+
 
         context.sendResponse(Response.buildResponse(context.getCommand(),
-                candidateService, 0, "success"));
+            candidateServices, 0, "success"));
+
     }
 
     @Override
@@ -55,6 +62,6 @@ public class ServiceLookupingProcessor extends AbstractProcessor<ServiceQuery> {
 
     @Override
     protected int getCmd() {
-        return RegistrationConstants.CMD_LOOKUP_BIZ;
+        return RegistrationConstants.CMD_GET_ALL_SERVICE_BIZ;
     }
 }

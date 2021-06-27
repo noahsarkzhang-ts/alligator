@@ -1,5 +1,6 @@
 package org.noahsark.gw.processor;
 
+import java.util.Set;
 import org.noahsark.client.future.CommandCallback;
 import org.noahsark.gw.config.CommonConfig;
 import org.noahsark.gw.context.ServerContext;
@@ -8,6 +9,7 @@ import org.noahsark.registration.BizServiceCache;
 import org.noahsark.registration.domain.CandidateService;
 import org.noahsark.rocketmq.RocketmqProxy;
 import org.noahsark.rocketmq.RocketmqTopic;
+import org.noahsark.server.constant.RpcCommandType;
 import org.noahsark.server.processor.AbstractProcessor;
 import org.noahsark.server.rpc.MultiRequest;
 import org.noahsark.server.rpc.Request;
@@ -60,12 +62,17 @@ public class DefaultProcessor extends AbstractProcessor<Void> {
 
         MultiRequest request = (MultiRequest) context.getCommand();
 
-        List<String> targetIds = request.getTargetIds();
+        Set<String> targetIds = request.getTargetIds();
         if (targetIds == null || targetIds.size() == 0) {
 
             logger.warn("target ids is null.");
 
             return;
+        }
+
+        // 广播
+        if (targetIds.size() == 1 && targetIds.contains("*")) {
+            targetIds = UserManager.getInstance().getOnlineUsers();
         }
 
         targetIds.stream().forEach(userId -> {
@@ -87,27 +94,35 @@ public class DefaultProcessor extends AbstractProcessor<Void> {
 
                 logger.info("send a downstream:{}", downRequest);
 
-                session.invoke(downRequest, new CommandCallback() {
-                    @Override
-                    public void callback(Object result, int currentFanout, int fanout) {
+                if (request.getType() == RpcCommandType.REQUEST) {
+                    session.invoke(downRequest, new CommandCallback() {
+                        @Override
+                        public void callback(Object result, int currentFanout, int fanout) {
 
-                        RocketmqTopic topic = new RocketmqTopic();
-                        topic.setTopic(request.getTopic());
+                            RocketmqTopic topic = new RocketmqTopic();
+                            topic.setTopic(request.getTopic());
 
-                        Response response = Response.buildResponseFromResult(request, result);
-                        response.setAttachment(topic);
+                            Response response = Response.buildResponseFromResult(request, result);
+                            response.setAttachment(topic);
 
-                        context.sendResponse(response);
-                    }
+                            context.sendResponse(response);
+                        }
 
-                    @Override
-                    public void failure(Throwable cause, int currentFanout, int fanout) {
-                        logger.warn("catch an exception.", cause);
+                        @Override
+                        public void failure(Throwable cause, int currentFanout, int fanout) {
+                            logger.warn("catch an exception.", cause);
 
-                        context.sendResponse(Response.buildCommonResponse(context.getCommand(),
-                            -1, "failed"));
-                    }
-                }, 6000);
+                            context.sendResponse(Response.buildCommonResponse(context.getCommand(),
+                                -1, "failed"));
+                        }
+                    }, 6000);
+                } else if (request.getType() == RpcCommandType.REQUEST_ONEWAY) {
+                    session.invokeOneway(request);
+                } else {
+                    logger.warn("illegal cmd type: {}", request.getType());
+                }
+
+
             } catch (Exception ex) {
                 logger.warn("catch an exception.", ex);
 
@@ -124,7 +139,7 @@ public class DefaultProcessor extends AbstractProcessor<Void> {
             RpcCommand command = context.getCommand();
 
             // TODO
-            // 根据 biz 从注册中心获取 topc
+            // 根据 biz 从注册中心获取 topic
             BizServiceCache cache = ServerContext.bizServiceCache;
             CandidateService service = cache.get(command.getBiz());
 
@@ -148,28 +163,30 @@ public class DefaultProcessor extends AbstractProcessor<Void> {
 
             logger.info("toptic is: {}", topic);
 
-            proxy.sendAsync(topic, multiRequest, new CommandCallback() {
-                @Override
-                public void callback(Object result, int currentFanout, int fanout) {
+            if (command.getType() == RpcCommandType.REQUEST) {
+                proxy.sendAsync(topic, multiRequest, new CommandCallback() {
+                    @Override
+                    public void callback(Object result, int currentFanout, int fanout) {
 
-                    /*String sPayload = new String((byte[]) result);
-                    JsonObject paylpad = new JsonParser().parse(sPayload).getAsJsonObject();
-                    logger.info("receive a response: {}", paylpad);*/
+                        // 2. 响应
+                        context.sendResponse(
+                            Response.buildResponseFromResult(context.getCommand(), result));
+                    }
 
-                    // 2. 响应
-                    context.sendResponse(
-                        Response.buildResponseFromResult(context.getCommand(), result));
-                }
+                    @Override
+                    public void failure(Throwable cause, int currentFanout, int fanout) {
 
-                @Override
-                public void failure(Throwable cause,int currentFanout, int fanout) {
+                        logger.warn("Invoke catch an exception!", cause);
 
-                    logger.warn("Invoke catch an exception!", cause);
-
-                    context.sendResponse(Response.buildCommonResponse(context.getCommand(),
-                        -1, "failed"));
-                }
-            }, 10000);
+                        context.sendResponse(Response.buildCommonResponse(context.getCommand(),
+                            -1, "failed"));
+                    }
+                }, 10000);
+            } else if (command.getType() == RpcCommandType.REQUEST_ONEWAY) {
+                proxy.sendOneway(topic, multiRequest);
+            } else {
+                logger.warn("illegal cmd type: {}", command.getType());
+            }
         } catch (Exception ex) {
             logger.warn("Invoke catch an exception!", ex);
 

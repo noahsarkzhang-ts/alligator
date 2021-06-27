@@ -27,7 +27,7 @@ public class UserLookupingProcessor extends AbstractProcessor<UserQuery> {
 
     @Override
     protected void execute(UserQuery request, RpcContext context) {
-        logger.info("receive query user service request: {}", JsonUtils.toJson(request));
+        logger.info("receive query inviter service request: {}", JsonUtils.toJson(request));
 
         Service service = repository.getServiceByUser(request.getUserId());
 

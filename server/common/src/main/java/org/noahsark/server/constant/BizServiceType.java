@@ -22,6 +22,16 @@ public class BizServiceType {
     public static final int BIZ_REGISTRAION = 2;
 
     /**
+     * 用户事件服务
+     */
+    public static final int BIZ_USER_EVENT = 3;
+
+    /**
+     * 服务事件服务
+     */
+    public static final int BIZ_SERVICE_EVENT = 4;
+
+    /**
      *  100-200 网关类服务
      */
 
@@ -50,13 +60,13 @@ public class BizServiceType {
      */
 
     /**
-     *  在线服务
+     * 在线服务
      */
 
     public static final int BIZ_ONLINE = 201;
 
     /**
-     *  客户端 300-400
+     * 客户端 300-400
      */
     public static final int BIZ_CLIENT = 300;
 }

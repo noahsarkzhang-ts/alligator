@@ -9,8 +9,11 @@ import io.netty.util.CharsetUtil;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 import org.noahsark.server.constant.RpcCommandType;
 import org.noahsark.server.constant.RpcCommandVer;
 import org.noahsark.server.constant.SerializerType;
@@ -41,7 +44,7 @@ public class MultiRequest extends Request {
     /**
      * targetIds,目标用户
      */
-    private List<String> targetIds;
+    private Set<String> targetIds;
 
     public MultiRequest() {
     }
@@ -182,9 +185,9 @@ public class MultiRequest extends Request {
 
             String[] idSlice = ids.split(";");
 
-            List<String> list = Arrays.asList(idSlice);
+            Set<String> userIds = Arrays.stream(idSlice).collect(Collectors.toSet());
 
-            this.targetIds = list;
+            this.targetIds = userIds;
         }
     }
 
@@ -198,11 +201,11 @@ public class MultiRequest extends Request {
         props.put("topic", topic);
     }
 
-    public List<String> getTargetIds() {
+    public Set<String> getTargetIds() {
         return targetIds;
     }
 
-    public void setTargetIds(List<String> targetIds) {
+    public void setTargetIds(Set<String> targetIds) {
         this.targetIds = targetIds;
 
         String ids = String.join(";", targetIds);
@@ -224,7 +227,7 @@ public class MultiRequest extends Request {
 
         private String topic;
 
-        private List<String> targetIds;
+        private Set<String> targetIds;
 
         private Request.Builder requestBuilder = new Request.Builder();
 
@@ -271,7 +274,7 @@ public class MultiRequest extends Request {
             return this;
         }
 
-        public Builder targetIds(List<String> targetIds) {
+        public Builder targetIds(Set<String> targetIds) {
             this.targetIds = targetIds;
 
             String ids = String.join(";", targetIds);
@@ -366,9 +369,9 @@ public class MultiRequest extends Request {
 
         command.setTopic("t_reg");
 
-        ArrayList<String> targetIds = new ArrayList<>();
-        targetIds.add("user-1");
-        targetIds.add("user-2");
+        Set<String> targetIds = new HashSet<>();
+        targetIds.add("inviter-1");
+        targetIds.add("inviter-2");
 
         command.setTargetIds(targetIds);
 
