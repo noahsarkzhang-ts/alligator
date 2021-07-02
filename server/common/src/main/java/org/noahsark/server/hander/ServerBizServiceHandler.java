@@ -53,7 +53,8 @@ public class ServerBizServiceHandler extends SimpleChannelInboundHandler<RpcComm
             Session session = Session.getOrCreatedSession(ctx.channel());
             Connection connection = session.getConnection();
 
-            if (command.getType() == RpcCommandType.REQUEST) {
+            if (command.getType() == RpcCommandType.REQUEST
+                    || command.getType() == RpcCommandType.REQUEST_ONEWAY) {
                 RequestHandler.processRequest(ctx, command, workQueue, session);
             } else {
                 RequestHandler.processResponse(connection, command);

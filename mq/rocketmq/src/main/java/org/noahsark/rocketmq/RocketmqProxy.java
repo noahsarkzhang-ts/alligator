@@ -41,13 +41,17 @@ public class RocketmqProxy {
         init();
     }
 
+    public void start() {
+        producer.start();
+        consumer.start();
+    }
+
     private void init() {
         producer = new RocketmqProducer(this.producerGroup, this.namesrvAddr);
 
         consumer = new RocketmqConsumer(this.consumerGroup, this.namesrvAddr);
         this.topics.stream().forEach(topic -> consumer.subscribe(topic));
         consumer.setProxy(this);
-        consumer.start();
 
         promiseHolder = new RocketmqPromiseHolder(producer);
         channelHolder = new RocketmqChannelHolder(producer, promiseHolder);

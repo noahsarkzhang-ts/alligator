@@ -6,3 +6,10 @@ logging:
   config: classpath:config/logback-spring.xml
   file:
     name: logs/client-online.log
+
+cas:
+  # customer server address
+  client-host-url: http://192.168.68.25:9098/
+  server-url-prefix: http://192.168.7.171:8080/
+  # cas server login url
+  server-login-url: http://192.168.7.171:8080/login

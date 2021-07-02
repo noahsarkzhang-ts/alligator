@@ -124,14 +124,17 @@
     }
 
     var requestId = 1;
+    var currentUser;
 
     var handles = {};
     handles["2:1"] = loginRep;
+
 
     function loginRep(data) {
         var payload = data.payload;
 
         if (payload.code == 0 ) {
+            currentUser = payload.data;
             display("online");
             unDisplay("user-login");
         } else {

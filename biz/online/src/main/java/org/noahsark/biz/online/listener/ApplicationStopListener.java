@@ -1,5 +1,8 @@
 package org.noahsark.biz.online.listener;
 
+import org.noahsark.biz.online.context.ServerContext;
+import org.noahsark.registration.RegistrationClient;
+import org.noahsark.rocketmq.RocketmqProxy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationListener;
@@ -19,6 +22,18 @@ public class ApplicationStopListener implements ApplicationListener<ContextClose
 
     @Override
     public void onApplicationEvent(ContextClosedEvent contextClosedEvent) {
+        RocketmqProxy mqProxy = ServerContext.mqProxy;
+
+        if (mqProxy != null) {
+            mqProxy.getProducer().shutdown();
+            mqProxy.getConsumer().shutdown();
+        }
+
+        RegistrationClient regClient = ServerContext.regClient;
+        if (regClient != null) {
+            regClient.shutdown();
+        }
+
         logger.info("Application stoped!");
     }
 }

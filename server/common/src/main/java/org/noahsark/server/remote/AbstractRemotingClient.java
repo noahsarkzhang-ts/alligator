@@ -9,7 +9,7 @@ import org.noahsark.client.future.CommandCallback;
 import org.noahsark.client.future.Connection;
 import org.noahsark.client.future.RpcPromise;
 import org.noahsark.client.manager.ConnectionManager;
-import org.noahsark.server.event.ClientConnectionEvent;
+import org.noahsark.server.event.ClientConnectionSuccessEvent;
 import org.noahsark.server.eventbus.EventBus;
 import org.noahsark.server.processor.AbstractProcessor;
 import org.noahsark.server.queue.WorkQueue;
@@ -23,7 +23,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Created by hadoop on 2021/3/14.
@@ -258,7 +257,7 @@ public abstract class AbstractRemotingClient implements RemotingClient {
             if (!future.isSuccess()) {
                 future.channel().pipeline().fireChannelInactive();
             } else {
-                EventBus.getInstance().post(new ClientConnectionEvent(null));
+                EventBus.getInstance().post(new ClientConnectionSuccessEvent(null));
             }
         };
     }

@@ -1,6 +1,8 @@
 package org.noahsark.rocketmq;
 
 import java.util.UUID;
+
+import org.apache.rocketmq.client.exception.MQClientException;
 import org.apache.rocketmq.client.producer.DefaultMQProducer;
 import org.apache.rocketmq.client.producer.SendCallback;
 import org.apache.rocketmq.client.producer.SendResult;
@@ -15,7 +17,7 @@ import org.slf4j.LoggerFactory;
  * Created by hadoop on 2021/5/1.
  */
 public class RocketmqProducer implements Producer<RocketmqMessage,
-    RocketmqSendCallback, RocketmqSendResult> {
+        RocketmqSendCallback, RocketmqSendResult> {
 
     private static Logger logger = LoggerFactory.getLogger(RocketmqProducer.class);
 
@@ -41,19 +43,18 @@ public class RocketmqProducer implements Producer<RocketmqMessage,
             producer = new DefaultMQProducer(groupName);
 
             producer.setNamesrvAddr(namesrvAddr);
-            producer.start();
+            /*producer.start();*/
         } catch (Exception ex) {
             logger.error("catch an excepion.", ex);
             throw new MQOprationException(ex);
         }
-
     }
 
     @Override
     public void send(RocketmqMessage msg, RocketmqSendCallback sendCallback, long timeout) {
 
         Message message = new Message(msg.getTopic(), msg.getTag(),
-            msg.getKey(), msg.getContent());
+                msg.getKey(), msg.getContent());
 
         try {
             producer.send(message, new SendCallback() {
@@ -92,7 +93,7 @@ public class RocketmqProducer implements Producer<RocketmqMessage,
         try {
 
             Message message = new Message(msg.getTopic(), msg.getTag(),
-                msg.getKey(), msg.getContent());
+                    msg.getKey(), msg.getContent());
 
             SendResult sendResult = producer.send(message);
 
@@ -114,7 +115,7 @@ public class RocketmqProducer implements Producer<RocketmqMessage,
     @Override
     public void sendOneway(RocketmqMessage msg) {
         Message message = new Message(msg.getTopic(), msg.getTag(),
-            msg.getContent());
+                msg.getContent());
 
         try {
             producer.sendOneway(message);
@@ -126,7 +127,19 @@ public class RocketmqProducer implements Producer<RocketmqMessage,
 
     @Override
     public void shutdown() {
-        producer.shutdown();
+        if (producer != null) {
+            producer.shutdown();
+        }
 
+    }
+
+    public void start() {
+        if (producer != null) {
+            try {
+                producer.start();
+            } catch (Exception ex) {
+                logger.error("catch an excepion.", ex);
+            }
+        }
     }
 }

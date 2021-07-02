@@ -39,7 +39,8 @@ public class ClientBizServiceHandler extends SimpleChannelInboundHandler<RpcComm
         try {
             Session session = Session.getOrCreatedSession(connection);
 
-            if (msg.getType() == RpcCommandType.REQUEST) {
+            if (msg.getType() == RpcCommandType.REQUEST
+                    || msg.getType() == RpcCommandType.REQUEST_ONEWAY) {
                 RequestHandler.processRequest(ctx, msg, workQueue, session);
             } else {
                 RequestHandler.processResponse(connection, msg);

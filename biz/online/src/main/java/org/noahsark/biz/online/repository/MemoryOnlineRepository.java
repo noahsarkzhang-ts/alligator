@@ -107,4 +107,9 @@ public class MemoryOnlineRepository implements OnlineRepository {
     public void serviceUnRegistor(ServiceEvent event) {
 
     }
+
+    @Override
+    public Set<UserInfo> getAllUser() {
+        return currentUsers;
+    }
 }

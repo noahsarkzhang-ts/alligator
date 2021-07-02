@@ -16,6 +16,8 @@ public class UserManager {
 
     private Map<String, Session> sessionMap = new ConcurrentHashMap<>();
 
+    private Map<String, UserSubject> userMap = new ConcurrentHashMap<>();
+
     private Set<String> userIds = new HashSet<>();
 
     private static class UserManagerHolder {
@@ -33,13 +35,19 @@ public class UserManager {
         return sessionMap.get(userId);
     }
 
+    public UserSubject getUser(String userId) {
+        return userMap.get(userId);
+    }
+
     public void putSession(String userId, Session session) {
         sessionMap.put(userId, session);
+        userMap.put(userId, (UserSubject)session.getSubject());
         userIds.add(userId);
     }
 
-    public void remoreSession(String userId) {
+    public void removeSession(String userId) {
         sessionMap.remove(userId);
+        userMap.remove(userId);
         userIds.add(userId);
     }
 

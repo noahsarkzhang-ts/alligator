@@ -8,7 +8,7 @@ import org.noahsark.registration.BizServiceCache;
 import org.noahsark.registration.RegistrationClient;
 import org.noahsark.registration.domain.Service;
 import org.noahsark.server.constant.BizServiceType;
-import org.noahsark.server.event.ClientConnectionEvent;
+import org.noahsark.server.event.ClientConnectionSuccessEvent;
 import org.noahsark.server.eventbus.ApplicationListener;
 import org.noahsark.server.eventbus.EventBus;
 import org.noahsark.server.rpc.Result;
@@ -26,15 +26,15 @@ import javax.annotation.PostConstruct;
  * @date: 2021/4/12
  */
 @Component
-public class ClientConnectionListener extends ApplicationListener<ClientConnectionEvent> {
+public class ClientConnectionSuccessListener extends ApplicationListener<ClientConnectionSuccessEvent> {
 
-    private Logger logger = LoggerFactory.getLogger(ClientConnectionListener.class);
+    private Logger logger = LoggerFactory.getLogger(ClientConnectionSuccessListener.class);
 
     @Autowired
     private CommonConfig config;
 
     @Override
-    public void onApplicationEvent(ClientConnectionEvent event) {
+    public void onApplicationEvent(ClientConnectionSuccessEvent event) {
 
         Service service = new Service();
         service.setLoad(0);

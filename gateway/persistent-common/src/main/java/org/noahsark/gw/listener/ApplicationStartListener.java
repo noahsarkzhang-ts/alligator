@@ -46,6 +46,8 @@ public class ApplicationStartListener implements ApplicationListener<Application
                 .namesrvAddr(nameSrv)
                 .build();
 
+        rocketmqProxy.start();
+
         ServerContext.mqProxy = rocketmqProxy;
 
         logger.info("Application start!");

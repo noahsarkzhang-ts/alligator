@@ -20,7 +20,7 @@ public class CommonConfig {
 
     private MqProxy mqProxy;
 
-    private UserEvent userEvent;
+    private SysEvent sysEvent;
 
     public static class WorkQueueConfig {
 
@@ -119,7 +119,7 @@ public class CommonConfig {
         }
     }
 
-    public  static class MqProxy {
+    public static class MqProxy {
         private String nameSrv;
 
         private String producerGroup;
@@ -161,15 +161,25 @@ public class CommonConfig {
         }
     }
 
-    public static class UserEvent {
-        private String topic;
+    public static class SysEvent {
+        private String userTopic;
 
-        public String getTopic() {
-            return topic;
+        private String serviceTopic;
+
+        public String getUserTopic() {
+            return userTopic;
         }
 
-        public void setTopic(String topic) {
-            this.topic = topic;
+        public void setUserTopic(String userTopic) {
+            this.userTopic = userTopic;
+        }
+
+        public String getServiceTopic() {
+            return serviceTopic;
+        }
+
+        public void setServiceTopic(String serviceTopic) {
+            this.serviceTopic = serviceTopic;
         }
     }
 
@@ -203,5 +213,13 @@ public class CommonConfig {
 
     public void setMqProxy(MqProxy mqProxy) {
         this.mqProxy = mqProxy;
+    }
+
+    public SysEvent getSysEvent() {
+        return sysEvent;
+    }
+
+    public void setSysEvent(SysEvent sysEvent) {
+        this.sysEvent = sysEvent;
     }
 }

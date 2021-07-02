@@ -29,6 +29,12 @@
 
         <dependency>
             <groupId>org.noahsark</groupId>
+            <artifactId>alligator-common</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.noahsark</groupId>
             <artifactId>alligator-registration-client</artifactId>
             <version>${project.version}</version>
         </dependency>

@@ -27,6 +27,7 @@ import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.util.SelfSignedCertificate;
 import io.netty.handler.timeout.IdleStateHandler;
 import org.noahsark.server.hander.AuthHandler;
+import org.noahsark.server.hander.ConnectionInactiveHandler;
 import org.noahsark.server.hander.ServerBizServiceHandler;
 import org.noahsark.server.ws.handler.WebsocketDecoder;
 import org.noahsark.server.queue.WorkQueue;
@@ -39,6 +40,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ *
  */
 public class WebSocketServerInitializer extends ChannelInitializer<SocketChannel> {
 
@@ -74,6 +76,7 @@ public class WebSocketServerInitializer extends ChannelInitializer<SocketChannel
         }
         pipeline.addLast(new IdleStateHandler(120, 0, 0));
         pipeline.addLast(new ServerIdleStateTrigger());
+        pipeline.addLast(new ConnectionInactiveHandler());
         pipeline.addLast(new HttpServerCodec());
         pipeline.addLast(new HttpObjectAggregator(65536));
         pipeline.addLast(new WebSocketServerCompressionHandler());

@@ -7,9 +7,9 @@ import org.noahsark.server.eventbus.ApplicationEvent;
  * @version:
  * @date: 2021/4/12
  */
-public class ClientConnectionEvent  extends ApplicationEvent {
+public class ClientConnectionSuccessEvent extends ApplicationEvent {
 
-    public ClientConnectionEvent(Object source) {
+    public ClientConnectionSuccessEvent(Object source) {
         super(source);
     }
 }

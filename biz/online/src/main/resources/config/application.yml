@@ -5,14 +5,17 @@ common:
     name: gw-online-01
   mqProxy:
     nameSrv: 120.79.235.83:9876
-    producerGroup: online-produce-1
-    consumerGroup: online-consumer-1
+    producerGroup: online-produce-2
+    consumerGroup: online-consumer-2
     topic: TopicTest
   regServer:
-    host: 192.168.1.102
+    host: 192.168.68.25
     port: 9090
+  sysEvent:
+    userTopic: UserEvent
+    serviceTopic: ServiceEvent
 
 logging:
-  config: classpath:configuration/logback-spring.xml
+  config: classpath:config/logback-spring.xml
   file:
     name: logs/ws-online.log
