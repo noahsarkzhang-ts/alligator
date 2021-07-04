@@ -26,15 +26,50 @@
         </triggeringPolicy>
     </appender>
 
+    <!--<appender name="mqAppender" class="org.apache.rocketmq.logappender.logback.RocketmqLogbackAppender">
+        <tag></tag>
+        <topic>UserEvent</topic>
+        <producerGroup>online-produce-4</producerGroup>
+        <nameServerAddress>120.79.235.83:9876</nameServerAddress>
+        <layout>
+            <pattern>%date %p %t - %m%n</pattern>
+        </layout>
+    </appender>
+
+    <appender name="mqAsyncAppender" class="ch.qos.logback.classic.AsyncAppender">
+        <queueSize>1024</queueSize>
+        <discardingThreshold>80</discardingThreshold>
+        <maxFlushTime>2000</maxFlushTime>
+        <neverBlock>true</neverBlock>
+        <appender-ref ref="mqAppender"/>
+    </appender>-->
+
+    <!-- rocketmq日志 -->
+    <appender name="RocketmqClientAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>logs/rocketmq_client.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>logs/rocketmq_client.%d{yyyyMMdd}.log</fileNamePattern>
+            <!--<maxFileSize>1024M</maxFileSize>-->
+            <!--保留时间,单位:天-->
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+        <encoder charset="UTF-8">
+            <pattern>%d{yy-MM-dd.HH:mm:ss.SSS} [%-16t] %-5p %-22c{0} %X{ServiceId} - %m%n</pattern>
+        </encoder>
+        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+            <MaxFileSize>100MB</MaxFileSize>
+        </triggeringPolicy>
+    </appender>
+
+    <logger name="RocketmqClient" additivity="false">
+        <level value="info" />
+        <appender-ref ref="RocketmqClientAppender"/>
+    </logger>
+
     <!-- 日志输出级别 -->
     <root level="INFO">
         <appender-ref ref="STDOUT"/>
         <appender-ref ref="FILE"/>
     </root>
-
-    <logger name="com.hst.dbproxy" level="DEBUG" additivity="false">
-        <appender-ref ref="STDOUT"/>
-        <appender-ref ref="FILE"/>
-    </logger>
 
 </configuration>

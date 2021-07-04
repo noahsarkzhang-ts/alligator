@@ -28,4 +28,12 @@ public class CandidateService implements Serializable {
     public void setTopic(String topic) {
         this.topic = topic;
     }
+
+    @Override
+    public String toString() {
+        return "CandidateService{" +
+                "address='" + address + '\'' +
+                ", topic='" + topic + '\'' +
+                '}';
+    }
 }

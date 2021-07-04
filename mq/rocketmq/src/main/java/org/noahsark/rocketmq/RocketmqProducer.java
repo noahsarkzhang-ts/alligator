@@ -137,6 +137,8 @@ public class RocketmqProducer implements Producer<RocketmqMessage,
         if (producer != null) {
             try {
                 producer.start();
+
+                logger.info("rocketmq producer is started: {}", this.producer.getProducerGroup());
             } catch (Exception ex) {
                 logger.error("catch an excepion.", ex);
             }
