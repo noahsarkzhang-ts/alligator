@@ -22,6 +22,8 @@ public interface Repository {
 
     Service getServiceByUser(String userId);
 
+    Service getServiceById(String id);
+
     List<String> getExpireServices(int timeoutMillis);
 
     void updateService(Service service);

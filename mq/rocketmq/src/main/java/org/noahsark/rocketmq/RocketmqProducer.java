@@ -31,7 +31,6 @@ public class RocketmqProducer implements Producer<RocketmqMessage,
 
             producer.setNamesrvAddr(namesrvAddr);
             producer.setVipChannelEnabled(false);
-            producer.start();
         } catch (Exception ex) {
             logger.error("catch an excepion.", ex);
             throw new MQOprationException(ex);
@@ -41,9 +40,8 @@ public class RocketmqProducer implements Producer<RocketmqMessage,
     public RocketmqProducer(String groupName, String namesrvAddr) {
         try {
             producer = new DefaultMQProducer(groupName);
-
+            producer.setVipChannelEnabled(false);
             producer.setNamesrvAddr(namesrvAddr);
-            /*producer.start();*/
         } catch (Exception ex) {
             logger.error("catch an excepion.", ex);
             throw new MQOprationException(ex);

@@ -27,7 +27,7 @@ public class OnlineCommandLineRunner implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        RocketmqTopic topic = new RocketmqTopic();
+       /* RocketmqTopic topic = new RocketmqTopic();
 
         topic.setTopic(commonConfig.getMqProxy().getTopic());
 
@@ -39,7 +39,7 @@ public class OnlineCommandLineRunner implements CommandLineRunner {
                 .build();
 
         ServerContext.mqProxy = rocketmqProxy;
-
+        */
         log.info("RocketmqProxy start!");
     }
 }

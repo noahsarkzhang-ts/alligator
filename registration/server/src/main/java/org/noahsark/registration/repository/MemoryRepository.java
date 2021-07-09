@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.PriorityQueue;
+
 import org.noahsark.registration.domain.Service;
 import org.noahsark.registration.domain.User;
 import org.slf4j.Logger;
@@ -149,6 +150,11 @@ public class MemoryRepository implements Repository {
     public Service getServiceByUser(String userId) {
 
         return serviceMap.get(user2Servie.get(userId));
+    }
+
+    @Override
+    public Service getServiceById(String id) {
+        return serviceMap.get(id);
     }
 
     @Override

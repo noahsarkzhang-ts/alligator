@@ -68,8 +68,6 @@ public class MemoryOnlineRepository implements OnlineRepository {
 
             serviceUsers.put(userInfo.getServiceId(),users);
         }
-
-
     }
 
     @Override
@@ -111,5 +109,10 @@ public class MemoryOnlineRepository implements OnlineRepository {
     @Override
     public Set<UserInfo> getAllUser() {
         return currentUsers;
+    }
+
+    @Override
+    public String getResidedService(String userId) {
+        return user2Servie.get(userId);
     }
 }

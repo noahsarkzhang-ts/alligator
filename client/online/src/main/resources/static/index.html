@@ -24,19 +24,19 @@
             margin-right: 10px;
         }
 
-        #customers {
+        #onlineUsers {
             font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
             width: 90%;
             border-collapse: collapse;
         }
 
-        #customers td, #customers th {
+        #onlineUsers tbody td, #onlineUsers thead th {
             font-size: 1em;
             border: 1px solid;
             padding: 3px 7px 2px 7px;
         }
 
-        #customers th {
+        #onlineUsers thead th {
             font-size: 1.1em;
             text-align: left;
             padding-top: 5px;
@@ -49,9 +49,11 @@
 <div id="user-login">
     <form id="login-form" name="loginForm" onsubmit="return false;">
         <label for="userId">User Id:</label> <input type="text" id="userId" name="userId" required="required"> <br>
-        <label for="userName">User name:</label> <input type="text" id="userName" name="userName" required="required"> <br>
-        <label for="password">password:</label> <input type="password" id="password" name="password" required="required"> <br>
-        <input type="button" id="loginButton" value="login" onclick="login()" >
+        <label for="userName">User name:</label> <input type="text" id="userName" name="userName" required="required">
+        <br>
+        <label for="password">password:</label> <input type="password" id="password" name="password"
+                                                       required="required"> <br>
+        <input type="button" id="loginButton" value="login" onclick="login()">
     </form>
 </div>
 
@@ -61,31 +63,25 @@
     </div>
     <div id="menu" style="width:300px;float:left;">
         <strong>在线列表</strong>
-        <table id="customers">
+        <table id="onlineUsers">
+            <thead>
             <tr>
                 <th>用户id</th>
                 <th>用户名称</th>
                 <th>在线状态</th>
             </tr>
-            <tr>
-                <td>10001</td>
-                <td>Allen</td>
-                <td>online</td>
-            </tr>
-            <tr>
-                <td>10002</td>
-                <td>double</td>
-                <td>online</td>
-            </tr>
-
+            </thead>
+            <tbody>
+            </tbody>
         </table>
     </div>
     <div id="content" style="width:500px;float:right;">
         <form onsubmit="return false;" id="formMessage" name="formMessage">
-            <textarea type="text" name="message" id="message" style="width:100%;height:150px;">Hello, World!</textarea>
+            <textarea type="text" name="message" id="message" style="width:100%;height:150px;"
+                      placeholder="用户列表，使用逗号分隔"></textarea>
             <br>
-            <input type="button" value="Send Web Socket Data"
-                   onclick="send(document.getElementById('message').value)">
+            <input type="button" value="发送邀请"
+                   onclick="inviteUsers(document.getElementById('message').value)">
             <h3>Business Output</h3>
             <textarea id="responseText" style="width:100%;height:300px;"></textarea>
             <h3>Ping/Pong Output</h3>
@@ -104,7 +100,7 @@
         window.WebSocket = window.MozWebSocket;
     }
     if (window.WebSocket) {
-        socket = new WebSocket("ws://192.168.3.103:9091/websocket");
+        socket = new WebSocket("ws://192.168.68.25:9091/websocket");
         socket.onmessage = function (busevent) {
             var msg = busevent.data;
             var data = JSON.parse(msg);
@@ -125,21 +121,81 @@
 
     var requestId = 1;
     var currentUser;
+    var onlineUsers = {};
 
     var handles = {};
     handles["2:1"] = loginRep;
+    handles["300:10"] = userInfo;
+    handles["300:1"] = execInvitedUser;
+    handles["201:2"] = getAllUserResp;
+    handles["201:1"] = invitedUserResp;
+
+    var userTable = document.getElementById('onlineUsers');
+    var tableBody = userTable.tBodies[0];
 
 
     function loginRep(data) {
         var payload = data.payload;
 
-        if (payload.code == 0 ) {
+        if (payload.code == 0) {
             currentUser = payload.data;
             display("online");
             unDisplay("user-login");
+
+            var cmd = buildGetAllUserCmd();
+            send(cmd);
         } else {
             alert("login fail!!")
         }
+    }
+
+    function userInfo(data) {
+        var payload = data.payload;
+
+        if (payload != null) {
+            var user = payload;
+            console.log(payload);
+
+            if (onlineUsers[user.userId] != null) {
+                // 更新操作
+                updateUser(user);
+            } else {
+                // 插入操作
+                onlineUsers[user.userId] = user;
+                appendTr(user);
+            }
+
+        } else {
+
+        }
+    }
+
+    function getAllUserResp(data) {
+        var payload = data.payload;
+
+        if (payload.code == 0) {
+            var users = payload.data;
+
+            for (var i = 0; i < users.length; i++) {
+                var user = users[i];
+
+                if (onlineUsers[user.userId] == null) {
+                    onlineUsers[user.userId] = user;
+                    appendTr(user);
+                }
+            }
+        } else {
+        }
+    }
+
+    function invitedUserResp(data) {
+        var payload = data.payload;
+        if (payload.code == 0) {
+            alert("邀请成功！！！")
+        } else {
+            alert("邀请失败！！！")
+        }
+
     }
 
     function send(message) {
@@ -151,6 +207,29 @@
         } else {
             alert("The socket is not open.");
         }
+    }
+
+    function inviteUsers(text) {
+
+        if (text == null || text.length == 0) {
+            alert("请输入邀请的用户！！！");
+            return;
+        }
+
+        var users = text.split(",");
+        var digitalReg = /^\+?[1-9][0-9]*$/;
+
+        for (var i = 0; i < users.length; i++) {
+            if (!digitalReg.test(users[i])) {
+                alert("请输入正确的用户！！！");
+                return;
+            }
+        }
+
+        var cmd = buildInviteCmd(users);
+        console.log("invited users:" + cmd);
+        send(cmd);
+
     }
 
     function login() {
@@ -246,6 +325,67 @@
         return JSON.stringify(cmd);
     }
 
+    function buildGetAllUserCmd() {
+        var userQuery = {
+            current: 1,
+            size: 1000
+        };
+
+        var cmd = {
+            headSize: 17,
+            requestId: requestId++,
+            biz: 201,
+            cmd: 2,
+            type: 1,
+            ver: 1,
+            serializer: 1,
+            payload: userQuery
+        };
+
+        return JSON.stringify(cmd);
+    }
+
+    function buildResponse(request, code, message, result) {
+        var payload = {
+            code: code,
+            message: message,
+            data: result
+        };
+
+        var cmd = {
+            headSize: 17,
+            requestId: request.requestId,
+            biz: request.biz,
+            cmd: request.cmd,
+            type: 2,
+            ver: 1,
+            serializer: 1,
+            payload: payload
+        };
+
+        return JSON.stringify(cmd);
+    }
+
+    function buildInviteCmd(users) {
+        var invitedInfo = {
+            userIds: users,
+            type: 1
+        };
+
+        var cmd = {
+            headSize: 17,
+            requestId: requestId++,
+            biz: 201,
+            cmd: 1,
+            type: 1,
+            ver: 1,
+            serializer: 1,
+            payload: invitedInfo
+        };
+
+        return JSON.stringify(cmd);
+    }
+
     function dispatcher(data) {
         var cmdKey = data.biz + ":" + data.cmd;
         if (cmdKey == "1:1") {
@@ -265,9 +405,70 @@
 
         } else {
             var ta = document.getElementById('responseText');
-            ta.value = ta.value + '\n' +   JSON.stringify(data)
-                +  '\n'+  cmdKey + ": no handle!!!";
+            ta.value = ta.value + '\n' + JSON.stringify(data)
+                + '\n' + cmdKey + ": no handle!!!";
         }
+    }
+
+    function appendTr(user) {
+
+        var tr = document.createElement('tr');
+        tr.setAttribute("userId", user.userId);
+
+        var userIdTd = document.createElement('td');
+        var userNameTd = document.createElement('td');
+        var stateTd = document.createElement('td');
+
+        userIdTd.innerHTML = user.userId;
+        userNameTd.innerHTML = user.name;
+        stateTd.innerHTML = "online";
+
+        tr.appendChild(userIdTd);
+        tr.appendChild(userNameTd);
+        tr.appendChild(stateTd);
+        tableBody.appendChild(tr);
+    }
+
+    function updateUser(user) {
+        var existUser = onlineUsers[user.userId];
+
+        // 状态不一致更新
+        if (existUser.state != user.state) {
+            onlineUsers[user.userId] = user;
+            var tr = findTr(user);
+
+            if (tr == null) {
+                console.log("No Tr...");
+                return;
+            }
+
+            if (user.state == 0) {
+                tr.cells[2].innerHTML = "offline";
+            } else {
+                tr.cells[2].innerHTML = "online";
+            }
+        }
+
+    }
+
+    function findTr(user) {
+        var rows = tableBody.rows;
+
+        for (var i = 0; i < rows.length; i++) {
+            var tr = rows[i];
+
+            if (tr.getAttribute("userId") == user.userId) {
+                return tr;
+            }
+        }
+
+        return null;
+    }
+
+    function execInvitedUser(request) {
+        var resp = buildResponse(request,0,"success",null);
+        console.log("send response:" + resp)
+        send(resp);
     }
 
 </script>

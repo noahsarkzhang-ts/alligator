@@ -50,7 +50,7 @@ public class RegistrationCommandLineRunner implements CommandLineRunner {
 
         registrationServer.start();
 
-        log.info("Stat RegistrationServer server!!!");
+        log.info("Start RegistrationServer server!!!");
 
     }
 }

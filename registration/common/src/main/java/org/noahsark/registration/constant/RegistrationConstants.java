@@ -21,4 +21,6 @@ public final class RegistrationConstants {
 
     public static final int CMD_GET_ALL_SERVICE_BIZ = 7;
 
+    public static final int CMD_GET_SERVICE_BY_ID = 8;
+
 }

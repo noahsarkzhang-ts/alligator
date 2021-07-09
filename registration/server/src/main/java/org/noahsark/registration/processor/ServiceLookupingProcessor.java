@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
 
@@ -31,11 +32,16 @@ public class ServiceLookupingProcessor extends AbstractProcessor<ServiceQuery> {
     protected void execute(ServiceQuery request, RpcContext context) {
         logger.info("receive query service request: {}" , JsonUtils.toJson(request));
 
-        List<Service> serviceList = repository.getServicesByBiz(request.getBiz());
+        Service service;
+        if (!StringUtils.isEmpty(request.getId())) {
+            service = repository.getServiceById(request.getId());
+        } else {
+            List<Service> serviceList = repository.getServicesByBiz(request.getBiz());
+            // TODO 暂时返回第一个服务
+            service = serviceList.get(0);
+        }
 
-        // TODO 暂时返回第一个服务
         CandidateService candidateService = new CandidateService();
-        Service service = serviceList.get(0);
         candidateService.setAddress(service.getAddress());
         candidateService.setTopic(service.getTopic());
 

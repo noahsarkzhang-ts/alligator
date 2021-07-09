@@ -21,6 +21,11 @@ public class ServiceQuery implements Serializable {
     private String ip;
 
     /**
+     * service id
+     */
+    private String id;
+
+    /**
      *  扩展信息
      */
     private Map<String,String> conf;
@@ -39,6 +44,14 @@ public class ServiceQuery implements Serializable {
 
     public void setIp(String ip) {
         this.ip = ip;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public Map<String, String> getConf() {

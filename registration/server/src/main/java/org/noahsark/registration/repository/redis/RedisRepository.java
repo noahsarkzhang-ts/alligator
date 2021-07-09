@@ -27,7 +27,7 @@ public class RedisRepository implements Repository {
     }
 
     @Override
-    public void unRegisterService(String serviceId) {
+    public void unRegisterService(String id) {
 
     }
 
@@ -38,6 +38,11 @@ public class RedisRepository implements Repository {
 
     @Override
     public Service getServiceByUser(String userId) {
+        return null;
+    }
+
+    @Override
+    public Service getServiceById(String serviceId) {
         return null;
     }
 

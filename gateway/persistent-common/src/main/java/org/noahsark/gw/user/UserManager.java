@@ -48,7 +48,7 @@ public class UserManager {
     public void removeSession(String userId) {
         sessionMap.remove(userId);
         userMap.remove(userId);
-        userIds.add(userId);
+        userIds.remove(userId);
     }
 
     public Set<String> getOnlineUsers() {

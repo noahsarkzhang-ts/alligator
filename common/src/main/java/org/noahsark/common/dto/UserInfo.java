@@ -9,7 +9,7 @@ public class UserInfo implements Serializable {
 
     private String userId;
 
-    private String Name;
+    private String name;
 
     private String serviceId;
 
@@ -27,11 +27,11 @@ public class UserInfo implements Serializable {
     }
 
     public String getName() {
-        return Name;
+        return name;
     }
 
     public void setName(String name) {
-        Name = name;
+        this.name = name;
     }
 
     public String getServiceId() {
@@ -73,7 +73,7 @@ public class UserInfo implements Serializable {
     public String toString() {
         return "UserInfo{" +
             "userId='" + userId + '\'' +
-            ", Name='" + Name + '\'' +
+            ", name='" + name + '\'' +
             ", serviceId='" + serviceId + '\'' +
             ", state=" + state +
             '}';

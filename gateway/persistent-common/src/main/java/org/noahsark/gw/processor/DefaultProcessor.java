@@ -81,6 +81,7 @@ public class DefaultProcessor extends AbstractProcessor<Void> {
 
                 if (session == null) {
                     logger.info("userId not online:{}", userId);
+                    return;
                 }
 
                 Request downRequest = new Request.Builder()

@@ -1,6 +1,5 @@
 package org.noahsark.biz.online.processor.user;
 
-import org.noahsark.biz.online.processor.inviter.InviteProcessor;
 import org.noahsark.biz.online.repository.OnlineRepository;
 import org.noahsark.common.dto.UserInfo;
 import org.noahsark.rocketmq.RocketmqTopic;

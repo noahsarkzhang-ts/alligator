@@ -21,4 +21,6 @@ public interface OnlineRepository {
 
     Set<UserInfo> getAllUser();
 
+    String getResidedService(String userId);
+
 }

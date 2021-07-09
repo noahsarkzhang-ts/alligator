@@ -2,18 +2,24 @@ package org.noahsark.biz.online.processor.inviter;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+
 import java.util.HashSet;
 import java.util.Set;
+
 import org.noahsark.biz.online.config.CommonConfig;
 import org.noahsark.biz.online.context.ServerContext;
+import org.noahsark.biz.online.repository.OnlineRepository;
 import org.noahsark.client.future.CommandCallback;
 import org.noahsark.registration.domain.CandidateService;
+import org.noahsark.registration.domain.Service;
+import org.noahsark.registration.domain.ServiceQuery;
 import org.noahsark.rocketmq.RocketmqProxy;
 import org.noahsark.rocketmq.RocketmqTopic;
 import org.noahsark.server.constant.BizServiceType;
 import org.noahsark.server.processor.AbstractProcessor;
 import org.noahsark.server.rpc.MultiRequest;
 import org.noahsark.server.rpc.Response;
+import org.noahsark.server.rpc.Result;
 import org.noahsark.server.rpc.RpcContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,6 +42,9 @@ public class InviteProcessor extends AbstractProcessor<InviteInfo> {
     @Autowired
     private CommonConfig commonConfig;
 
+    @Autowired
+    private OnlineRepository onlineRepository;
+
     @Override
     protected void execute(InviteInfo request, RpcContext context) {
 
@@ -49,18 +58,24 @@ public class InviteProcessor extends AbstractProcessor<InviteInfo> {
             // 向用户发起请求
 
             // 获取用户所在服务器,假定用户都在一台服务器上
-            CandidateService service = ServerContext.userServiceCache.get(request.getUserIds().get(0));
+            // 获取第一个用户所在服务器，只发送第一个用户的邀请信息，多个用户的邀请后期扩展
+            String serviceId = onlineRepository.getResidedService(request.getUserIds().get(0));
+            ServiceQuery serviceQuery = new ServiceQuery();
+            serviceQuery.setId(serviceId);
+
+            Result<CandidateService> result = ServerContext.regClient.serviceLookup(serviceQuery);
+            CandidateService service = result.getData();
 
             MultiRequest multiRequest = new MultiRequest.Builder()
-                .biz(BizServiceType.BIZ_CLIENT)
-                .cmd(command.getCmd())
-                .serializer(command.getSerializer())
-                .type(command.getType())
-                .ver(command.getVer())
-                .payload(command.getPayload())
-                .topic(commonConfig.getMqProxy().getTopic())
-                .targetIds(targetIds)
-                .build();
+                    .biz(BizServiceType.BIZ_CLIENT)
+                    .cmd(command.getCmd())
+                    .serializer(command.getSerializer())
+                    .type(command.getType())
+                    .ver(command.getVer())
+                    .payload(command.getPayload())
+                    .topic(commonConfig.getMqProxy().getTopic())
+                    .targetIds(targetIds)
+                    .build();
 
             log.info("send a request: {}", multiRequest);
 
@@ -72,7 +87,7 @@ public class InviteProcessor extends AbstractProcessor<InviteInfo> {
                 @Override
                 public void callback(Object result, int currentFanout, int fanout) {
 
-                    log.info("currentFanout:{},fanout:{}", currentFanout,fanout);
+                    log.info("currentFanout:{},fanout:{}", currentFanout, fanout);
 
                     List<Object> results = new ArrayList<>();
                     if (result instanceof List) {
@@ -102,18 +117,18 @@ public class InviteProcessor extends AbstractProcessor<InviteInfo> {
                 @Override
                 public void failure(Throwable cause, int currentFanout, int fanout) {
                     log.warn("Invoke catch an exception!", cause);
-                    log.info("currentFanout:{},fanout:{}", currentFanout,fanout);
+                    log.info("currentFanout:{},fanout:{}", currentFanout, fanout);
 
                     context.sendResponse(Response.buildCommonResponse(context.getCommand(),
-                        -1, "failed"));
+                            -1, "failed"));
                 }
-            }, 3000);
+            }, 10000);
 
         } catch (Exception ex) {
             log.warn("Invoke catch an exception!", ex);
 
             context.sendResponse(Response.buildCommonResponse(context.getCommand(),
-                -1, "failed"));
+                    -1, "failed"));
         }
 
     }
