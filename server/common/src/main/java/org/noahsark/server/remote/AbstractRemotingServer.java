@@ -84,8 +84,9 @@ public abstract class AbstractRemotingServer implements RemotingServer {
 
                 InetSocketAddress address = new InetSocketAddress(host, port);
 
-                ChannelFuture channelFuture = bootstrap.bind(address).sync();
+                ChannelFuture channelFuture = bootstrap.bind(address);
                 channelFuture.addListener(getStartListener());
+                channelFuture.sync();
 
                 channel = channelFuture.channel();
 

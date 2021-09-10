@@ -12,7 +12,7 @@ public class TcpServerTest {
 
     @Test
     public void tcpServerTest() {
-        String host = "192.168.1.102";
+        String host = "192.168.68.25";
         int port = 2222;
 
         final TcpServer tcpServer = new TcpServer(host, port);

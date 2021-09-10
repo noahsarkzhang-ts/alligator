@@ -1,4 +1,4 @@
-package org.noahsark.server.exception;
+package org.noahsark.exception;
 
 /**
  * @author: noahsark

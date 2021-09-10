@@ -2,7 +2,7 @@ package org.noahsark.rocketmq;
 
 import org.noahsark.client.future.PromisHolder;
 import org.noahsark.client.future.RpcPromise;
-import org.noahsark.server.exception.InvokeExcption;
+import org.noahsark.exception.InvokeExcption;
 import org.noahsark.server.rpc.MultiRequest;
 import org.noahsark.server.rpc.RpcCommand;
 import org.slf4j.Logger;

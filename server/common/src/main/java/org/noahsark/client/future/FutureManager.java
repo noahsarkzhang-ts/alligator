@@ -4,7 +4,7 @@ import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.PriorityQueue;
-import org.noahsark.server.exception.TimeoutException;
+import org.noahsark.exception.TimeoutException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

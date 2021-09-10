@@ -85,13 +85,13 @@ public class DefaultProcessor extends AbstractProcessor<Void> {
                 }
 
                 Request downRequest = new Request.Builder()
-                    .biz(request.getBiz())
-                    .cmd(request.getCmd())
-                    .serializer(request.getSerializer())
-                    .type(request.getType())
-                    .ver(request.getVer())
-                    .payload(request.getPayload())
-                    .build();
+                        .biz(request.getBiz())
+                        .cmd(request.getCmd())
+                        .serializer(request.getSerializer())
+                        .type(request.getType())
+                        .ver(request.getVer())
+                        .payload(request.getPayload())
+                        .build();
 
                 logger.info("send a downstream:{}", downRequest);
 

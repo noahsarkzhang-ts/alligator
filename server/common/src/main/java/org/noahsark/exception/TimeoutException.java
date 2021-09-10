@@ -1,4 +1,4 @@
-package org.noahsark.server.exception;
+package org.noahsark.exception;
 
 /**
  * Created by hadoop on 2021/3/28.
