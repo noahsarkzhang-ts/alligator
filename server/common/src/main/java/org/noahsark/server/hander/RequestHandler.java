@@ -3,6 +3,8 @@ package org.noahsark.server.hander;
 import io.netty.channel.ChannelHandlerContext;
 import org.noahsark.client.future.Connection;
 import org.noahsark.client.future.RpcPromise;
+import org.noahsark.enums.PromiseEnum;
+import org.noahsark.server.constant.RpcCommandType;
 import org.noahsark.server.dispatcher.Dispatcher;
 import org.noahsark.server.processor.AbstractProcessor;
 import org.noahsark.server.queue.WorkQueue;
@@ -101,7 +103,15 @@ public class RequestHandler {
 
         if (promise != null) {
             promise.setSuccess(command.getPayload());
-            // connection.removePromis(command.getRequestId());
+
+            if (command.getType() == RpcCommandType.STREAM) {
+                promise.setType(PromiseEnum.STREAM);
+                if (command.getEnd() == (byte) 1) {
+                    promise.end(command.getPayload());
+                } else {
+                    promise.flow(command.getPayload());
+                }
+            }
 
         } else {
             log.warn("promis is null : {}", command.getRequestId());

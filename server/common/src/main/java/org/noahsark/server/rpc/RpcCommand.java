@@ -6,14 +6,10 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.util.CharsetUtil;
-
-import java.io.Serializable;
-import java.nio.charset.Charset;
-import java.util.Map;
-
 import org.noahsark.server.serializer.Serializer;
 import org.noahsark.server.serializer.SerializerManager;
-import org.noahsark.server.util.JsonUtils;
+
+import java.io.Serializable;
 
 /**
  * @author: noahsark
@@ -22,7 +18,7 @@ import org.noahsark.server.util.JsonUtils;
  */
 public class RpcCommand implements Serializable {
 
-    public static final short RPC_COMMAND_SIZE = 17;
+    public static final short RPC_COMMAND_SIZE = 18;
 
     /**
      * 消息头长度，消息头有定长和不定长
@@ -41,13 +37,19 @@ public class RpcCommand implements Serializable {
 
     /**
      * 命令id
+     *
      */
     private int cmd;
 
     /**
-     * 消息类型，1：请求，2：响应，3：oneway
+     * 消息类型，1：请求，2：响应，3：oneway，4：stream
      */
     private byte type;
+
+    /**
+     * 是否最后一个响应，0：不是，1：是
+     */
+    private byte end;
 
     /**
      * 接口版本
@@ -79,6 +81,7 @@ public class RpcCommand implements Serializable {
         this.biz = builder.biz;
         this.cmd = builder.cmd;
         this.type = builder.type;
+        this.end = builder.end;
         this.ver = builder.ver;
         this.serializer = builder.serializer;
         this.payload = builder.payload;
@@ -140,6 +143,14 @@ public class RpcCommand implements Serializable {
         this.payload = payload;
     }
 
+    public byte getEnd() {
+        return end;
+    }
+
+    public void setEnd(byte end) {
+        this.end = end;
+    }
+
     public short getHeadSize() {
         return headSize;
     }
@@ -191,6 +202,7 @@ public class RpcCommand implements Serializable {
         command.setBiz(buf.readInt());
         command.setCmd(buf.readInt());
         command.setType(buf.readByte());
+        command.setEnd(buf.readByte());
         command.setVer(buf.readByte());
         command.setSerializer(buf.readByte());
 
@@ -220,6 +232,7 @@ public class RpcCommand implements Serializable {
         buf.writeInt(command.getBiz());
         buf.writeInt(command.getCmd());
         buf.writeByte(command.getType());
+        buf.writeByte(command.getEnd());
         buf.writeByte(command.getVer());
         buf.writeByte(command.getSerializer());
 
@@ -246,6 +259,7 @@ public class RpcCommand implements Serializable {
         command.setBiz(data.get("biz").getAsInt());
         command.setCmd(data.get("cmd").getAsInt());
         command.setType(data.get("type").getAsByte());
+        command.setEnd(data.get("end").getAsByte());
         command.setVer(data.get("ver").getAsByte());
         command.setSerializer(data.get("serializer").getAsByte());
         command.setPayload(data.get("payload").getAsJsonObject().toString().getBytes(CharsetUtil.UTF_8));
@@ -261,6 +275,7 @@ public class RpcCommand implements Serializable {
                 ", biz=" + biz +
                 ", cmd=" + cmd +
                 ", type=" + type +
+                ", end=" + end +
                 ", ver=" + ver +
                 ", serializer=" + serializer +
                 ", payload=" + ((payload instanceof byte[]) ? new JsonParser().parse(new String((byte[]) payload)).getAsJsonObject() : payload) +
@@ -276,6 +291,8 @@ public class RpcCommand implements Serializable {
         private int cmd;
 
         private byte type;
+
+        private byte end;
 
         private byte ver;
 
@@ -300,6 +317,12 @@ public class RpcCommand implements Serializable {
 
         public Builder type(byte type) {
             this.type = type;
+            return this;
+        }
+
+        public Builder end(byte end) {
+            this.end = end;
+
             return this;
         }
 

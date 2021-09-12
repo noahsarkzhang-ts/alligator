@@ -13,7 +13,6 @@ public class Response extends RpcCommand implements Serializable {
 
     public Response() {
 
-        this.setType(RpcCommandType.RESPONSE);
         this.setVer(RpcCommandVer.V1);
         this.setSerializer(SerializerType.JSON);
     }
@@ -22,7 +21,6 @@ public class Response extends RpcCommand implements Serializable {
 
         super(builder.commandBuilder);
 
-        this.setType(RpcCommandType.RESPONSE);
         this.setVer(RpcCommandVer.V1);
         this.setSerializer(SerializerType.JSON);
     }
@@ -67,7 +65,6 @@ public class Response extends RpcCommand implements Serializable {
         }
 
         public Response build() {
-            this.commandBuilder.type(RpcCommandType.RESPONSE);
             this.commandBuilder.ver(RpcCommandVer.V1);
             this.commandBuilder.serializer(SerializerType.JSON);
 
@@ -76,6 +73,36 @@ public class Response extends RpcCommand implements Serializable {
     }
 
     public static Response buildCommonResponse(RpcCommand request, int code, String message) {
+
+        return buildCommonResponse(request, RpcCommandType.RESPONSE, code, message);
+    }
+
+    public static Response buildCommonStream(RpcCommand request, int code, String message) {
+
+        return buildCommonResponse(request, RpcCommandType.STREAM, code, message);
+    }
+
+    public static <T> Response buildResponse(RpcCommand request, T t, int code, String message) {
+
+        return buildResponse(request, RpcCommandType.RESPONSE, t, code, message);
+    }
+
+    public static <T> Response buildStream(RpcCommand request, T t, int code, String message) {
+
+        return buildResponse(request, RpcCommandType.STREAM, t, code, message);
+    }
+
+    public static Response buildResponseFromResult(RpcCommand request, Object result) {
+
+        return buildResponseFromResult(request, RpcCommandType.RESPONSE, result);
+    }
+
+    public static Response buildStreamFromResult(RpcCommand request, Object result) {
+
+        return buildResponseFromResult(request, RpcCommandType.STREAM, result);
+    }
+
+    public static Response buildCommonResponse(RpcCommand request, byte responseType, int code, String message) {
         Result<Void> result = new Result.Builder<Void>()
                 .code(code)
                 .message(message)
@@ -85,13 +112,14 @@ public class Response extends RpcCommand implements Serializable {
                 .requestId(request.getRequestId())
                 .biz(request.getBiz())
                 .cmd(request.getCmd())
+                .type(responseType)
                 .payload(result)
                 .build();
 
         return command;
     }
 
-    public static <T> Response buildResponse(RpcCommand request, T t, int code, String message) {
+    public static <T> Response buildResponse(RpcCommand request, byte responseType, T t, int code, String message) {
 
         Result<T> result = new Result.Builder<T>()
                 .code(code)
@@ -103,18 +131,20 @@ public class Response extends RpcCommand implements Serializable {
                 .requestId(request.getRequestId())
                 .biz(request.getBiz())
                 .cmd(request.getCmd())
+                .type(responseType)
                 .payload(result)
                 .build();
 
         return command;
     }
 
-    public static Response buildResponseFromResult(RpcCommand request, Object result) {
+    public static Response buildResponseFromResult(RpcCommand request, byte responseType, Object result) {
 
         Response command = new Response.Builder()
                 .requestId(request.getRequestId())
                 .biz(request.getBiz())
                 .cmd(request.getCmd())
+                .type(responseType)
                 .payload(result)
                 .build();
 

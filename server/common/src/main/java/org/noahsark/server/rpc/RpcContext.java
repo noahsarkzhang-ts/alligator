@@ -26,10 +26,26 @@ public class RpcContext {
         this.session = builder.session;
     }
 
-    public void sendResponse(RpcCommand repsponse) {
-        log.info("send response:{}", repsponse);
+    public void sendResponse(RpcCommand response) {
+        log.info("send response:{}", response);
 
-        session.write(repsponse);
+        session.write(response);
+    }
+
+    public void flow(RpcCommand stream) {
+        stream.setEnd((byte) 0);
+
+        log.info("send stream:{}", stream);
+        session.write(stream);
+
+    }
+
+    public void end(RpcCommand stream) {
+        stream.setEnd((byte) 1);
+
+        log.info("send stream:{}", stream);
+        session.write(stream);
+
     }
 
     public ChannelHolder getSession() {

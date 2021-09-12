@@ -14,4 +14,9 @@ public class RpcCommandType {
      * rpc oneway request
      */
     public static final byte REQUEST_ONEWAY = (byte) 0x03;
+
+    /**
+     *  rpc stream
+     */
+    public static final byte STREAM = (byte) 0x04;
 }

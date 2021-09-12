@@ -15,6 +15,7 @@ import org.noahsark.enums.PromiseEnum;
 import org.noahsark.exception.InvokeExcption;
 import org.noahsark.exception.OperationNotSupported;
 import org.noahsark.exception.TimeoutException;
+import org.noahsark.server.constant.RpcCommandType;
 import org.noahsark.server.remote.TimerHolder;
 import org.noahsark.server.rpc.Request;
 import org.slf4j.Logger;
@@ -152,7 +153,7 @@ public class RpcPromise extends DefaultPromise<Object> implements Comparable<Rpc
 
             try {
 
-                switch (type) {
+                switch (promise.type) {
                     case GENERAL:
                     case MULTIPLE: {
                         result = future.get();
@@ -268,6 +269,17 @@ public class RpcPromise extends DefaultPromise<Object> implements Comparable<Rpc
         return isFailure || isStop || this.currentFanout.get() >= fanout;
     }
 
+    public PromiseEnum getType() {
+        return type;
+    }
+
+    public void setType(PromiseEnum type) {
+        this.type = type;
+
+        if (this.type == PromiseEnum.STREAM) {
+            isStop = false;
+        }
+    }
 
     public long getTimeStampMillis() {
         return timeStampMillis;
