@@ -62,7 +62,7 @@ public class FutureManager {
         while (!queue.isEmpty()) {
             promise = queue.peek();
 
-            timeStampMillis = promise.getTimeStampMillis();
+            timeStampMillis = promise.getTimestampMillis();
             timeoutMillis = currentMillis - timeStampMillis;
 
             if (timeoutMillis >= intervalMillis) {

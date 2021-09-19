@@ -29,19 +29,6 @@ public class RocketmqChannelHolder implements ChannelHolder {
     public void write(RpcCommand response) {
 
         this.promisHolder.write(response);
-        /*RocketmqMessage msg = new RocketmqMessage();
-        Response resp = (Response) response;
-
-        RocketmqTopic topic = (RocketmqTopic) resp.getAttachment();
-
-        msg.setTopic(topic.getTopic());
-        msg.setTag(topic.getTag());
-        msg.setKey(topic.getKey());
-
-        byte[] body = RpcCommand.encode(resp);
-        msg.setContent(body);
-
-        producer.send(msg);*/
 
     }
 

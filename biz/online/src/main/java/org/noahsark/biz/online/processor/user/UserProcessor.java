@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author: noahsark
@@ -38,10 +39,23 @@ public class UserProcessor extends AbstractProcessor<UserQuery> {
         RocketmqTopic topic = new RocketmqTopic();
         topic.setTopic(command.getTopic());
 
-        Response response = Response.buildResponse(command, users, 0, "success");
+        Response response = Response.buildStream(command, users, 0, "success");
         response.setAttachment(topic);
 
-        context.sendResponse(response);
+        int i = 0;
+        while (i < 4) {
+            context.flow(response);
+
+            try {
+                TimeUnit.MILLISECONDS.sleep(100);
+            } catch (InterruptedException ex) {
+                log.error("catch an exception:",ex);
+            }
+
+            i++;
+        }
+
+        context.end(response);
     }
 
     @Override

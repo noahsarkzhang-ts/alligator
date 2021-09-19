@@ -15,7 +15,6 @@ import org.noahsark.enums.PromiseEnum;
 import org.noahsark.exception.InvokeExcption;
 import org.noahsark.exception.OperationNotSupported;
 import org.noahsark.exception.TimeoutException;
-import org.noahsark.server.constant.RpcCommandType;
 import org.noahsark.server.remote.TimerHolder;
 import org.noahsark.server.rpc.Request;
 import org.slf4j.Logger;
@@ -54,11 +53,11 @@ public class RpcPromise extends DefaultPromise<Object> implements Comparable<Rpc
 
     private PromiseEnum type = PromiseEnum.GENERAL;
 
-    private BlockingQueue<Object> streams;
+    private BlockingQueue<Object> streams = new LinkedBlockingQueue<>();
 
-    private List<GenericFutureListener<RpcPromise>> rpcListeners;
+    private List<GenericFutureListener<RpcPromise>> rpcListeners = new ArrayList<>();
 
-    private long timeStampMillis;
+    private long timestampMillis;
 
     private int requestId;
 
@@ -70,7 +69,7 @@ public class RpcPromise extends DefaultPromise<Object> implements Comparable<Rpc
         super(EVENT_EXECUTOR);
 
         Instant instant = Instant.now();
-        timeStampMillis = instant.toEpochMilli();
+        timestampMillis = instant.toEpochMilli();
 
     }
 
@@ -81,8 +80,6 @@ public class RpcPromise extends DefaultPromise<Object> implements Comparable<Rpc
         if (PromiseEnum.STREAM.equals(type)) {
             isStop = false;
 
-            rpcListeners = new ArrayList<>();
-            streams = new LinkedBlockingQueue<>();
         }
     }
 
@@ -184,7 +181,7 @@ public class RpcPromise extends DefaultPromise<Object> implements Comparable<Rpc
 
         this.addListener(listener);
 
-        if (PromiseEnum.STREAM.equals(type)) {
+        if (this.rpcListeners != null) {
             this.rpcListeners.add(listener);
         }
     }
@@ -278,15 +275,18 @@ public class RpcPromise extends DefaultPromise<Object> implements Comparable<Rpc
 
         if (this.type == PromiseEnum.STREAM) {
             isStop = false;
+
+            // stream 模式取消超时，由用户主动关闭
+            cancelTimeout();
         }
     }
 
-    public long getTimeStampMillis() {
-        return timeStampMillis;
+    public long getTimestampMillis() {
+        return timestampMillis;
     }
 
-    public void setTimeStampMillis(long timeStampMillis) {
-        this.timeStampMillis = timeStampMillis;
+    public void setTimestampMillis(long timestampMillis) {
+        this.timestampMillis = timestampMillis;
     }
 
     public int getRequestId() {
@@ -306,7 +306,7 @@ public class RpcPromise extends DefaultPromise<Object> implements Comparable<Rpc
     }
 
     public void cancelTimeout() {
-        if (this.timeout != null && isStop) {
+        if (this.timeout != null) {
             this.timeout.cancel();
 
             this.timeout = null;
@@ -319,7 +319,7 @@ public class RpcPromise extends DefaultPromise<Object> implements Comparable<Rpc
 
     @Override
     public int compareTo(RpcPromise o) {
-        return (int) (this.timeStampMillis - o.getTimeStampMillis());
+        return (int) (this.timestampMillis - o.getTimestampMillis());
     }
 
     @Override
@@ -335,14 +335,21 @@ public class RpcPromise extends DefaultPromise<Object> implements Comparable<Rpc
         }
 
         // 2、调用回调
-        safeExecute(EVENT_EXECUTOR, new Runnable() {
-            @Override
-            public void run() {
-                notifyListeners();
-            }
-        });
+        safeExecute(EVENT_EXECUTOR, () -> notifyListeners());
 
         return this;
+    }
+
+    private void notifyListeners() {
+
+        if (this.rpcListeners == null) {
+            return;
+        }
+
+        for (GenericFutureListener<RpcPromise> listener : this.rpcListeners) {
+            notifyListener(this, listener);
+        }
+
     }
 
     @Override
@@ -369,18 +376,6 @@ public class RpcPromise extends DefaultPromise<Object> implements Comparable<Rpc
         });
 
         return this;
-    }
-
-    private void notifyListeners() {
-
-        if (this.rpcListeners == null) {
-            return;
-        }
-
-        for (GenericFutureListener<RpcPromise> listener : this.rpcListeners) {
-            notifyListener(this, listener);
-        }
-
     }
 
     private void notifyListener(Future future, GenericFutureListener listener) {

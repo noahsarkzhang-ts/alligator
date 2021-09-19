@@ -11,6 +11,7 @@ import org.apache.rocketmq.client.consumer.DefaultMQPushConsumer;
 import org.apache.rocketmq.client.consumer.listener.ConsumeConcurrentlyStatus;
 import org.apache.rocketmq.client.consumer.listener.MessageListenerConcurrently;
 import org.noahsark.client.future.RpcPromise;
+import org.noahsark.enums.PromiseEnum;
 import org.noahsark.mq.Consumer;
 import org.noahsark.mq.exception.MQOprationException;
 import org.noahsark.server.constant.RpcCommandType;
@@ -39,8 +40,6 @@ public class RocketmqConsumer implements Consumer<RocketmqMessageListener, Rocke
     private DefaultMQPushConsumer consumer;
 
     private RocketmqProxy proxy;
-
-    // 120.79.235.83:9876
 
     public RocketmqConsumer(String namesrvAddr) {
         consumer = new DefaultMQPushConsumer(GROUP_NAME);
@@ -109,7 +108,8 @@ public class RocketmqConsumer implements Consumer<RocketmqMessageListener, Rocke
 
                                 logger.info("receive a command: {}", command);
 
-                                if (!(command.getType() == RpcCommandType.RESPONSE)) { // 处理请求
+                                if (command.getType() == RpcCommandType.REQUEST
+                                        || command.getType() == RpcCommandType.REQUEST_ONEWAY) { // 处理请求
                                     RocketmqChannelHolder channelHolder = proxy.getChannelHolder();
 
                                     RpcContext rpcContext = new RpcContext.Builder()
@@ -146,7 +146,16 @@ public class RocketmqConsumer implements Consumer<RocketmqMessageListener, Rocke
                                             .getPromise(command.getRequestId());
 
                                     if (promise != null) {
-                                        promise.setSuccess(command.getPayload());
+                                        if (command.getType() == RpcCommandType.RESPONSE) {
+                                            promise.setSuccess(command.getPayload());
+                                        } else if (command.getType() == RpcCommandType.STREAM) {
+                                            promise.setType(PromiseEnum.STREAM);
+                                            if (command.getEnd() == (byte) 1) {
+                                                promise.end(command.getPayload());
+                                            } else {
+                                                promise.flow(command.getPayload());
+                                            }
+                                        }
 
                                     } else {
                                         logger.warn("promis is null : {}", command.getRequestId());

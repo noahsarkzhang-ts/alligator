@@ -104,6 +104,7 @@ public class MultiRequest extends Request {
         command.setBiz(header.readInt());
         command.setCmd(header.readInt());
         command.setType(header.readByte());
+        command.setEnd(header.readByte());
         command.setVer(header.readByte());
         command.setSerializer(header.readByte());
 
@@ -146,6 +147,7 @@ public class MultiRequest extends Request {
         buf.writeInt(command.getBiz());
         buf.writeInt(command.getCmd());
         buf.writeByte(command.getType());
+        buf.writeByte(command.getEnd());
         buf.writeByte(command.getVer());
         buf.writeByte(command.getSerializer());
 

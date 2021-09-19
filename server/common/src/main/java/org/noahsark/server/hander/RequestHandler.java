@@ -102,9 +102,9 @@ public class RequestHandler {
         RpcPromise promise = connection.getPromise(command.getRequestId());
 
         if (promise != null) {
-            promise.setSuccess(command.getPayload());
-
-            if (command.getType() == RpcCommandType.STREAM) {
+            if (command.getType() == RpcCommandType.RESPONSE) {
+                promise.setSuccess(command.getPayload());
+            } else if (command.getType() == RpcCommandType.STREAM) {
                 promise.setType(PromiseEnum.STREAM);
                 if (command.getEnd() == (byte) 1) {
                     promise.end(command.getPayload());
