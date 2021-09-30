@@ -84,7 +84,7 @@ public class RegistrationClient extends TcpClient {
 
     public Result<List<CandidateService>> getAllService(ServiceQuery query) {
 
-        Result<List<CandidateService>>  result = commonArrayInvoke(query, CandidateService.class, RegistrationConstants.BIZ_TYPE, RegistrationConstants.CMD_GET_ALL_SERVICE_BIZ);
+        Result<List<CandidateService>> result = commonArrayInvoke(query, CandidateService.class, RegistrationConstants.BIZ_TYPE, RegistrationConstants.CMD_GET_ALL_SERVICE_BIZ);
 
         return result;
     }
@@ -131,10 +131,10 @@ public class RegistrationClient extends TcpClient {
 
     private <T> Result<List<T>> commonArrayInvoke(Object payload, Class<T> type, int biz, int cmd) {
         Request request = new Request.Builder()
-            .biz(biz)
-            .cmd(cmd)
-            .payload(payload)
-            .build();
+                .biz(biz)
+                .cmd(cmd)
+                .payload(payload)
+                .build();
 
         Object object = invokeSync(request, 30000);
         Result<List<T>> result = null;
@@ -142,7 +142,7 @@ public class RegistrationClient extends TcpClient {
         if (object != null) {
             String json = new String((byte[]) object, CharsetUtil.UTF_8);
 
-            result = JsonUtils.fromJsonArray(json,type);
+            result = JsonUtils.fromJsonArray(json, type);
         }
 
         return result;
