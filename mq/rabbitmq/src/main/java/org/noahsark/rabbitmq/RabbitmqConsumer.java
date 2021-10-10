@@ -17,6 +17,8 @@ public class RabbitmqConsumer implements Consumer<RabbitmqMessageListener, Rabbi
 
     private List<RabbitmqTopic> topics;
 
+    private RabbitmqConnection connection;
+
     private RabbitmqChannelPool pool;
 
     @Override
