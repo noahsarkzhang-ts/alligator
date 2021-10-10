@@ -7,7 +7,7 @@ import java.util.List;
  * @version:
  * @date: 2021/4/29
  */
-public interface MessageListener<M extends Message> {
+public interface MessageListener {
 
-    boolean consumeMessage(List<M> messageList);
+    boolean consumeMessage(byte[] message);
 }

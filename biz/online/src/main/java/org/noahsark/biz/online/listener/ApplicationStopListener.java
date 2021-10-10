@@ -25,8 +25,7 @@ public class ApplicationStopListener implements ApplicationListener<ContextClose
         RocketmqProxy mqProxy = ServerContext.mqProxy;
 
         if (mqProxy != null) {
-            mqProxy.getProducer().shutdown();
-            mqProxy.getConsumer().shutdown();
+            mqProxy.shutdown();
         }
 
         RegistrationClient regClient = ServerContext.regClient;

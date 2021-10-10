@@ -29,6 +29,8 @@ public class RabbitmqTopic implements Topic {
      */
     private String routeKey;
 
+    private int qos;
+
     public String getExchangeName() {
         return exchangeName;
     }
@@ -59,6 +61,14 @@ public class RabbitmqTopic implements Topic {
 
     public void setRouteKey(String routeKey) {
         this.routeKey = routeKey;
+    }
+
+    public int getQos() {
+        return qos;
+    }
+
+    public void setQos(int qos) {
+        this.qos = qos;
     }
 
     @Override

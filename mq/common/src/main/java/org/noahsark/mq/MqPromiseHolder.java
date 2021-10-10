@@ -1,9 +1,8 @@
-package org.noahsark.rocketmq;
+package org.noahsark.mq;
 
 import org.noahsark.client.future.PromisHolder;
 import org.noahsark.client.future.RpcPromise;
 import org.noahsark.exception.InvokeExcption;
-import org.noahsark.server.rpc.MultiRequest;
 import org.noahsark.server.rpc.RpcCommand;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,25 +10,20 @@ import org.slf4j.LoggerFactory;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
-/**
- *
- * @author hadoop
- * @date 2021/5/4
- */
-public class RocketmqPromiseHolder implements PromisHolder {
+public class MqPromiseHolder implements PromisHolder {
 
-    private static Logger logger = LoggerFactory.getLogger(RocketmqPromiseHolder.class);
+    private static Logger logger = LoggerFactory.getLogger(MqPromiseHolder.class);
 
     private AtomicInteger nextId = new AtomicInteger(1);
 
-    private RocketmqProducer producer;
+    private Producer producer;
 
     private final ConcurrentHashMap<Integer, RpcPromise> futures = new ConcurrentHashMap<>(16);
 
-    public RocketmqPromiseHolder() {
+    public MqPromiseHolder() {
     }
 
-    public RocketmqPromiseHolder(RocketmqProducer producer) {
+    public MqPromiseHolder(Producer producer) {
         this.producer = producer;
     }
 
@@ -72,13 +66,12 @@ public class RocketmqPromiseHolder implements PromisHolder {
     @Override
     public void write(RpcCommand command) {
 
-        RocketmqMessage msg = buildRocketmqMessage(command);
-        //producer.send(msg);
+        Message msg = producer.buildMessage(command);
 
-        producer.send(msg, new RocketmqSendCallback() {
+        producer.send(msg, new SendCallback() {
 
             @Override
-            public void onSuccess(RocketmqSendResult var1) {
+            public void onSuccess(SendResult var1) {
                 logger.info("send command successfully:{}", command.getRequestId());
             }
 
@@ -86,8 +79,8 @@ public class RocketmqPromiseHolder implements PromisHolder {
             public void onException(Throwable var1) {
                 logger.error("send command fail!", var1);
 
-                RpcPromise promise = RocketmqPromiseHolder.this
-                    .removePromis(command.getRequestId());
+                RpcPromise promise = MqPromiseHolder.this
+                        .removePromis(command.getRequestId());
                 if (promise != null) {
 
                     promise.setFailure(new InvokeExcption());
@@ -95,26 +88,6 @@ public class RocketmqPromiseHolder implements PromisHolder {
 
             }
         }, 3000);
-    }
-
-    private RocketmqMessage buildRocketmqMessage(RpcCommand command) {
-        RocketmqMessage msg = new RocketmqMessage();
-        RocketmqTopic topic = (RocketmqTopic) command.getAttachment();
-
-        msg.setTopic(topic.getTopic());
-        msg.setTag(topic.getTag());
-        msg.setKey(topic.getKey());
-
-        byte[] body;
-
-        if (command instanceof MultiRequest) {
-            body = MultiRequest.encode((MultiRequest) command);
-        } else {
-            body = RpcCommand.encode(command);
-        }
-
-        msg.setContent(body);
-        return msg;
     }
 
 }

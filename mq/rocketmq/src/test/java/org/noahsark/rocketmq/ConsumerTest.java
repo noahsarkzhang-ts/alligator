@@ -2,6 +2,7 @@ package org.noahsark.rocketmq;
 
 import java.util.concurrent.TimeUnit;
 import org.junit.Test;
+import org.noahsark.mq.DefaultmqMessageListener;
 
 /**
  * Created by hadoop on 2021/5/2.
@@ -19,7 +20,7 @@ public class ConsumerTest {
 
         consumer.subscribe(topic);
 
-        consumer.registerMessageListener(new RocketmqMessageListener(){
+        consumer.registerMessageListener(new DefaultmqMessageListener(){
 
         });
 

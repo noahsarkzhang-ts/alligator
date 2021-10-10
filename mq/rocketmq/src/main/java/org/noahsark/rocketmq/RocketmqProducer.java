@@ -1,8 +1,5 @@
 package org.noahsark.rocketmq;
 
-import java.util.UUID;
-
-import org.apache.rocketmq.client.exception.MQClientException;
 import org.apache.rocketmq.client.producer.DefaultMQProducer;
 import org.apache.rocketmq.client.producer.SendCallback;
 import org.apache.rocketmq.client.producer.SendResult;
@@ -10,14 +7,18 @@ import org.apache.rocketmq.client.producer.SendStatus;
 import org.apache.rocketmq.common.message.Message;
 import org.noahsark.mq.Producer;
 import org.noahsark.mq.exception.MQOprationException;
+import org.noahsark.server.rpc.MultiRequest;
+import org.noahsark.server.rpc.RpcCommand;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.UUID;
+
 /**
- * Created by hadoop on 2021/5/1.
+ * @author hadoop
+ * @date 2021/5/1
  */
-public class RocketmqProducer implements Producer<RocketmqMessage,
-        RocketmqSendCallback, RocketmqSendResult> {
+public class RocketmqProducer implements Producer<RocketmqMessage, RocketmqSendResult> {
 
     private static Logger logger = LoggerFactory.getLogger(RocketmqProducer.class);
 
@@ -49,7 +50,7 @@ public class RocketmqProducer implements Producer<RocketmqMessage,
     }
 
     @Override
-    public void send(RocketmqMessage msg, RocketmqSendCallback sendCallback, long timeout) {
+    public void send(RocketmqMessage msg, org.noahsark.mq.SendCallback sendCallback, long timeout) {
 
         Message message = new Message(msg.getTopic(), msg.getTag(),
                 msg.getKey(), msg.getContent());
@@ -80,6 +81,27 @@ public class RocketmqProducer implements Producer<RocketmqMessage,
             throw new MQOprationException(ex);
         }
 
+    }
+
+    @Override
+    public RocketmqMessage buildMessage(RpcCommand command) {
+        RocketmqMessage msg = new RocketmqMessage();
+        RocketmqTopic topic = (RocketmqTopic) command.getAttachment();
+
+        msg.setTopic(topic.getTopic());
+        msg.setTag(topic.getTag());
+        msg.setKey(topic.getKey());
+
+        byte[] body;
+
+        if (command instanceof MultiRequest) {
+            body = MultiRequest.encode((MultiRequest) command);
+        } else {
+            body = RpcCommand.encode(command);
+        }
+
+        msg.setContent(body);
+        return msg;
     }
 
     @Override
@@ -131,6 +153,7 @@ public class RocketmqProducer implements Producer<RocketmqMessage,
 
     }
 
+    @Override
     public void start() {
         if (producer != null) {
             try {

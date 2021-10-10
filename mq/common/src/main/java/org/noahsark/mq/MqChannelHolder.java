@@ -1,28 +1,23 @@
-package org.noahsark.rocketmq;
+package org.noahsark.mq;
 
 import org.noahsark.client.future.PromisHolder;
-import org.noahsark.client.future.RpcPromise;
-import org.noahsark.server.rpc.Response;
 import org.noahsark.server.rpc.RpcCommand;
 import org.noahsark.server.session.ChannelHolder;
 import org.noahsark.server.session.Subject;
 
-
 /**
- *
- * @author hadoop
- * @date 2021/5/4
+ * @author Admin
  */
-public class RocketmqChannelHolder implements ChannelHolder {
+public class MqChannelHolder implements ChannelHolder {
 
-    private RocketmqProducer producer;
+    private Producer producer;
 
     private PromisHolder promisHolder;
 
-    public RocketmqChannelHolder() {
+    public MqChannelHolder() {
     }
 
-    public RocketmqChannelHolder(RocketmqProducer producer, PromisHolder promisHolder) {
+    public MqChannelHolder(Producer producer, PromisHolder promisHolder) {
         this.producer = producer;
         this.promisHolder = promisHolder;
     }

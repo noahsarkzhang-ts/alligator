@@ -18,20 +18,31 @@ public class RabbitmqSendResult implements SendResult {
      */
     private long deliveryTag;
 
+    public RabbitmqSendResult() {}
+
+    public RabbitmqSendResult(boolean success, long deliveryTag) {
+        this.success = success;
+        this.deliveryTag = deliveryTag;
+    }
+
+    @Override
     public boolean isSuccess() {
         return success;
     }
 
+    @Override
     public void setSuccess(boolean success) {
         this.success = success;
     }
 
-    public long getDeliveryTag() {
-        return deliveryTag;
+    @Override
+    public String getMsgId() {
+        return Long.toString(deliveryTag);
     }
 
-    public void setDeliveryTag(long deliveryTag) {
-        this.deliveryTag = deliveryTag;
+    @Override
+    public void setMsgId(String msgId) {
+        this.deliveryTag = Long.parseLong(msgId);
     }
 
     @Override

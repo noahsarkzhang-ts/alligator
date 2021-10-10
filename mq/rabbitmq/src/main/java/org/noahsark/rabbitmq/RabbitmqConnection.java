@@ -7,6 +7,7 @@ import com.rabbitmq.client.ConnectionFactory;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 /**
  * <p>代表了连接到 RabbitMQ broker 的 TCP Connection </p>
@@ -48,7 +49,6 @@ public class RabbitmqConnection {
     private Connection connection;
 
     public RabbitmqConnection() {
-
     }
 
     /**
@@ -57,7 +57,12 @@ public class RabbitmqConnection {
      * @throws Exception 异常
      * @see
      */
-    public void init() throws Exception {
+    public void init(Properties config) throws Exception {
+
+        this.username = config.getProperty("username");
+        this.password = config.getProperty("password");
+        this.vhost = config.getProperty("vhost");
+        this.urls = config.getProperty("urls");
 
         String[] lists = urls.split(",");
         List<Address> addressList = new ArrayList<>();
@@ -82,8 +87,15 @@ public class RabbitmqConnection {
         return connection;
     }
 
-    public void close() throws IOException {
-        this.connection.close();
+    public synchronized void close() throws IOException {
+
+        if(connection != null) {
+            this.connection.close();
+
+            this.connection = null;
+        }
+
+
     }
 
     public String getUsername() {
