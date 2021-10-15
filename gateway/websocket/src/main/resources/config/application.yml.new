@@ -12,12 +12,17 @@ common:
     host: 192.168.68.25
     port: 9090
   mqProxy:
-    dialect: rocketmq
-    topic: TopicTest-1
+    dialet: rocketmq
     rocketMq:
       nameSrv: 120.79.235.83:9876
       producerGroup: online-produce-1
       consumerGroup: online-consumer-1
+      topic: TopicTest-1
+    rabbitMq:
+      vhost: alligator
+      username: allen
+      password: test
+      urls: 120.79.235.83:9876
 
   sysEvent:
     userTopic: UserEvent

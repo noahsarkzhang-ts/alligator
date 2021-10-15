@@ -1,10 +1,11 @@
 package org.noahsark.rocketmq;
 
-import org.noahsark.client.future.PromisHolder;
-import org.noahsark.mq.*;
-import org.noahsark.server.rpc.MultiRequest;
+import org.noahsark.mq.AbstractMqProxy;
+import org.noahsark.mq.DefaultmqMessageListener;
+import org.noahsark.mq.MqChannelHolder;
+import org.noahsark.mq.MqPromiseHolder;
+import org.noahsark.mq.Topic;
 import org.noahsark.server.rpc.Request;
-import org.noahsark.server.session.ChannelHolder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,10 +24,6 @@ public class RocketmqProxy extends AbstractMqProxy {
     private RocketmqConsumer consumer;
 
     private RocketmqProducer producer;
-
-    private PromisHolder promiseHolder;
-
-    private ChannelHolder channelHolder;
 
     private List<RocketmqTopic> topics = new ArrayList<>();
 

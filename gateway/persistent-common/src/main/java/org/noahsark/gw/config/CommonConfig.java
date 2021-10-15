@@ -120,13 +120,45 @@ public class CommonConfig {
     }
 
     public static class MqProxy {
+
+        private String dialect;
+
+        private RocketMq rocketMq;
+
+        private String topic;
+
+        public String getDialect() {
+            return dialect;
+        }
+
+        public void setDialect(String dialect) {
+            this.dialect = dialect;
+        }
+
+        public RocketMq getRocketMq() {
+            return rocketMq;
+        }
+
+        public void setRocketMq(RocketMq rocketMq) {
+            this.rocketMq = rocketMq;
+        }
+
+        public String getTopic() {
+            return topic;
+        }
+
+        public void setTopic(String topic) {
+            this.topic = topic;
+        }
+    }
+
+    public static class RocketMq {
+
         private String nameSrv;
 
         private String producerGroup;
 
         private String consumerGroup;
-
-        private String topic;
 
         public String getNameSrv() {
             return nameSrv;
@@ -152,13 +184,6 @@ public class CommonConfig {
             this.consumerGroup = consumerGroup;
         }
 
-        public String getTopic() {
-            return topic;
-        }
-
-        public void setTopic(String topic) {
-            this.topic = topic;
-        }
     }
 
     public static class SysEvent {

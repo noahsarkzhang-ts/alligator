@@ -29,7 +29,10 @@ public class RabbitmqTopic implements Topic {
      */
     private String routeKey;
 
-    private int qos;
+    /**
+     *  默认为 1
+     */
+    private int qos = 1;
 
     public String getExchangeName() {
         return exchangeName;

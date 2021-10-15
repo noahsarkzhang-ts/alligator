@@ -76,6 +76,8 @@ public class UserEventBroadcaster {
                 RocketmqTopic topic = new RocketmqTopic();
                 topic.setTopic(service.getTopic());
 
+                logger.info("send a multiRequest:{}", multiRequest);
+
                 proxy.sendOneway(topic, multiRequest);
 
             });

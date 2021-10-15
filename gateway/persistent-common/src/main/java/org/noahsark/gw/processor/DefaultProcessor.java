@@ -5,6 +5,7 @@ import org.noahsark.client.future.CommandCallback;
 import org.noahsark.gw.config.CommonConfig;
 import org.noahsark.gw.context.ServerContext;
 import org.noahsark.gw.user.UserManager;
+import org.noahsark.mq.MqProxy;
 import org.noahsark.registration.BizServiceCache;
 import org.noahsark.registration.domain.CandidateService;
 import org.noahsark.rocketmq.RocketmqProxy;
@@ -112,6 +113,7 @@ public class DefaultProcessor extends AbstractProcessor<Void> {
                         @Override
                         public void failure(Throwable cause, int currentFanout, int fanout) {
                             logger.warn("catch an exception.", cause);
+                            logger.warn("catch an exception when invoking command:{}",context.getCommand());
 
                             context.sendResponse(Response.buildCommonResponse(context.getCommand(),
                                 -1, "failed"));
@@ -157,7 +159,7 @@ public class DefaultProcessor extends AbstractProcessor<Void> {
             logger.info("send a request: {}", multiRequest);
             //logger.info("payload: {}", command.getPayload());
 
-            RocketmqProxy proxy = ServerContext.mqProxy;
+            MqProxy proxy = ServerContext.mqProxy;
 
             RocketmqTopic topic = new RocketmqTopic();
             topic.setTopic(service.getTopic());

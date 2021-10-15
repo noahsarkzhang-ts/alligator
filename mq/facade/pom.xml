@@ -3,40 +3,42 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <artifactId>alligator-all</artifactId>
+        <artifactId>alligator-mq</artifactId>
         <groupId>org.noahsark</groupId>
         <version>1.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>alligator-mq</artifactId>
-    <packaging>pom</packaging>
+    <artifactId>alligator-mq-facade</artifactId>
 
-    <name>alligator-mq</name>
+    <name>alligator-mq-facade</name>
     <!-- FIXME change it to the project's website -->
     <url>http://www.example.com</url>
-    <modules>
-        <module>common</module>
-        <module>rocketmq</module>
-        <module>rabbitmq</module>
-        <module>kafka</module>
-        <module>facade</module>
-    </modules>
-
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <artifactId>slf4j-api</artifactId>
-                <groupId>org.slf4j</groupId>
-                <version>1.7.26</version>
-            </dependency>
-        </dependencies>
-
-    </dependencyManagement>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>1.9</maven.compiler.source>
+        <maven.compiler.target>1.9</maven.compiler.target>
     </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.noahsark</groupId>
+            <artifactId>alligator-mq-rabbitmq</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.noahsark</groupId>
+            <artifactId>alligator-mq-rocketmq</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+        </dependency>
+    </dependencies>
 
     <build>
         <pluginManagement><!-- lock down plugins versions to avoid using Maven defaults (may be moved to parent pom) -->

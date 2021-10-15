@@ -30,9 +30,9 @@ public class RabbitmqProxy extends AbstractMqProxy {
     private List<RabbitmqTopic> topics = new ArrayList<>();
 
     public RabbitmqProxy(Builder builder) {
-        config.setProperty("username",builder.username);
-        config.setProperty("password",builder.password);
-        config.setProperty("vhost",builder.vhost);
+        config.setProperty("username", builder.username);
+        config.setProperty("password", builder.password);
+        config.setProperty("vhost", builder.vhost);
         config.setProperty("urls", builder.urls);
 
         this.topics = builder.topics;
@@ -62,14 +62,14 @@ public class RabbitmqProxy extends AbstractMqProxy {
             /**
              * 初始化 consumer
              */
-            consumer = new RabbitmqConsumer(connection,pool);
+            consumer = new RabbitmqConsumer(connection, pool);
             consumer.subscribe(topics);
             consumer.registerMessageListener(new DefaultmqMessageListener(this));
 
             /**
              * 初始化 producer
              */
-            producer = new RabbitmqProducer(connection,pool);
+            producer = new RabbitmqProducer(connection, pool);
 
             initHolder();
 
@@ -150,7 +150,7 @@ public class RabbitmqProxy extends AbstractMqProxy {
         }
 
         public Builder urls(String urls) {
-            this.urls = vhost;
+            this.urls = urls;
 
             return this;
         }
@@ -165,6 +165,10 @@ public class RabbitmqProxy extends AbstractMqProxy {
             this.topics.add(topic);
 
             return this;
+        }
+
+        public RabbitmqProxy build() {
+            return new RabbitmqProxy(this);
         }
 
     }

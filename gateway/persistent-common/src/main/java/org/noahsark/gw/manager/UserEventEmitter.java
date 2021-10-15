@@ -4,6 +4,7 @@ import org.noahsark.common.event.UserEvent;
 import org.noahsark.gw.config.CommonConfig;
 import org.noahsark.gw.context.ServerContext;
 import org.noahsark.gw.user.UserSubject;
+import org.noahsark.mq.MqProxy;
 import org.noahsark.rocketmq.RocketmqProxy;
 import org.noahsark.rocketmq.RocketmqTopic;
 import org.noahsark.server.constant.BizServiceType;
@@ -61,7 +62,7 @@ public class UserEventEmitter {
 
             logger.info("send a request: {}", multiRequest);
 
-            RocketmqProxy proxy = ServerContext.mqProxy;
+            MqProxy proxy = ServerContext.mqProxy;
 
             RocketmqTopic topic = new RocketmqTopic();
             topic.setTopic(commonConfig.getSysEvent().getUserTopic());

@@ -292,7 +292,6 @@ public class MultiRequest extends Request {
         }
 
         public MultiRequest build() {
-            this.requestBuilder.type(RpcCommandType.REQUEST);
             this.requestBuilder.ver(RpcCommandVer.V1);
             this.requestBuilder.serializer(SerializerType.JSON);
 

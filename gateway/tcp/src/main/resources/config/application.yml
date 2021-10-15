@@ -18,6 +18,6 @@ common:
     topic: TopicTest-1
 
 logging:
-  config: classpath:config/logback-spring.xml
+  config: classpath:config/logback.xml
   file:
     name: logs/ws-gw.log

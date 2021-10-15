@@ -98,48 +98,4 @@ public class RabbitmqConnection {
 
     }
 
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getVhost() {
-        return vhost;
-    }
-
-    public void setVhost(String vhost) {
-        this.vhost = vhost;
-    }
-
-    public String getUrls() {
-        return urls;
-    }
-
-    public void setUrls(String urls) {
-        this.urls = urls;
-    }
-
-    public ConnectionFactory getFactory() {
-        return factory;
-    }
-
-    public void setFactory(ConnectionFactory factory) {
-        this.factory = factory;
-    }
-
-    public void setConnection(Connection connection) {
-        this.connection = connection;
-    }
-
 }

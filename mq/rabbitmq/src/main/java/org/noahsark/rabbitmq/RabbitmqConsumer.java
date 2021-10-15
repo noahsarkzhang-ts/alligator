@@ -71,7 +71,6 @@ public class RabbitmqConsumer implements Consumer<RabbitmqTopic> {
                     @Override
                     public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties,
                                                byte[] body) throws IOException {
-
                         try {
 
                             listener.consumeMessage(body);

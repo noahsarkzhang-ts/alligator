@@ -1,5 +1,6 @@
 package org.noahsark.gw.context;
 
+import org.noahsark.mq.MqProxy;
 import org.noahsark.registration.BizServiceCache;
 import org.noahsark.registration.RegistrationClient;
 import org.noahsark.rocketmq.RocketmqProxy;
@@ -16,7 +17,7 @@ public final class ServerContext {
 
     public static RegistrationClient regClient;
 
-    public static RocketmqProxy mqProxy;
+    public static MqProxy mqProxy;
 
     public static BizServiceCache bizServiceCache;
 
