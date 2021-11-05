@@ -17,6 +17,7 @@
     <module>biz</module>
     <module>client</module>
     <module>common</module>
+      <module>db</module>
   </modules>
 
   <name>alligator-all</name>

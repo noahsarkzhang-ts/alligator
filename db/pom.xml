@@ -9,33 +9,36 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>alligator-mq</artifactId>
+    <artifactId>alligator-db</artifactId>
     <packaging>pom</packaging>
 
-    <name>alligator-mq</name>
+    <name>alligator-db</name>
     <!-- FIXME change it to the project's website -->
     <url>http://www.example.com</url>
     <modules>
-        <module>common</module>
-        <module>rocketmq</module>
-        <module>rabbitmq</module>
-        <module>kafka</module>
-        <module>facade</module>
+        <module>redis</module>
     </modules>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <slf4j.version>1.7.26</slf4j.version>
+    </properties>
 
     <dependencyManagement>
         <dependencies>
             <dependency>
                 <artifactId>slf4j-api</artifactId>
                 <groupId>org.slf4j</groupId>
-                <version>1.7.26</version>
+                <version>${slf4j.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>ch.qos.logback</groupId>
+                <artifactId>logback-classic</artifactId>
+                <version>1.2.3</version>
+                <scope>test</scope>
             </dependency>
         </dependencies>
-
     </dependencyManagement>
-
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    </properties>
 
 </project>

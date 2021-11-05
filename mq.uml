@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Diagram>
+  <ID>JAVA</ID>
+  <OriginalElement>org.noahsark.mq</OriginalElement>
+  <nodes>
+    <node x="386.5" y="81.0">org.noahsark.client.future.PromisHolder</node>
+    <node x="-255.0" y="317.0">org.noahsark.rabbitmq.RabbitmqConsumer</node>
+    <node x="-198.0" y="78.0">org.noahsark.server.session.ChannelHolder</node>
+    <node x="420.0" y="317.0">org.noahsark.rabbitmq.RabbitmqProducer</node>
+    <node x="0.0" y="160.0">org.noahsark.rabbitmq.RabbitmqProxy</node>
+    <node x="73.5" y="80.0">org.noahsark.mq.AbstractMqProxy</node>
+    <node x="-119.0" y="-3.0">org.noahsark.mq.MqProxyFactory</node>
+    <node x="373.0" y="161.0">org.noahsark.mq.MqPromiseHolder</node>
+    <node x="157.0" y="160.0">org.noahsark.rocketmq.RocketmqProxy</node>
+    <node x="-208.0" y="158.0">org.noahsark.mq.MqChannelHolder</node>
+    <node x="240.0" y="317.0">org.noahsark.rocketmq.RocketmqProducer</node>
+    <node x="97.5" y="0.0">org.noahsark.mq.MqProxy</node>
+    <node x="-71.0" y="317.0">org.noahsark.rocketmq.RocketmqConsumer</node>
+    <node x="-134.0" y="237.0">org.noahsark.mq.Consumer</node>
+    <node x="319.0" y="-1.0">org.noahsark.client.future.RpcPromise</node>
+    <node x="359.0" y="237.0">org.noahsark.mq.Producer</node>
+  </nodes>
+  <notes />
+  <edges>
+    <edge source="org.noahsark.mq.MqChannelHolder" target="org.noahsark.server.session.ChannelHolder">
+      <point x="0.0" y="-15.0" />
+      <point x="0.0" y="15.0" />
+    </edge>
+    <edge source="org.noahsark.rabbitmq.RabbitmqProducer" target="org.noahsark.mq.Producer">
+      <point x="0.0" y="-15.0" />
+      <point x="499.0" y="292.0" />
+      <point x="434.75" y="292.0" />
+      <point x="25.25" y="15.0" />
+    </edge>
+    <edge source="org.noahsark.rocketmq.RocketmqConsumer" target="org.noahsark.mq.Consumer">
+      <point x="0.0" y="-15.0" />
+      <point x="12.0" y="292.0" />
+      <point x="-53.75" y="292.0" />
+      <point x="26.75" y="15.0" />
+    </edge>
+    <edge source="org.noahsark.rocketmq.RocketmqProxy" target="org.noahsark.mq.AbstractMqProxy">
+      <point x="0.0" y="-15.0" />
+      <point x="226.5" y="135.0" />
+      <point x="184.5" y="135.0" />
+      <point x="37.0" y="15.0" />
+    </edge>
+    <edge source="org.noahsark.mq.MqPromiseHolder" target="org.noahsark.client.future.PromisHolder">
+      <point x="0.0" y="-15.0" />
+      <point x="0.0" y="15.0" />
+    </edge>
+    <edge source="org.noahsark.rocketmq.RocketmqProducer" target="org.noahsark.mq.Producer">
+      <point x="0.0" y="-15.0" />
+      <point x="320.0" y="292.0" />
+      <point x="384.25" y="292.0" />
+      <point x="-25.25" y="15.0" />
+    </edge>
+    <edge source="org.noahsark.rabbitmq.RabbitmqConsumer" target="org.noahsark.mq.Consumer">
+      <point x="0.0" y="-15.0" />
+      <point x="-173.0" y="292.0" />
+      <point x="-107.25" y="292.0" />
+      <point x="-26.75" y="15.0" />
+    </edge>
+    <edge source="org.noahsark.mq.AbstractMqProxy" target="org.noahsark.mq.MqProxy">
+      <point x="0.0" y="-15.0" />
+      <point x="0.0" y="15.0" />
+    </edge>
+    <edge source="org.noahsark.rabbitmq.RabbitmqProxy" target="org.noahsark.mq.AbstractMqProxy">
+      <point x="0.0" y="-15.0" />
+      <point x="68.5" y="135.0" />
+      <point x="110.5" y="135.0" />
+      <point x="-37.0" y="15.0" />
+    </edge>
+  </edges>
+  <settings layout="Hierarchic Group" zoom="1.0" x="161.5" y="172.0" />
+  <SelectedNodes />
+  <Categories />
+  <SCOPE>All</SCOPE>
+  <VISIBILITY>private</VISIBILITY>
+</Diagram>
+
