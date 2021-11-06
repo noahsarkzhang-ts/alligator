@@ -3,10 +3,10 @@ package org.noahsark.server.util;
 import java.lang.reflect.*;
 
 /**
- * @author: noahsark
- * @version:
- * @date: 2021/3/27
- */
+ * 类对象工具类
+ * @author zhangxt
+ * @date 2021/11/06 11:57
+ **/
 public class TypeUtils {
 
     public static Class<?> getFirstParameterizedType(Object object) {

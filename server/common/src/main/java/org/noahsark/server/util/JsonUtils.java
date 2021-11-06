@@ -12,10 +12,10 @@ import io.netty.util.CharsetUtil;
 import org.noahsark.server.rpc.Result;
 
 /**
- * @author: noahsark
- * @version:
- * @date: 2020/12/7
- */
+ * Json 工具类
+ * @author zhangxt
+ * @date 2021/11/06 12:17
+ **/
 public class JsonUtils {
 
     private static final Gson GSON = new GsonBuilder().setDateFormat("yyyy-MM-dd HH:mm:ss").create();
@@ -39,6 +39,14 @@ public class JsonUtils {
         return JsonUtils.fromJsonObject(json, Void.class);
     }
 
+    /**
+     *
+     * @author zhangxt
+     * @date 2021/11/06 12:16
+     * @param json json字串
+     * @param clazz 反序列化的类
+     * @return org.noahsark.server.rpc.Result<java.util.List<T>>
+    */
     public static <T> Result<List<T>> fromJsonArray(String json, Class<T> clazz) {
         // 生成List<T> 中的 List<T>
         Type listType = new ParameterizedTypeImpl(List.class, new Class[]{clazz});

@@ -10,8 +10,10 @@ import org.noahsark.common.event.UserEvent;
 import org.springframework.stereotype.Component;
 
 /**
- * Created by hadoop on 2021/6/27.
- */
+ * 内存在线数据访问类
+ * @author zhangxt
+ * @date 2021/6/27 14:45
+ **/
 @Component
 public class MemoryOnlineRepository implements OnlineRepository {
 
@@ -26,14 +28,14 @@ public class MemoryOnlineRepository implements OnlineRepository {
     private Map<String, String> user2Servie = new HashMap<>();
 
     /**
-     * service id --> inviter id list
+     * service id --> User id list
      */
     private Map<String, Set<String>> serviceUsers = new HashMap<>();
 
     /**
      * 当前在线的所有用户
      */
-    private Set<UserInfo> currentUsers = new HashSet<>();
+    private Set<String> currentUsers = new HashSet<>();
 
 
     @Override
@@ -53,7 +55,7 @@ public class MemoryOnlineRepository implements OnlineRepository {
         userMap.put(userInfo.getUserId(),userInfo);
 
         // 2、添加到当前用户列表
-        currentUsers.add(userInfo);
+        currentUsers.add(userInfo.getUserId());
 
         // 3、添加用户-->服务映射关系
         user2Servie.put(userInfo.getUserId(),userInfo.getServiceId());
@@ -83,7 +85,7 @@ public class MemoryOnlineRepository implements OnlineRepository {
         userMap.remove(event.getUserId());
 
         // 2、删除当前用户列表
-        currentUsers.remove(userInfo);
+        currentUsers.remove(userInfo.getUserId());
 
         // 3、删除用户-->服务映射关系
         user2Servie.remove(userInfo.getUserId());
@@ -98,17 +100,43 @@ public class MemoryOnlineRepository implements OnlineRepository {
 
     @Override
     public void serviceRegistor(ServiceEvent event) {
-
+        // TODO 服务器上线，暂时不处理
     }
 
     @Override
     public void serviceUnRegistor(ServiceEvent event) {
+        // TODO 服务器下线，需要将该服务器下的所有用户下线
+
+        String serviceId = event.getServiceId();
+
+        // TODO 1、获取该服务器下的所有用户id
+        Set<String> userIds = serviceUsers.get(serviceId);
+
+        // TODO 2、下线所有用户
+        userIds.stream().forEach(userId -> {
+
+            // 2.1 移除在线用户
+            currentUsers.remove(userId);
+
+            // 2.1 移除用户服务绑定信息
+            user2Servie.remove(userId);
+
+            // 2.2 移除用户信息
+            userMap.remove(userId);
+        });
+
+        // TODO 3、清除服务器信息
+        serviceUsers.remove(serviceId);
 
     }
 
     @Override
     public Set<UserInfo> getAllUser() {
-        return currentUsers;
+        Set<UserInfo> users = new HashSet<>();
+
+        currentUsers.stream().forEach(userId -> users.add(userMap.get(userId)));
+
+        return users;
     }
 
     @Override

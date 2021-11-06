@@ -4,8 +4,10 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 /**
- * registration
- */
+ * 注册中心启动类
+ * @author zhangxt
+ * @date 2021/4/10 20:39
+ **/
 @SpringBootApplication
 public class RegistrationApp
 {

@@ -16,10 +16,10 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 /**
- * @author: noahsark
- * @version:
- * @date: 2021/7/1
- */
+ * 用户处理类
+ * @author zhangxt
+ * @date 2021/7/1 15:23
+ **/
 @Component
 public class UserProcessor extends AbstractProcessor<UserQuery> {
 

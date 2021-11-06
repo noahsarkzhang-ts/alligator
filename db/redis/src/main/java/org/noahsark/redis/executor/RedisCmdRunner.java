@@ -214,6 +214,26 @@ public class RedisCmdRunner {
         return result;
     }
 
+    /**
+     * 是否存在一个 key
+     *
+     * @param key key
+     * @return boolean
+     * @author zhangxt
+     * @date 2021/11/06 20:24
+     */
+    public boolean isExistKey(String key) {
+        boolean result = false;
+
+        try (Jedis jedis = jedisPool.getResource()) {
+            result = jedis.exists(key);
+        } catch (Exception ex) {
+            logger.error("catch an exception when existing element!", ex);
+        }
+
+        return result;
+    }
+
     public void del(String key) {
         try (Jedis jedis = jedisPool.getResource()) {
             jedis.del(key);

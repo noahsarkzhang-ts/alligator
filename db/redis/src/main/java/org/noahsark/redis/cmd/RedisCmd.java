@@ -31,6 +31,13 @@ public class RedisCmd {
     }
 
     public void parseCmd(Pipeline pipeline) {
+
+        if (OperationEnum.DEL.equals(operationType)) {
+            pipeline.del(key.getKey());
+
+            return;
+        }
+
         switch (type) {
             case STRING:
                 parseString(pipeline);

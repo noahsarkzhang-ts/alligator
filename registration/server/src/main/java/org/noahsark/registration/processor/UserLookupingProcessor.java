@@ -29,14 +29,7 @@ public class UserLookupingProcessor extends AbstractProcessor<UserQuery> {
     protected void execute(UserQuery request, RpcContext context) {
         logger.info("receive query inviter service request: {}", JsonUtils.toJson(request));
 
-        Service service = repository.getServiceByUser(request.getUserId());
-
-        CandidateService candidateService = new CandidateService();
-        candidateService.setAddress(service.getAddress());
-        candidateService.setTopic(service.getTopic());
-
-        context.sendResponse(Response.buildResponse(context.getCommand(),
-                candidateService, 0, "success"));
+        // TODO 从注册中心移除
     }
 
     @Override

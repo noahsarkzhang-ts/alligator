@@ -22,11 +22,8 @@ public class LoginProcessor extends AbstractProcessor<User> {
 
     @Override
     protected void execute(User request, RpcContext context) {
-        Session session = (Session) context.getSession();
-        Service service = (Service) session.getSubject();
 
-        repository.login(request,service);
-
+        // TODO 从注册中心移除
         context.sendResponse(Response.buildCommonResponse(context.getCommand(),
             0, "success"));
 

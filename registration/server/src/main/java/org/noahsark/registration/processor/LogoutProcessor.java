@@ -21,8 +21,7 @@ public class LogoutProcessor extends AbstractProcessor<Id> {
     @Override
     protected void execute(Id request, RpcContext context) {
 
-        repository.logout(request.getId());
-
+        // TODO 从注册中心移除
         context.sendResponse(Response.buildCommonResponse(context.getCommand(),
                 0, "success"));
 

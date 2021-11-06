@@ -1,43 +1,25 @@
 package org.noahsark.registration.repository;
 
-import java.time.Instant;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.PriorityQueue;
-
 import org.noahsark.registration.domain.Service;
-import org.noahsark.registration.domain.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.time.Instant;
+import java.util.*;
+
 /**
- * Created by hadoop on 2021/4/10.
- */
+ * 注册中心 内存 数据访问类
+ * @author zhangxt
+ * @date 2021/4/10 20:37
+ **/
 public class MemoryRepository implements Repository {
 
     private static Logger log = LoggerFactory.getLogger(MemoryRepository.class);
 
     /**
-     * 用户id --> inviter
-     */
-    private Map<String, User> userMap = new HashMap<>();
-
-    /**
      * service id --> service
      */
     private Map<String, Service> serviceMap = new HashMap<>();
-
-    /**
-     * inviter id --> service id
-     */
-    private Map<String, String> user2Servie = new HashMap<>();
-
-    /**
-     * service id --> inviter id list
-     */
-    private Map<String, List<String>> serviceUsers = new HashMap<>();
 
     /**
      * biz id --> service id list
@@ -50,49 +32,11 @@ public class MemoryRepository implements Repository {
     private PriorityQueue<Service> queue = new PriorityQueue<>();
 
     @Override
-    public void login(User user, Service service) {
-        userMap.put(user.getUserId(), user);
-        user2Servie.put(user.getUserId(), service.getId());
-
-        List<String> users = serviceUsers.get(service.getId());
-        if (users != null) {
-            users.add(user.getUserId());
-        } else {
-            users = new ArrayList<>();
-            users.add(user.getUserId());
-
-            serviceUsers.put(service.getId(), users);
-        }
-
-    }
-
-    @Override
-    public void logout(String userId) {
-        userMap.remove(userId);
-
-        String serviceId = user2Servie.get(userId);
-
-        user2Servie.remove(userId);
-
-        List<String> users = serviceUsers.get(serviceId);
-        if (users != null) {
-            users.remove(userId);
-        }
-    }
-
-    @Override
     public void registerService(Service service) {
 
         serviceMap.put(service.getId(), service);
 
-        /*
-         * 如果是网关服务，则需要构建服务用户信息记录
-         */
-        if (service.getBiz() >= 100 && service.getBiz() < 200) {
-            serviceUsers.put(service.getId(), new ArrayList<>());
-        }
-
-        List<String> services = bizServices.get(service.getId());
+        List<String> services = bizServices.get(service.getBiz());
         if (services != null) {
             services.add(service.getId());
         } else {
@@ -112,21 +56,8 @@ public class MemoryRepository implements Repository {
 
         serviceMap.remove(serviceId);
 
-        /*
-         * 如果是网关服务，则需要清理用户信息
-         */
-        if (service.getBiz() >= 100 && service.getBiz() < 200) {
-            List<String> users = serviceUsers.get(serviceId);
 
-            users.stream().forEach(userId -> {
-                userMap.remove(userId);
-                user2Servie.remove(userId);
-            });
-
-            serviceUsers.remove(serviceId);
-        }
-
-        List<String> services = bizServices.get(service.getId());
+        List<String> services = bizServices.get(service.getBiz());
         if (services != null) {
             services.remove(service.getId());
         }
@@ -146,11 +77,6 @@ public class MemoryRepository implements Repository {
         return services;
     }
 
-    @Override
-    public Service getServiceByUser(String userId) {
-
-        return serviceMap.get(user2Servie.get(userId));
-    }
 
     @Override
     public Service getServiceById(String id) {
