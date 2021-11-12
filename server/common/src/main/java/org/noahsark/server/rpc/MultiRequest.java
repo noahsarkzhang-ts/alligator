@@ -6,14 +6,6 @@ import io.netty.buffer.ByteBufUtil;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.util.CharsetUtil;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
 import org.noahsark.server.constant.RpcCommandType;
 import org.noahsark.server.constant.RpcCommandVer;
 import org.noahsark.server.constant.SerializerType;
@@ -21,10 +13,17 @@ import org.noahsark.server.serializer.Serializer;
 import org.noahsark.server.serializer.SerializerManager;
 import org.noahsark.server.util.JsonUtils;
 
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 /**
- * @author: noahsark
- * @version:
- * @date: 2021/4/22
+ * 多播请求类
+ * @author zhangxt
+ * @date 2021/4/22
  */
 public class MultiRequest extends Request {
 

@@ -11,7 +11,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Created by hadoop on 2021/4/3.
+ * 客户端通用处理类
+ * @author zhangxt
+ * @date 2021/4/3
  */
 public class ClientBizServiceHandler extends SimpleChannelInboundHandler<RpcCommand> {
 

@@ -12,9 +12,9 @@ import org.noahsark.server.serializer.SerializerManager;
 import java.io.Serializable;
 
 /**
- * @author: noahsark
- * @version:
- * @date: 2021/3/26
+ * RPC 命令类
+ * @author zhangxt
+ * @date 2021/3/26
  */
 public class RpcCommand implements Serializable {
 
@@ -85,86 +85,6 @@ public class RpcCommand implements Serializable {
         this.ver = builder.ver;
         this.serializer = builder.serializer;
         this.payload = builder.payload;
-    }
-
-    public int getRequestId() {
-        return requestId;
-    }
-
-    public void setRequestId(int requestId) {
-        this.requestId = requestId;
-    }
-
-    public int getBiz() {
-        return biz;
-    }
-
-    public void setBiz(int biz) {
-        this.biz = biz;
-    }
-
-    public int getCmd() {
-        return cmd;
-    }
-
-    public void setCmd(int cmd) {
-        this.cmd = cmd;
-    }
-
-    public byte getType() {
-        return type;
-    }
-
-    public void setType(byte type) {
-        this.type = type;
-    }
-
-    public byte getVer() {
-        return ver;
-    }
-
-    public void setVer(byte ver) {
-        this.ver = ver;
-    }
-
-    public Object getPayload() {
-        return payload;
-    }
-
-    public byte getSerializer() {
-        return serializer;
-    }
-
-    public void setSerializer(byte serializer) {
-        this.serializer = serializer;
-    }
-
-    public void setPayload(Object payload) {
-        this.payload = payload;
-    }
-
-    public byte getEnd() {
-        return end;
-    }
-
-    public void setEnd(byte end) {
-        this.end = end;
-    }
-
-    public short getHeadSize() {
-        return headSize;
-    }
-
-    public void setHeadSize(short headSize) {
-        this.headSize = headSize;
-    }
-
-    public Object getAttachment() {
-        return attachment;
-    }
-
-    public void setAttachment(Object attachment) {
-        this.attachment = attachment;
     }
 
     public static ByteBuf encode(ChannelHandlerContext ctx, RpcCommand command) {
@@ -345,5 +265,85 @@ public class RpcCommand implements Serializable {
             return new RpcCommand(this);
         }
 
+    }
+
+    public int getRequestId() {
+        return requestId;
+    }
+
+    public void setRequestId(int requestId) {
+        this.requestId = requestId;
+    }
+
+    public int getBiz() {
+        return biz;
+    }
+
+    public void setBiz(int biz) {
+        this.biz = biz;
+    }
+
+    public int getCmd() {
+        return cmd;
+    }
+
+    public void setCmd(int cmd) {
+        this.cmd = cmd;
+    }
+
+    public byte getType() {
+        return type;
+    }
+
+    public void setType(byte type) {
+        this.type = type;
+    }
+
+    public byte getVer() {
+        return ver;
+    }
+
+    public void setVer(byte ver) {
+        this.ver = ver;
+    }
+
+    public Object getPayload() {
+        return payload;
+    }
+
+    public byte getSerializer() {
+        return serializer;
+    }
+
+    public void setSerializer(byte serializer) {
+        this.serializer = serializer;
+    }
+
+    public void setPayload(Object payload) {
+        this.payload = payload;
+    }
+
+    public byte getEnd() {
+        return end;
+    }
+
+    public void setEnd(byte end) {
+        this.end = end;
+    }
+
+    public short getHeadSize() {
+        return headSize;
+    }
+
+    public void setHeadSize(short headSize) {
+        this.headSize = headSize;
+    }
+
+    public Object getAttachment() {
+        return attachment;
+    }
+
+    public void setAttachment(Object attachment) {
+        this.attachment = attachment;
     }
 }

@@ -18,7 +18,6 @@ import java.util.concurrent.ExecutorService;
  * @version:
  * @date: 2020/12/3
  */
-
 public abstract class AbstractProcessor<T> implements Runnable {
 
     private static Logger log = LoggerFactory.getLogger(AbstractProcessor.class);

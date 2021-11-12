@@ -6,9 +6,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * @author: noahsark
- * @version:
- * @date: 2020/12/3
+ * RPC 上下文
+ * @author zhangxt
+ * @date 2020/12/3
  */
 public class RpcContext {
 

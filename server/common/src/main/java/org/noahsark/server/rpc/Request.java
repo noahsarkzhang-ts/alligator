@@ -8,7 +8,9 @@ import java.io.Serializable;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * Created by hadoop on 2021/3/13.
+ * 请求类
+ * @author zhangxt
+ * @date 2021/3/13
  */
 public class Request extends RpcCommand implements Serializable {
 

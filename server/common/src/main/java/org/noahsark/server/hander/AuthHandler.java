@@ -7,7 +7,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Created by hadoop on 2021/3/28.
+ * 认证处理器
+ * @author zhangxt
+ * @date 2021/3/28
  */
 public class AuthHandler extends SimpleChannelInboundHandler<RpcCommand> {
 
@@ -17,7 +19,6 @@ public class AuthHandler extends SimpleChannelInboundHandler<RpcCommand> {
     protected void channelRead0(ChannelHandlerContext ctx, RpcCommand msg) throws Exception {
 
         // TODO 用户认证
-
         ctx.fireChannelRead(msg);
 
     }

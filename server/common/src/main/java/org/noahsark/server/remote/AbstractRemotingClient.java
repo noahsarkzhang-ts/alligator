@@ -25,7 +25,9 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Created by hadoop on 2021/3/14.
+ * 客户端
+ * @author zhangxt
+ * @date 2021/3/14
  */
 public abstract class AbstractRemotingClient implements RemotingClient {
 

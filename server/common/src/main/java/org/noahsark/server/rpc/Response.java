@@ -7,7 +7,9 @@ import org.noahsark.server.constant.SerializerType;
 import java.io.Serializable;
 
 /**
- * Created by hadoop on 2021/3/13.
+ * 响应类
+ * @author zhangxt
+ * @date 2021/3/13
  */
 public class Response extends RpcCommand implements Serializable {
 

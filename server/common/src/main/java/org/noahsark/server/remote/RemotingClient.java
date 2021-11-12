@@ -7,24 +7,27 @@ import org.noahsark.server.rpc.Request;
 import org.noahsark.server.rpc.RpcCommand;
 
 /**
- * Created by hadoop on 2021/3/7.
+ * 客户端接口
+ *
+ * @author zhangxt
+ * @date 2021/03/07
  */
 public interface RemotingClient {
 
-  void connect();
+    void connect();
 
-  void shutdown();
+    void shutdown();
 
-  void ping();
+    void ping();
 
-  void toggleServer();
+    void toggleServer();
 
-  ServerInfo getServerInfo();
+    ServerInfo getServerInfo();
 
-  ConnectionManager getConnectionManager();
+    ConnectionManager getConnectionManager();
 
-  void sendMessage(RpcCommand command);
+    void sendMessage(RpcCommand command);
 
-  RpcPromise invoke(Request request, CommandCallback commandCallback, int timeoutMillis);
+    RpcPromise invoke(Request request, CommandCallback commandCallback, int timeoutMillis);
 
 }

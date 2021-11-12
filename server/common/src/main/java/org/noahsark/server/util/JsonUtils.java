@@ -84,11 +84,6 @@ public class JsonUtils {
         }
     }
 
-    /**
-     * @author: noahsark
-     * @version:
-     * @date: 2020/12/7
-     */
     public static void main(String[] args) {
 /*
         MeetingLog meetingLog = new MeetingLog();

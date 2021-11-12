@@ -11,6 +11,11 @@ import org.noahsark.server.remote.ExponentialBackOffRetry;
 import org.noahsark.server.remote.ServerInfo;
 import org.noahsark.server.rpc.RpcCommand;
 
+/**
+ * TCP 客户端
+ * @author zhangxt
+ * @date 2021/3/7 17:23
+ */
 public class TcpClient extends AbstractRemotingClient {
 
     public TcpClient(String host, int port) {

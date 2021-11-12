@@ -1,9 +1,9 @@
 package org.noahsark.server.rpc;
 
 /**
- * @author: noahsark
- * @version:
- * @date: 2020/12/3
+ * RPC 请求类
+ * @author zhangxt
+ * @date 2020/12/3
  */
 public class RpcRequest {
 

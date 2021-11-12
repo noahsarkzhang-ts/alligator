@@ -12,9 +12,9 @@ import org.noahsark.server.rpc.Result;
 import java.util.concurrent.ExecutionException;
 
 /**
- * @author: noahsark
- * @version:
- * @date: 2021/5/21
+ * 用户服务Cache
+ * @author zhangxt
+ * @date 2021/5/21
  */
 public class UserServiceCache {
 

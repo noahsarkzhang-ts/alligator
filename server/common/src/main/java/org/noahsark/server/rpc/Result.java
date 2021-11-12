@@ -3,9 +3,9 @@ package org.noahsark.server.rpc;
 import java.io.Serializable;
 
 /**
- * @author: noahsark
- * @version:
- * @date: 2021/3/26
+ * 结果类
+ * @author zhangxt
+ * @date 2021/3/26
  */
 public class Result<R> implements Serializable {
 

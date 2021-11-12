@@ -13,7 +13,9 @@ import org.noahsark.server.util.JsonUtils;
 import java.util.List;
 
 /**
- * Created by hadoop on 2021/4/10.
+ * 注册中心客户端
+ * @author zhangxt
+ * @date 22021/4/10 17:22
  */
 public class RegistrationClient extends TcpClient {
 
