@@ -3,21 +3,22 @@ package org.noahsark.redis.cmd;
 import java.util.Objects;
 
 /**
- * @author: noahsark
- * @version:
- * @date: 2020/3/9
+ * Redis 元素
+ *
+ * @author zhangxt
+ * @date 22020/3/9
  */
 public class Triple {
 
     /**
-     *  键或字段
+     * 键或字段
      */
     private String key;
 
     /**
      * 值
      */
-    private byte [] value;
+    private byte[] value;
 
     /**
      * 计数

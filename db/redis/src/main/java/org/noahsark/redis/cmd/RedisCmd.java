@@ -7,9 +7,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @author: noahsark
- * @version:
- * @date: 2020/3/9
+ * Redis 命令
+ *
+ * @author zhangxt
+ * @date 2020/3/9
  */
 public class RedisCmd {
 

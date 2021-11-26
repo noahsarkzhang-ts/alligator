@@ -15,9 +15,9 @@ import redis.clients.jedis.JedisPool;
 import java.util.UUID;
 
 /**
- * @author: zhangxt
- * @version:
- * @date: 2021/11/4
+ * Redis 测试
+ * @author zhangxt
+ * @date 2021/11/4
  */
 public class RedisRunnerTest {
 

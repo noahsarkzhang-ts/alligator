@@ -1,10 +1,11 @@
 package org.noahsark.redis.cmd;
 
 /**
- * @author: noahsark
- * @version:
- * @date: 2020/3/9
+ * 命令类型
+ *
+ * @author zhangxt
+ * @date 2020/3/9
  */
 public enum CmdEnum {
-    STRING,HASH,LIST,SET,ZSET
+    STRING, HASH, LIST, SET, ZSET
 }

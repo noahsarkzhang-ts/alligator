@@ -20,9 +20,9 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * @author: noahsark
- * @version:
- * @date: 2020/3/8
+ *  Redis 命令执行类
+ * @author zhangxt
+ * @date 2020/3/8
  */
 public class RedisCmdRunner {
 
