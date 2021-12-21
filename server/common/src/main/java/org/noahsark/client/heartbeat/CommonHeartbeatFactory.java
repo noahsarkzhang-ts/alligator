@@ -8,7 +8,9 @@ import org.noahsark.server.rpc.Result;
 import org.noahsark.server.rpc.RpcCommand;
 
 /**
- * Created by hadoop on 2021/4/3.
+ * Tcp 心跳构造器
+ * @author zhangxt
+ * @date 2021/4/3.
  */
 public class CommonHeartbeatFactory implements HeartbeatFactory<RpcCommand> {
 

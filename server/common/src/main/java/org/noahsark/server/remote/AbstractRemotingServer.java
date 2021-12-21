@@ -19,7 +19,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Created by hadoop on 2021/3/14.
+ * 服务器
+ * @author zhangxt
+ * @date  2021/3/14
  */
 public abstract class AbstractRemotingServer implements RemotingServer {
 

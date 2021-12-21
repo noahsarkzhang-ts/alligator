@@ -9,6 +9,11 @@ import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.TimeUnit;
 
+/**
+ * 连接重连处理器
+ * @author zhangxt
+ * @date 2021/3/14
+ */
 @ChannelHandler.Sharable
 public class ReconnectHandler extends ChannelInboundHandlerAdapter {
 

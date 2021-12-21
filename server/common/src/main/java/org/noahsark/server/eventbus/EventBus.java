@@ -10,9 +10,9 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 /**
- * @author: noahsark
- * @version:
- * @date: 2021/4/9
+ * 应用事件处理总线
+ * @author zhangxt
+ * @date 2021/4/9
  */
 public final class EventBus {
 

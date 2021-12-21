@@ -12,7 +12,9 @@ import org.noahsark.server.rpc.RpcCommand;
 import org.noahsark.server.util.JsonUtils;
 
 /**
- * Created by hadoop on 2021/4/3.
+ * 编码处理器
+ * @author zhangxt
+ * @date 2021/4/3
  */
 public class WebsocketEncoder extends MessageToMessageEncoder<RpcCommand> {
 

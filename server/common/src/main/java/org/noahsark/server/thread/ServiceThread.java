@@ -20,7 +20,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Base class for background thread
+ * 后台线程
+ * @author zhangxt
+ * @date 2021/4/10
  */
 public abstract class ServiceThread implements Runnable {
     private static Logger log = LoggerFactory.getLogger(ServiceThread.class);

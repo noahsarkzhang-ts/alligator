@@ -14,7 +14,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Created by hadoop on 2021/4/3.
+ * Pong 处理器
+ * @author zhangxt
+ * @date 2021/4/3
  */
 @ChannelHandler.Sharable
 public class PongHandler extends SimpleChannelInboundHandler<RpcCommand> {

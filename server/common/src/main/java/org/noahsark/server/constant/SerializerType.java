@@ -1,9 +1,9 @@
 package org.noahsark.server.constant;
 
 /**
- * @author: noahsark
- * @version:
- * @date: 2021/3/31
+ * RPC 序列化类型
+ * @author zhangxt
+ * @date 2021/3/31
  */
 public class SerializerType {
 

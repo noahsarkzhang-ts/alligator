@@ -1,9 +1,9 @@
 package org.noahsark.server.serializer;
 
 /**
- * @author: noahsark
- * @version:
- * @date: 2021/4/2
+ * 序列化接口
+ * @author zhangxt
+ * @date 2021/4/2
  */
 public interface Serializer {
 

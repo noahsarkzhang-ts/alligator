@@ -3,9 +3,9 @@ package org.noahsark.server.eventbus;
 import java.util.concurrent.TimeUnit;
 
 /**
- * @author: noahsark
- * @version:
- * @date: 2021/4/9
+ * 重连事件监听器
+ * @author zhangxt
+ * @date 2021/4/9
  */
 public class ReconnectListener extends ApplicationListener<ReconnectEvent> {
 

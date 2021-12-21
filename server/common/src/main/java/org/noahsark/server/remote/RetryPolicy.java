@@ -1,5 +1,10 @@
 package org.noahsark.server.remote;
 
+/**
+ * 重试逻辑
+ * @author zhangxt
+ * @date 2021/3/7
+ */
 public interface RetryPolicy {
 
     /**

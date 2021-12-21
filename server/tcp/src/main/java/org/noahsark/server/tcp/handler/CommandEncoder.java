@@ -8,9 +8,9 @@ import org.noahsark.server.rpc.MultiRequest;
 import org.noahsark.server.rpc.RpcCommand;
 
 /**
- * @author: noahsark
- * @version:
- * @date: 2021/3/31
+ * 编码处理器
+ * @author zhangxt
+ * @date 2021/3/31
  */
 @ChannelHandler.Sharable
 public class CommandEncoder extends MessageToMessageEncoder<RpcCommand> {

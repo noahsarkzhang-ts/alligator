@@ -14,9 +14,9 @@ import javax.annotation.PostConstruct;
 import java.util.concurrent.ExecutorService;
 
 /**
- * @author: noahsark
- * @version:
- * @date: 2020/12/3
+ * 通用消息处理器
+ * @author zhangxt
+ * @date 2020/12/3
  */
 public abstract class AbstractProcessor<T> implements Runnable {
 

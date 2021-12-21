@@ -1,9 +1,9 @@
 package org.noahsark.enums;
 
 /**
- * @author: zhangxt
- * @version:
- * @date: 2021/9/10
+ * Promise 类型
+ * @author zhangxt
+ * @date 2021/9/10
  */
 public enum PromiseEnum {
     GENERAL, MULTIPLE, STREAM

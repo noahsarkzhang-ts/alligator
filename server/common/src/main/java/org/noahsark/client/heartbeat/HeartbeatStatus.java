@@ -3,7 +3,9 @@ package org.noahsark.client.heartbeat;
 import java.time.Instant;
 
 /**
- * Created by hadoop on 2021/4/4.
+ * 心跳全局状态
+ * @author zhangxt
+ * @date 2021/4/4
  */
 public class HeartbeatStatus {
 
@@ -58,8 +60,8 @@ public class HeartbeatStatus {
     @Override
     public String toString() {
         return "HeartbeatStatus{" +
-            "count=" + count +
-            ", lastReceiveTime=" + lastReceiveTime +
-            '}';
+                "count=" + count +
+                ", lastReceiveTime=" + lastReceiveTime +
+                '}';
     }
 }

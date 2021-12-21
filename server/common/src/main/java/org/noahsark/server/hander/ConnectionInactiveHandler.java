@@ -7,9 +7,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * @author: noahsark
- * @version:
- * @date: 2021/6/30
+ * 连接断开之后的处理器
+ * @author zhangxt
+ * @date 2021/6/30
  */
 public class ConnectionInactiveHandler extends ChannelInboundHandlerAdapter {
 

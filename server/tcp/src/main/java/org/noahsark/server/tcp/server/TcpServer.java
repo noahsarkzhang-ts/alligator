@@ -20,6 +20,11 @@ import io.netty.channel.socket.SocketChannel;
 import org.noahsark.server.remote.AbstractRemotingServer;
 import org.noahsark.server.processor.PingProcessor;
 
+/**
+ * TCP 服务器
+ * @author zhangxt
+ * @date 2021/4/3
+ */
 public class TcpServer extends AbstractRemotingServer {
 
     public TcpServer(String host, int port) {

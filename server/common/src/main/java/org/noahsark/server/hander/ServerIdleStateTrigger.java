@@ -9,7 +9,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * <p>在规定时间内未收到客户端的任何数据包, 将主动断开该连接</p>
+ * 在规定时间内未收到客户端的任何数据包, 将主动断开该连接
+ * @author zhangxt
+ * @date 2021/5/13
  */
 public class ServerIdleStateTrigger extends ChannelInboundHandlerAdapter {
 

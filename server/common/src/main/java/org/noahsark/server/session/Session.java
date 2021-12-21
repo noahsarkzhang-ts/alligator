@@ -15,7 +15,10 @@ import org.noahsark.server.rpc.Request;
 import org.noahsark.server.rpc.RpcCommand;
 
 /**
- * Created by hadoop on 2021/3/13.
+ * 长连接会话
+ *
+ * @author zhangxt
+ * @date 2021/3/13
  */
 public class Session implements ChannelHolder {
 

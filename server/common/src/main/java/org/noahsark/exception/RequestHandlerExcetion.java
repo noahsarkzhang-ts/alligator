@@ -1,10 +1,11 @@
 package org.noahsark.exception;
 
 /**
- * @author: noahsark
- * @version:
- * @date: 2021/5/13
+ * 请求操作异常
+ * @author zhangxt
+ * @date 2021/5/13
  */
+@Deprecated
 public class RequestHandlerExcetion extends RuntimeException {
     public RequestHandlerExcetion() {
         super();

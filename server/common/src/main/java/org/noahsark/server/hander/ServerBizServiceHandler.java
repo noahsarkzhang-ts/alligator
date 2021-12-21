@@ -33,7 +33,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Echoes uppercase content of text frames.
+ * 服务器通用处理类
+ * @author zhangxt
+ * @date 2021/5/13
  */
 public class ServerBizServiceHandler extends SimpleChannelInboundHandler<RpcCommand> {
 

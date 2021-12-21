@@ -9,9 +9,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * @author: noahsark
- * @version:
- * @date: 2021/3/25
+ * RPC 调用管理类
+ * @author zhangxt
+ * @date 2021/3/25
  */
 public class FutureManager {
 

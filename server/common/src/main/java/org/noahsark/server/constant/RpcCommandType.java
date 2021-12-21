@@ -1,6 +1,11 @@
 
 package org.noahsark.server.constant;
 
+/**
+ * RPC 请求类型
+ * @author zhangxt
+ * @date 2021/4/12
+ */
 public class RpcCommandType {
     /**
      * rpc response

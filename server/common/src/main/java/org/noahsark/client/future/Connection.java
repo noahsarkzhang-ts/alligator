@@ -11,19 +11,22 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Created by hadoop on 2021/4/5.
+ * 连接，是一个抽象概念，
+ * 标示 TCP/WebSocket 中的一个 Channel
+ * @author zhangxt
+ * @date 2021/4/5.
  */
 public class Connection implements PromisHolder {
 
     private static Logger log = LoggerFactory.getLogger(Connection.class);
 
-    private AtomicInteger nextId = new AtomicInteger(1);
-
-    private Channel channel;
-
     private final ConcurrentHashMap<Integer, RpcPromise> futures = new ConcurrentHashMap<>(16);
 
     public static final AttributeKey<Connection> CONNECTION = AttributeKey.valueOf("connection");
+
+    private AtomicInteger nextId = new AtomicInteger(1);
+
+    private Channel channel;
 
     public Connection() {
     }

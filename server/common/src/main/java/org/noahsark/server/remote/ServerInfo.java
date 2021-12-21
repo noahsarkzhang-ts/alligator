@@ -3,7 +3,10 @@ package org.noahsark.server.remote;
 import java.net.URI;
 
 /**
- * Created by hadoop on 2021/4/4.
+ * 连接的服务器信息
+ *
+ * @author zhangxt
+ * @date 2021/4/4
  */
 public class ServerInfo {
 

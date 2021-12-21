@@ -5,9 +5,9 @@ import org.noahsark.server.util.JsonUtils;
 import java.nio.charset.Charset;
 
 /**
- * @author: noahsark
- * @version:
- * @date: 2021/4/2
+ * JSON 序列化类
+ * @author zhangxt
+ * @date 2021/4/2
  */
 public class JsonSerializer implements Serializer {
 

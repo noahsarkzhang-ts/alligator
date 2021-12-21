@@ -20,8 +20,12 @@ import org.noahsark.server.remote.RemotingClient;
 import org.noahsark.server.ws.handler.WebSocketClientDecoder;
 import org.noahsark.server.ws.handler.WebsocketEncoder;
 
+
 /**
- * Created by hadoop on 2021/3/7.
+ * Websocket 客户端初始化类
+ *
+ * @author zhangxt
+ * @date 2021/3/7.
  */
 public class WebSocketClientInitializer extends ChannelInitializer<SocketChannel> {
 
@@ -51,9 +55,9 @@ public class WebSocketClientInitializer extends ChannelInitializer<SocketChannel
         pipeline.addLast(WebSocketClientCompressionHandler.INSTANCE);
         pipeline.addLast(new WebsocketEncoder());
         pipeline.addLast(new WebSocketClientDecoder(
-            WebSocketClientHandshakerFactory.newHandshaker(
-                this.client.getServerInfo().getUri(), WebSocketVersion.V13, null,
-                true, new DefaultHttpHeaders()), this.client));
+                WebSocketClientHandshakerFactory.newHandshaker(
+                        this.client.getServerInfo().getUri(), WebSocketVersion.V13, null,
+                        true, new DefaultHttpHeaders()), this.client));
         pipeline.addLast(new ClientBizServiceHandler(this.workQueue));
 
     }

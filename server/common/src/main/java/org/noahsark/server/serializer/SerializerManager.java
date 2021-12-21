@@ -6,9 +6,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * @author: noahsark
- * @version:
- * @date: 2021/4/2
+ * 序列化管理类
+ * @author zhangxt
+ * @date 2021/4/2
  */
 public class SerializerManager {
     private Map<Byte, Serializer> serializerMap = new HashMap<>();

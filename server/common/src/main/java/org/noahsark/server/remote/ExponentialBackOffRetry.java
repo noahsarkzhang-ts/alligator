@@ -3,7 +3,9 @@ package org.noahsark.server.remote;
 import java.util.Random;
 
 /**
- * <p>Retry policy that retries a set number of times with increasing sleep time between retries</p>
+ * Retry policy that retries a set number of times with increasing sleep time between retries
+ * @author zhangxt
+ * @date 2021/3/14
  */
 public class ExponentialBackOffRetry implements RetryPolicy {
 

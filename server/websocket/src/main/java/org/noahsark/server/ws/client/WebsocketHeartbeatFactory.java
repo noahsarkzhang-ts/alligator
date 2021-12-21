@@ -6,7 +6,10 @@ import io.netty.handler.codec.http.websocketx.WebSocketFrame;
 import org.noahsark.client.heartbeat.HeartbeatFactory;
 
 /**
- * Created by hadoop on 2021/4/3.
+ * Websocket 心跳工厂类
+ *
+ * @author zhangxt
+ * @date 2021/4/3
  */
 public class WebsocketHeartbeatFactory implements HeartbeatFactory<WebSocketFrame> {
 
@@ -14,7 +17,7 @@ public class WebsocketHeartbeatFactory implements HeartbeatFactory<WebSocketFram
     public WebSocketFrame getPing() {
 
         WebSocketFrame frame = new PingWebSocketFrame(
-            Unpooled.wrappedBuffer(new byte[]{8, 1, 8, 1}));
+                Unpooled.wrappedBuffer(new byte[]{8, 1, 8, 1}));
 
         return frame;
     }

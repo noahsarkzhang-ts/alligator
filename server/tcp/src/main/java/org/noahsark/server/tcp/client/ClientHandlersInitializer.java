@@ -16,6 +16,12 @@ import org.noahsark.server.tcp.handler.CommandDecoder;
 import org.noahsark.server.tcp.handler.CommandEncoder;
 import org.noahsark.server.tcp.handler.PongHandler;
 
+/**
+ * 客户端处理器初始化类
+ *
+ * @author zhangxt
+ * @date 2021/3/7
+ */
 public class ClientHandlersInitializer extends ChannelInitializer<SocketChannel> {
 
     private AbstractRemotingClient client;

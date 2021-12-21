@@ -2,16 +2,11 @@ package org.noahsark.biz.online.processor.inviter;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-
-import java.util.HashSet;
-import java.util.Set;
-
 import org.noahsark.biz.online.config.CommonConfig;
 import org.noahsark.biz.online.context.ServerContext;
 import org.noahsark.biz.online.repository.OnlineRepository;
 import org.noahsark.client.future.CommandCallback;
 import org.noahsark.registration.domain.CandidateService;
-import org.noahsark.registration.domain.Service;
 import org.noahsark.registration.domain.ServiceQuery;
 import org.noahsark.rocketmq.RocketmqProxy;
 import org.noahsark.rocketmq.RocketmqTopic;
@@ -27,7 +22,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author: noahsarks
@@ -92,6 +89,8 @@ public class InviteProcessor extends AbstractProcessor<InviteInfo> {
                     List<Object> results = new ArrayList<>();
                     if (result instanceof List) {
                         results = (List<Object>) result;
+                    } else {
+                        results.add(result);
                     }
 
                     log.info("receive responses size: {}", results.size());

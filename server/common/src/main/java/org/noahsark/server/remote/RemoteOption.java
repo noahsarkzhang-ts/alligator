@@ -4,7 +4,9 @@ package org.noahsark.server.remote;
 import java.util.Objects;
 
 /**
- * Created by hadoop on 2021/3/21.
+ * RCP 配置项
+ * @author zhangxt
+ * @date 2021/3/21
  */
 public class RemoteOption<T> {
 

@@ -9,7 +9,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Created by hadoop on 2021/4/3.
+ * Ping 消息处理器
+ * @author zhangxt
+ * @date 2021/4/3
  */
 public class PingProcessor extends AbstractProcessor<Ping> {
 

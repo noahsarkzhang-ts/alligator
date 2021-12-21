@@ -32,38 +32,82 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * @author: noahsark
- * @version:
- * @date: 2021/3/25
+ * 代表一次 RPC 调用
+ * 封装了 RPC 调用流程：
+ * 1）异步操作，或异步转同步；
+ * 2）支持消息的组播；
+ * 3）支持消息的流处理；
+ * 4）支持调用超时处理。
+ *
+ * @author zhangxt
+ * @date 2021/3/25
  */
 public class RpcPromise extends DefaultPromise<Object> implements Comparable<RpcPromise>, StreamPromise<Object> {
 
     private static Logger log = LoggerFactory.getLogger(RpcPromise.class);
 
-    private static final UnorderedThreadPoolEventExecutor EVENT_EXECUTOR = new UnorderedThreadPoolEventExecutor(
-            5);
+    /**
+     * 处理Response的线程池
+     */
+    private static final UnorderedThreadPoolEventExecutor EVENT_EXECUTOR = new UnorderedThreadPoolEventExecutor(5);
 
+    /**
+     * 记录当前收到的响应数
+     */
     private AtomicInteger currentFanout = new AtomicInteger(0);
 
-    private int fanout = 1;
-
-    private volatile boolean isStop = true;
-
-    private boolean isFailure = false;
-
+    /**
+     * 请求的类型：GENERAL/MULTICAST/STREAM
+     * request-response为GENERAL类型
+     * 组播消息为MULTICAST类型
+     * 流处理为STREAM类型
+     */
     private PromiseEnum type = PromiseEnum.GENERAL;
 
+    /**
+     * 用于缓存收到的Response数据
+     */
     private BlockingQueue<Object> streams = new LinkedBlockingQueue<>();
 
+    /**
+     * Rpc 回调处理列表
+     */
     private List<GenericFutureListener<RpcPromise>> rpcListeners = new ArrayList<>();
 
+    /**
+     * 期望收到的 response 数量
+     */
+    private int fanout = 1;
+
+    /**
+     * 标示是否结束
+     */
+    private volatile boolean isStop = false;
+
+    /**
+     * 标示是否失败
+     */
+    private boolean isFailure = false;
+
+    /**
+     * 标示 time task 是否已经已经移除
+     */
+    private boolean isRemoved = false;
+
+    /**
+     * 时间戳
+     */
     private long timestampMillis;
 
+    /**
+     * 请求的唯一id
+     */
     private int requestId;
 
+    /**
+     * 定时任务，用于清除未及时响应的请求
+     */
     private Timeout timeout;
-
-    private List<Object> results;
 
     public RpcPromise() {
         super(EVENT_EXECUTOR);
@@ -86,25 +130,29 @@ public class RpcPromise extends DefaultPromise<Object> implements Comparable<Rpc
     @Override
     public Promise<Object> setSuccess(Object result) {
 
+        /**
+         * GENERAL：正常调用,返回结果之后，Promise 不再允许调用；
+         * MULTIPLE：将多次返回结果存放到缓存中，批量调用；
+         * STREAM：执行 end 操作。
+         */
         if (PromiseEnum.GENERAL.equals(this.type)) {
+            this.currentFanout.incrementAndGet();
+
             return super.setSuccess(result);
         } else if (PromiseEnum.MULTIPLE.equals(this.type)) {
-            if (this.currentFanout.get() <= this.fanout) {
-                synchronized (this) {
-
-                    this.currentFanout.incrementAndGet();
-
-                    if (results == null) {
-                        results = new ArrayList<>();
-                    }
-
-                    this.results.add(result);
-
-                    if (this.currentFanout.get() == this.fanout) {
-                        return super.setSuccess(results);
-                    }
-                }
+            if (this.currentFanout.get() > this.fanout) {
+                return this;
             }
+
+            this.currentFanout.incrementAndGet();
+
+            // 1、加入队列
+            if (result != null) {
+                streams.offer(result);
+            }
+
+            // 2、调用回调
+            safeExecute(EVENT_EXECUTOR, () -> notifyListeners());
         } else if (PromiseEnum.STREAM.equals(this.type)) {
             this.end(result);
         }
@@ -122,14 +170,16 @@ public class RpcPromise extends DefaultPromise<Object> implements Comparable<Rpc
 
             log.error(String.format("RpcPromise catch an exception,requestId is : %d", this.requestId), cause);
 
-            synchronized (this) {
-                if (results == null) {
-                    results = new ArrayList<>();
-                }
-
+            if (!streams.isEmpty()) {
+                // 1、调用回调
+                safeExecute(EVENT_EXECUTOR, () -> notifyListeners());
+            } else {
                 isFailure = true;
-                return super.setSuccess(results);
+                super.setFailure(cause);
             }
+
+            return this;
+
         } else if (PromiseEnum.STREAM.equals(this.type)) {
             isFailure = true;
             log.error(String.format("RpcPromise catch an exception,requestId is : %d", this.requestId), cause);
@@ -140,7 +190,13 @@ public class RpcPromise extends DefaultPromise<Object> implements Comparable<Rpc
         return this;
     }
 
-
+    /**
+     * 添加异步回调函数
+     *
+     * @param promisHolder Promise管理类
+     * @param request      请求
+     * @param callback     回调
+     */
     public void addCallback(PromisHolder promisHolder, Request request, CommandCallback callback) {
 
         GenericFutureListener<RpcPromise> listener = future -> {
@@ -151,12 +207,12 @@ public class RpcPromise extends DefaultPromise<Object> implements Comparable<Rpc
             try {
 
                 switch (promise.type) {
-                    case GENERAL:
-                    case MULTIPLE: {
+                    case GENERAL: {
                         result = future.get();
                         callback.callback(result, currentFanout.get(), fanout);
                         break;
                     }
+                    case MULTIPLE:
                     case STREAM: {
                         result = streams.poll();
                         while (result != null) {
@@ -186,6 +242,14 @@ public class RpcPromise extends DefaultPromise<Object> implements Comparable<Rpc
         }
     }
 
+    /**
+     * 同步方法调用
+     *
+     * @param promisHolder  Promise管理类
+     * @param request       请求
+     * @param timeoutMillis 超时时间
+     * @return 结果
+     */
     public Object invokeSync(PromisHolder promisHolder, Request request, int timeoutMillis) {
 
         this.invoke(promisHolder, request, null, timeoutMillis);
@@ -199,7 +263,14 @@ public class RpcPromise extends DefaultPromise<Object> implements Comparable<Rpc
         return null;
     }
 
-
+    /**
+     * 同步方法调用
+     *
+     * @param promisHolder    Promise管理类
+     * @param request         请求
+     * @param commandCallback 回调函数
+     * @param timeoutMillis   超时时间
+     */
     public void invoke(PromisHolder promisHolder, Request request, CommandCallback commandCallback,
                        int timeoutMillis) {
 
@@ -261,9 +332,24 @@ public class RpcPromise extends DefaultPromise<Object> implements Comparable<Rpc
         }
     }
 
-    public boolean isRemoving() {
+    /**
+     * 判断 Promis 是否可以被移除，以下条件返回true:
+     * 1）已经调用 setFailure;
+     * 2) 是否已经结束（流模式下）;
+     * 3）所有结果已经返回
+     *
+     * @return 是否
+     */
+    public synchronized boolean isRemoving() {
 
-        return isFailure || isStop || this.currentFanout.get() >= fanout;
+        if (isRemoved) {
+            return false;
+        }
+
+        isRemoved = isFailure || isStop || this.currentFanout.get() >= fanout;
+
+        return isRemoved;
+
     }
 
     public PromiseEnum getType() {
@@ -433,7 +519,7 @@ public class RpcPromise extends DefaultPromise<Object> implements Comparable<Rpc
                     log.error("explore listener fails.", ex);
                 }
 
-                return result;
+                return null;
             }
         });
 

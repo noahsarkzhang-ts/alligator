@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by hadoop on 2021/4/4.
+ * 服务器管理
+ * @author zhangxt
+ * @date 2021/4/4
  */
 public class ServerManager {
 

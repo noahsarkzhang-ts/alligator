@@ -1,9 +1,9 @@
 package org.noahsark.server.constant;
 
 /**
- * @author: noahsark
- * @version:
- * @date: 2021/3/26
+ * RPC 版本
+ * @author zhangxt
+ * @date 2021/3/26
  */
 public class RpcCommandVer {
 

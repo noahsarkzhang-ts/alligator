@@ -5,9 +5,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * @author: noahsark
- * @version:
- * @date: 2021/4/2
+ * ping 对象
+ * @author zhangxt
+ * @date 2021/4/2
  */
 public class Ping implements Serializable {
 

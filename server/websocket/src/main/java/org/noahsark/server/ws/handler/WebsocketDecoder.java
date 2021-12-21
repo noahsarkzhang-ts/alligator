@@ -13,7 +13,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Created by hadoop on 2021/3/28.
+ * 客户端解码处理器
+ *
+ * @author zhangxt
+ * @date 2021/3/28
  */
 public class WebsocketDecoder extends SimpleChannelInboundHandler<WebSocketFrame> {
 

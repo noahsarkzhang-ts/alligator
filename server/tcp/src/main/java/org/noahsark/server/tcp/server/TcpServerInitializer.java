@@ -36,6 +36,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * TCP 服务器初始化类
+ * @author zhangxt
+ * @date 2021/4/3
  */
 public class TcpServerInitializer extends ChannelInitializer<SocketChannel> {
 

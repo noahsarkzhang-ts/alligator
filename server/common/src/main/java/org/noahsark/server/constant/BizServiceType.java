@@ -1,9 +1,9 @@
 package org.noahsark.server.constant;
 
 /**
- * @author: noahsark
- * @version:
- * @date: 2021/4/12
+ * 业务服务类型
+ * @author zhangxt
+ * @date 2021/4/12
  */
 public class BizServiceType {
 

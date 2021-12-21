@@ -1,9 +1,9 @@
 package org.noahsark.client.future;
 
 /**
- * @author: zhangxt
- * @version:
- * @date: 2021/9/9
+ * 流处理接口，向 Rpc 中添加支持流处理的能力
+ * @author zhangxt
+ * @date 2021/9/9
  */
 public interface StreamPromise<V> {
 

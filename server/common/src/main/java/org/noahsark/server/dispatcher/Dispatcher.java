@@ -4,11 +4,10 @@ import java.util.HashMap;
 import java.util.Map;
 import org.noahsark.server.processor.AbstractProcessor;
 
-
 /**
- * @author: noahsark
- * @version:
- * @date: 2020/12/3
+ * 请求分发类
+ * @author zhangxt
+ * @date 2020/12/3
  */
 public class Dispatcher {
 

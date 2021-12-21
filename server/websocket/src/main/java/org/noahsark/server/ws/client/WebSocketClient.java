@@ -18,8 +18,10 @@ package org.noahsark.server.ws.client;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.codec.http.websocketx.WebSocketFrame;
+
 import java.net.URI;
 import java.util.List;
+
 import org.noahsark.client.manager.ConnectionManager;
 import org.noahsark.server.remote.AbstractRemotingClient;
 import org.noahsark.server.remote.ExponentialBackOffRetry;
@@ -28,7 +30,12 @@ import org.noahsark.server.rpc.RpcCommand;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
+/**
+ * Websocket 客户端
+ *
+ * @author zhangxt
+ * @date 2021/3/7
+ */
 public final class WebSocketClient extends AbstractRemotingClient {
 
     private static Logger log = LoggerFactory.getLogger(WebSocketClient.class);
@@ -47,7 +54,7 @@ public final class WebSocketClient extends AbstractRemotingClient {
 
     @Override
     protected ChannelInitializer<SocketChannel> getChannelInitializer(
-        AbstractRemotingClient server) {
+            AbstractRemotingClient server) {
         return new WebSocketClientInitializer(this);
     }
 
@@ -68,7 +75,7 @@ public final class WebSocketClient extends AbstractRemotingClient {
         ConnectionManager connectionManager = new ConnectionManager();
         connectionManager.setHeartbeatFactory(new WebsocketHeartbeatFactory());
         connectionManager.setRetryPolicy(new ExponentialBackOffRetry(1000,
-            4, 60 * 1000));
+                4, 60 * 1000));
 
         this.connectionManager = connectionManager;
 

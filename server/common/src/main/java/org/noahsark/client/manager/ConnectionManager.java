@@ -5,7 +5,9 @@ import org.noahsark.client.heartbeat.HeartbeatStatus;
 import org.noahsark.server.remote.RetryPolicy;
 
 /**
- * Created by hadoop on 2021/4/4.
+ * 连接管理类
+ * @author zhangxt
+ * @date 22021/4/4
  */
 public class ConnectionManager {
 

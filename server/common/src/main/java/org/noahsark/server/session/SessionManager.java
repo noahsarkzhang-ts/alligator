@@ -9,7 +9,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Created by hadoop on 2021/3/13.
+ * 会话管理
+ * @author zhangxt
+ * @date 2021/3/13
  */
 public class SessionManager {
 

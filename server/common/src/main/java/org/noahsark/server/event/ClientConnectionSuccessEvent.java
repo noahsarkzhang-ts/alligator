@@ -3,9 +3,9 @@ package org.noahsark.server.event;
 import org.noahsark.server.eventbus.ApplicationEvent;
 
 /**
- * @author: noahsark
- * @version:
- * @date: 2021/4/12
+ * 提供给上层业务订阅的客户端上线事件
+ * @author zhangxt
+ * @date 2021/4/12
  */
 public class ClientConnectionSuccessEvent extends ApplicationEvent {
 

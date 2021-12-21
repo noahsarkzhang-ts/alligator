@@ -8,9 +8,9 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 /**
- * @author: noahsark
- * @version:
- * @date: 2020/12/3
+ * 工作队列
+ * @author zhangxt
+ * @date 2020/12/3
  */
 public class WorkQueue {
 

@@ -3,9 +3,9 @@ package org.noahsark.server.eventbus;
 import java.io.Serializable;
 
 /**
- * @author: noahsark
- * @version:
- * @date: 2021/4/9
+ * 事件对象
+ * @author zhangxt
+ * @date 021/4/9
  */
 public class EventObject implements Serializable {
 

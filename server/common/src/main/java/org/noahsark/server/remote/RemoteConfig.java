@@ -1,7 +1,9 @@
 package org.noahsark.server.remote;
 
 /**
- * Created by hadoop on 2021/3/21.
+ * RPC 配置项
+ * @author zhangxt
+ * @date 2021/3/21
  */
 public class RemoteConfig {
 

@@ -8,11 +8,10 @@ import java.util.List;
 import org.noahsark.server.rpc.MultiRequest;
 import org.noahsark.server.rpc.RpcCommand;
 
-
 /**
- * @author: noahsark
- * @version:
- * @date: 2021/3/31
+ * 解码处理器
+ * @author zhangxt
+ * @date 2021/3/31
  */
 @ChannelHandler.Sharable
 public class CommandDecoder extends MessageToMessageDecoder<ByteBuf> {
