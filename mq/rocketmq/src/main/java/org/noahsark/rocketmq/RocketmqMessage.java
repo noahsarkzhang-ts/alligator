@@ -3,7 +3,10 @@ package org.noahsark.rocketmq;
 import org.noahsark.mq.Message;
 
 /**
- * Created by hadoop on 2021/5/2.
+ * RocketMQ 消息
+ *
+ * @author zhangxt
+ * @date 2021/5/2
  */
 public class RocketmqMessage implements Message {
 
@@ -13,7 +16,7 @@ public class RocketmqMessage implements Message {
 
     private String key;
 
-    private byte [] content;
+    private byte[] content;
 
     public String getTopic() {
         return topic;
@@ -50,9 +53,9 @@ public class RocketmqMessage implements Message {
     @Override
     public String toString() {
         return "RocketmqMessage{" +
-            "topic='" + topic + '\'' +
-            ", tag='" + tag + '\'' +
-            ", key='" + key + '\'' +
-            '}';
+                "topic='" + topic + '\'' +
+                ", tag='" + tag + '\'' +
+                ", key='" + key + '\'' +
+                '}';
     }
 }

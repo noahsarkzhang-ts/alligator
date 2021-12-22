@@ -27,9 +27,10 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * @author: noahsarks
- * @version:
- * @date: 2021/5/11
+ * 邀请处理器
+ *
+ * @author zhangxt
+ * @date 2021/5/11
  */
 @Component
 public class InviteProcessor extends AbstractProcessor<InviteInfo> {

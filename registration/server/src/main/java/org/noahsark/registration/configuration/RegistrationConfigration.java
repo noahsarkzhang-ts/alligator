@@ -7,7 +7,10 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
 
 /**
- * Created by hadoop on 2021/3/13.
+ * 注册服务配置信息
+ *
+ * @author zhangxt
+ * @date 2021/3/13
  */
 @Configuration
 @Component

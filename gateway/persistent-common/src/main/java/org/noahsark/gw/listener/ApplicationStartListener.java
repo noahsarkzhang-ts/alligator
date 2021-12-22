@@ -19,9 +19,9 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;
 
 /**
- * @author: noahsark
- * @version:
- * @date: 2020/3/13
+ * 服务启动
+ * @author zhangxt
+ * @date 2020/3/13
  */
 @Component
 public class ApplicationStartListener implements ApplicationListener<ApplicationStartedEvent> {

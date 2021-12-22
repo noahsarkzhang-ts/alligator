@@ -1,9 +1,10 @@
 package org.noahsark.biz.online.processor.inviter;
 
 /**
- * @author: noahsark
- * @version:
- * @date: 2021/5/11
+ * 邀请结果
+ *
+ * @author zhangxt
+ * @date 2021/5/11
  */
 public class InviteResult {
 

@@ -5,11 +5,12 @@ import org.noahsark.server.session.Subject;
 import java.util.Map;
 
 /**
- * @author: noahsark
- * @version:
- * @date: 2021/4/8
+ * 服务信息
+ *
+ * @author zhangxt
+ * @date 2021/4/8
  */
-public class Service implements Subject,Comparable<Service> {
+public class Service implements Subject, Comparable<Service> {
 
     private int zone;
 
@@ -29,7 +30,7 @@ public class Service implements Subject,Comparable<Service> {
 
     private int load;
 
-    private Map<String,Object> conf;
+    private Map<String, Object> conf;
 
     public int getZone() {
         return zone;

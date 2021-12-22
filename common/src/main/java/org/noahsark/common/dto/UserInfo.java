@@ -3,7 +3,9 @@ package org.noahsark.common.dto;
 import java.io.Serializable;
 
 /**
- * Created by hadoop on 2021/6/27.
+ *  用户信息
+ * @author zhangxt
+ * @date 2021/6/27
  */
 public class UserInfo implements Serializable {
 

@@ -18,7 +18,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
- * Created by hadoop on 2021/4/10.
+ * 服务注册
+ *
+ * @author zhangxt
+ * @date 2021/4/11
  */
 @Component
 public class RegisterServiceProcessor extends AbstractProcessor<Service> {
@@ -31,7 +34,7 @@ public class RegisterServiceProcessor extends AbstractProcessor<Service> {
     @Override
     protected void execute(Service request, RpcContext context) {
 
-        logger.info("receive reg service request: {}" , JsonUtils.toJson(request));
+        logger.info("receive reg service request: {}", JsonUtils.toJson(request));
 
         context.getSession().setSubject(request);
 
@@ -43,7 +46,7 @@ public class RegisterServiceProcessor extends AbstractProcessor<Service> {
         repository.registerService(request);
 
         context.sendResponse(Response.buildCommonResponse(context.getCommand(),
-            0, "success"));
+                0, "success"));
     }
 
     @Override

@@ -4,9 +4,9 @@ import java.io.Serializable;
 import java.util.Map;
 
 /**
- * @author: noahsark
- * @version:
- * @date: 2021/5/18
+ * 服务查询信息
+ * @author zhangxt
+ * @date 2021/5/18
  */
 public class ServiceQuery implements Serializable {
 

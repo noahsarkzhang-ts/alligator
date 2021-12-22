@@ -5,9 +5,10 @@ import org.noahsark.gw.context.GlobalStatus;
 import org.noahsark.registration.domain.ServicePing;
 
 /**
- * @author: noahsark
- * @version:
- * @date: 2021/4/21
+ * Ping 消息体对象构造器
+ *
+ * @author zhangxt
+ * @date 2021/4/21
  */
 public class PersistentPingPayloadGenerator implements PingPayloadGenerator {
 

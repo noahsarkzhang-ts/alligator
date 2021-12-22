@@ -15,6 +15,12 @@ import org.noahsark.server.session.ChannelHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * MQ 默认消息处理器
+ *
+ * @author zhangxt
+ * @date 2021/4/29
+ */
 public class DefaultmqMessageListener implements MessageListener {
 
     private static Logger logger = LoggerFactory.getLogger(DefaultmqMessageListener.class);

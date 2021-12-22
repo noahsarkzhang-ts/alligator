@@ -3,9 +3,9 @@ package org.noahsark.http.dto;
 import java.io.Serializable;
 
 /**
- * @author: noahsark
- * @version:
- * @date: 2021/5/27
+ * 通用响应类
+ * @author zhangxt
+ * @date 2021/5/27
  */
 public class Response implements Serializable {
 

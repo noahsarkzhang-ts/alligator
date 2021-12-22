@@ -13,9 +13,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * @author: zhangxt
- * @version:
- * @date: 2021/9/29
+ * RabbitMQ 生产者
+ *
+ * @author zhangxt
+ * @date 2021/9/29
  */
 public class RabbitmqProducer implements Producer<RabbitmqMessage, RabbitmqSendResult> {
 

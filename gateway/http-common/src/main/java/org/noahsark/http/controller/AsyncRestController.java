@@ -15,9 +15,9 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.async.WebAsyncTask;
 
 /**
- * @author: noahsark
- * @version:
- * @date: 2021/5/26
+ * 异步 Controller
+ * @author zhangxt
+ * @date 2021/5/26
  */
 @RestController
 @RequestMapping("/async")

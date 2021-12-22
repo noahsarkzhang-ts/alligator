@@ -1,7 +1,10 @@
 package org.noahsark.mq.exception;
 
 /**
- * Created by hadoop on 2021/5/3.
+ * MQ 客户端异常
+ *
+ * @author zhangxt
+ * @date 2021/5/3
  */
 public class MQClientException extends RuntimeException {
 

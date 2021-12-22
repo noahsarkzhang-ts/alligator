@@ -1,9 +1,10 @@
 package org.noahsark.registration.domain;
 
 /**
- * @author: noahsark
- * @version:
- * @date: 2021/4/8
+ * 用户信息
+ *
+ * @author zhangxt
+ * @date 2021/4/8
  */
 public class User {
 

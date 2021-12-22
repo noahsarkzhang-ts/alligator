@@ -13,9 +13,10 @@ import org.springframework.stereotype.Component;
 import java.util.UUID;
 
 /**
- * @author: noahsark
- * @version:
- * @date: 2021/5/11
+ * 在线服务启动类
+ *
+ * @author zhangxt
+ * @date 2021/5/11
  */
 @Component
 public class OnlineCommandLineRunner implements CommandLineRunner {

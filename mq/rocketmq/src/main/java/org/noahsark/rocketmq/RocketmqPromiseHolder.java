@@ -12,8 +12,9 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
+ * RocketMQ Promise 容器
  *
- * @author hadoop
+ * @author zhangxt
  * @date 2021/5/4
  */
 public class RocketmqPromiseHolder implements PromisHolder {
@@ -87,7 +88,7 @@ public class RocketmqPromiseHolder implements PromisHolder {
                 logger.error("send command fail!", var1);
 
                 RpcPromise promise = RocketmqPromiseHolder.this
-                    .removePromis(command.getRequestId());
+                        .removePromis(command.getRequestId());
                 if (promise != null) {
 
                     promise.setFailure(new InvokeExcption());

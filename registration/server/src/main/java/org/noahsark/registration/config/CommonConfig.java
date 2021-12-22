@@ -4,9 +4,10 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
 /**
- * @author: noahsark
- * @version:
- * @date: 2020/3/22
+ * 配置信息
+ *
+ * @author zhangxt
+ * @date 2020/3/22
  */
 @Component
 @ConfigurationProperties("common")

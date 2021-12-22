@@ -1,7 +1,10 @@
 package org.noahsark.gw.processor.user;
 
 /**
- * Created by hadoop on 2021/3/13.
+ * 用户登陆结果
+ *
+ * @author zhangxt
+ * @date 2021/3/13
  */
 public class UserLoginResult {
 

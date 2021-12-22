@@ -3,9 +3,10 @@ package org.noahsark.mq;
 import java.util.List;
 
 /**
- * @author: noahsark
- * @version:
- * @date: 2021/4/29
+ * MQ 消费者
+ *
+ * @author zhangxt
+ * @date 2021/4/29
  */
 public interface Consumer<T extends Topic> {
 

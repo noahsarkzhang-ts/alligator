@@ -1,7 +1,10 @@
 package org.noahsark.registration.constant;
 
 /**
- * Created by hadoop on 2021/4/10.
+ * 注册中心常量
+ *
+ * @author zhangxt
+ * @date 2021/4/10
  */
 public final class RegistrationConstants {
 

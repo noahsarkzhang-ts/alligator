@@ -17,6 +17,7 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * 用户处理类
+ *
  * @author zhangxt
  * @date 2021/7/1 15:23
  **/
@@ -49,7 +50,7 @@ public class UserProcessor extends AbstractProcessor<UserQuery> {
             try {
                 TimeUnit.MILLISECONDS.sleep(100);
             } catch (InterruptedException ex) {
-                log.error("catch an exception:",ex);
+                log.error("catch an exception:", ex);
             }
 
             i++;

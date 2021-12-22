@@ -3,9 +3,10 @@ package org.noahsark.gw.user;
 import org.noahsark.server.session.Subject;
 
 /**
- * @author: noahsark
- * @version:
- * @date: 2021/5/13
+ * 用户对象
+ *
+ * @author zhangxt
+ * @date 2021/5/13
  */
 public class UserSubject implements Subject {
 

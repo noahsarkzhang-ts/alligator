@@ -7,9 +7,10 @@ import org.springframework.context.event.ContextClosedEvent;
 import org.springframework.stereotype.Component;
 
 /**
- * @author: noahsark
- * @version:
- * @date: 2020/3/13
+ * 服务关闭监听器
+ *
+ * @author zhangxt
+ * @date 2020/3/13
  */
 @Component
 public class ApplicationStopListener implements ApplicationListener<ContextClosedEvent> {

@@ -26,9 +26,10 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * @author: noahsark
- * @version:
- * @date: 2021/6/30
+ * 用户事件广播器
+ *
+ * @author zhangxt
+ * @date 2021/6/30
  */
 @Component
 public class UserEventBroadcaster {

@@ -10,9 +10,10 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * @author: zhangxt
- * @version:
- * @date: 2021/10/11
+ * MQ 代理门面类
+ *
+ * @author zhangxt
+ * @date 2021/10/11
  */
 public class MqProxyFactory {
 

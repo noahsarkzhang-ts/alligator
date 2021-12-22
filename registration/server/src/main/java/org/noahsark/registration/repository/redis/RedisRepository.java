@@ -7,7 +7,6 @@ import org.noahsark.redis.cmd.RedisCmd;
 import org.noahsark.redis.cmd.Triple;
 import org.noahsark.redis.executor.RedisCmdRunner;
 import org.noahsark.registration.domain.Service;
-import org.noahsark.registration.domain.User;
 import org.noahsark.registration.repository.MemoryRepository;
 import org.noahsark.registration.repository.Repository;
 import org.noahsark.server.util.JsonUtils;

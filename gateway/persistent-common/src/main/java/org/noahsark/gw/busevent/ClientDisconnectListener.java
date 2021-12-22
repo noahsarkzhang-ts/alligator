@@ -14,9 +14,9 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 
 /**
- * @author: noahsark
- * @version:
- * @date: 2021/6/30
+ * 客户端断开事件监听器
+ * @author zhangxt
+ * @date 2021/6/30
  */
 @Component
 public class ClientDisconnectListener extends ApplicationListener<ClientDisconnectEvent> {

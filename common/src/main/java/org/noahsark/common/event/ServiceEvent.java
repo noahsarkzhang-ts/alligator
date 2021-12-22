@@ -1,7 +1,10 @@
 package org.noahsark.common.event;
 
 /**
- * Created by hadoop on 2021/6/27.
+ * 服务事件
+ *
+ * @author zhangxt
+ * @date 2021/6/27
  */
 public class ServiceEvent {
 

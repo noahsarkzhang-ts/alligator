@@ -20,9 +20,10 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Component;
 
 /**
- * @author: noahsark
- * @version:
- * @date: 2021/6/30
+ * 广播用户上线事件
+ *
+ * @author zhangxt
+ * @date 2021/6/30
  */
 @Component
 public class UserEventEmitter {
@@ -36,7 +37,7 @@ public class UserEventEmitter {
     @Qualifier("commonExecutor")
     private ThreadPoolTaskExecutor commonExecutor;
 
-    public void eimit(final UserSubject user,final boolean online) {
+    public void eimit(final UserSubject user, final boolean online) {
 
         commonExecutor.execute(() -> {
             UserEvent userEvent = new UserEvent();
@@ -45,9 +46,9 @@ public class UserEventEmitter {
             userEvent.setUserId(user.getUserId());
             userEvent.setTimestamp(user.getLoginTime());
             if (online) {
-                userEvent.setType((byte)1);
+                userEvent.setType((byte) 1);
             } else {
-                userEvent.setType((byte)0);
+                userEvent.setType((byte) 0);
             }
 
             MultiRequest multiRequest = new MultiRequest.Builder()
@@ -67,7 +68,7 @@ public class UserEventEmitter {
             RocketmqTopic topic = new RocketmqTopic();
             topic.setTopic(commonConfig.getSysEvent().getUserTopic());
 
-            proxy.sendOneway(topic,multiRequest);
+            proxy.sendOneway(topic, multiRequest);
         });
 
     }

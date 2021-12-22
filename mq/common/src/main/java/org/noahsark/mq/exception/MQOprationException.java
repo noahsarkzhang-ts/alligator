@@ -1,7 +1,11 @@
 package org.noahsark.mq.exception;
 
+
 /**
- * Created by hadoop on 2021/5/3.
+ * MQ 操作异常
+ *
+ * @author zhangxt
+ * @date 2021/5/3
  */
 public class MQOprationException extends RuntimeException {
 
@@ -21,7 +25,7 @@ public class MQOprationException extends RuntimeException {
     }
 
     public MQOprationException(String message, Throwable cause, boolean enableSuppression,
-        boolean writableStackTrace) {
+                               boolean writableStackTrace) {
         super(message, cause, enableSuppression, writableStackTrace);
     }
 }

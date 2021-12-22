@@ -2,7 +2,6 @@ package org.noahsark.registration.processor;
 
 import org.noahsark.registration.constant.RegistrationConstants;
 import org.noahsark.registration.domain.Id;
-import org.noahsark.registration.domain.Service;
 import org.noahsark.registration.repository.Repository;
 import org.noahsark.server.processor.AbstractProcessor;
 import org.noahsark.server.rpc.Response;
@@ -11,7 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
- * Created by hadoop on 2021/4/11.
+ * 服务下线
+ * @author zhangxt
+ * @date 2021/4/11
  */
 @Component
 public class UnregisterServiceProcessor extends AbstractProcessor<Id> {

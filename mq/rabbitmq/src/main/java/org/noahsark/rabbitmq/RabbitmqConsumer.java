@@ -12,9 +12,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @author: zhangxt
- * @version:
- * @date: 2021/9/29
+ * RabbitMQ 消费者
+ *
+ * @author zhangxt
+ * @date 2021/9/29
  */
 public class RabbitmqConsumer implements Consumer<RabbitmqTopic> {
 
@@ -93,7 +94,7 @@ public class RabbitmqConsumer implements Consumer<RabbitmqTopic> {
             }
 
         } catch (Exception ex) {
-            logger.error("Catch an exception when starting RabbitmqConsumer.",ex);
+            logger.error("Catch an exception when starting RabbitmqConsumer.", ex);
         }
 
     }
@@ -105,7 +106,7 @@ public class RabbitmqConsumer implements Consumer<RabbitmqTopic> {
                 connection.close();
             }
         } catch (IOException ex) {
-            logger.error("Catch an exception when closing connection.",ex);
+            logger.error("Catch an exception when closing connection.", ex);
         }
     }
 }

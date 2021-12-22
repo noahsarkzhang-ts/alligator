@@ -6,7 +6,9 @@ import org.noahsark.server.session.ChannelHolder;
 import org.noahsark.server.session.Subject;
 
 /**
- * @author Admin
+ * MQ 通道管理
+ * @author zhangxt
+ * @date 2021/4/29
  */
 public class MqChannelHolder implements ChannelHolder {
 

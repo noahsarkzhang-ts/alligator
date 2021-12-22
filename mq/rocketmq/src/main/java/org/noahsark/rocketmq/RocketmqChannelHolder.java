@@ -7,10 +7,10 @@ import org.noahsark.server.rpc.RpcCommand;
 import org.noahsark.server.session.ChannelHolder;
 import org.noahsark.server.session.Subject;
 
-
 /**
+ * RocketMQ 通道容器
  *
- * @author hadoop
+ * @author zhangxt
  * @date 2021/5/4
  */
 public class RocketmqChannelHolder implements ChannelHolder {

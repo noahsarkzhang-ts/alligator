@@ -2,6 +2,7 @@ package org.noahsark.registration.processor;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import org.noahsark.registration.constant.RegistrationConstants;
 import org.noahsark.registration.domain.CandidateService;
 import org.noahsark.registration.domain.Service;
@@ -17,10 +18,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
- * Created by hadoop on 2021/6/27.
+ * 获取所有服务
+ *
+ * @author zhangxt
+ * @date 2021/6/27
  */
 @Component
-public class GetAllServiceProcessor  extends AbstractProcessor<ServiceQuery> {
+public class GetAllServiceProcessor extends AbstractProcessor<ServiceQuery> {
 
     private static Logger logger = LoggerFactory.getLogger(GetAllServiceProcessor.class);
 
@@ -30,7 +34,7 @@ public class GetAllServiceProcessor  extends AbstractProcessor<ServiceQuery> {
     @Override
     protected void execute(ServiceQuery request, RpcContext context) {
 
-        logger.info("receive query service request: {}" , JsonUtils.toJson(request));
+        logger.info("receive query service request: {}", JsonUtils.toJson(request));
 
         List<Service> serviceList = repository.getServicesByBiz(request.getBiz());
 
@@ -46,7 +50,7 @@ public class GetAllServiceProcessor  extends AbstractProcessor<ServiceQuery> {
 
 
         context.sendResponse(Response.buildResponse(context.getCommand(),
-            candidateServices, 0, "success"));
+                candidateServices, 0, "success"));
 
     }
 

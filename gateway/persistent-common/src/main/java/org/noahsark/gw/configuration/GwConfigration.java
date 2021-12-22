@@ -5,7 +5,10 @@ import org.noahsark.server.dispatcher.Dispatcher;
 import org.noahsark.server.queue.WorkQueue;
 
 /**
- * Created by hadoop on 2021/3/13.
+ * GwConfigration
+ *
+ * @author zhangxt
+ * @date 2021/3/13
  */
 public class GwConfigration {
 

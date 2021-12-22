@@ -15,9 +15,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
- * @author: noahsark
- * @version:
- * @date: 2021/7/9
+ * 根据服务id查询服务信息
+ *
+ * @author zhangxt
+ * @date 2021/7/9
  */
 @Component
 public class GetUniqueServiceProcessor extends AbstractProcessor<ServiceQuery> {
@@ -29,7 +30,7 @@ public class GetUniqueServiceProcessor extends AbstractProcessor<ServiceQuery> {
 
     @Override
     protected void execute(ServiceQuery request, RpcContext context) {
-        logger.info("receive query service request: {}" , JsonUtils.toJson(request));
+        logger.info("receive query service request: {}", JsonUtils.toJson(request));
 
         Service service = repository.getServiceById(request.getId());
 

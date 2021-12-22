@@ -15,9 +15,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @author: noahsark
- * @version:
- * @date: 2020/3/13
+ * 服务启动监听器
+ *
+ * @author zhangxt
+ * @date 2020/3/13
  */
 @Component
 public class ApplicationStartListener implements ApplicationListener<ApplicationStartedEvent> {

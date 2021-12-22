@@ -9,7 +9,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 /**
- * Created by hadoop on 2021/6/27.
+ * 服务事件处理器
+ *
+ * @author zhangxt
+ * @date 2021/6/27
  */
 @Component
 public class ServiceEventProcessor extends AbstractProcessor<ServiceEvent> {

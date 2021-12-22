@@ -3,9 +3,10 @@ package org.noahsark.redis.config;
 import java.util.Set;
 
 /**
- * @author: zhangxt
- * @version:
- * @date: 2021/11/4
+ * Sentinel 配置
+ *
+ * @author zhangxt
+ * @date 2021/11/4
  */
 public class SentinelConfig {
 

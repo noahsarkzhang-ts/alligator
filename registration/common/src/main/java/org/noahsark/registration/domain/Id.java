@@ -4,9 +4,9 @@ import java.io.Serializable;
 import java.util.Objects;
 
 /**
- * @author: noahsark
- * @version:
- * @date: 2021/4/12
+ * id 信息
+ * @author zhangxt
+ * @date 2021/4/12
  */
 public class Id implements Serializable {
 

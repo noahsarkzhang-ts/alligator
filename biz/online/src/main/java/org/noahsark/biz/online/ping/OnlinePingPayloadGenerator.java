@@ -4,9 +4,10 @@ import org.noahsark.client.heartbeat.PingPayloadGenerator;
 import org.noahsark.registration.domain.ServicePing;
 
 /**
- * @author: noahsark
- * @version:
- * @date: 2021/4/21
+ * 在线服务负载(ping)构造器
+ *
+ * @author zhangxt
+ * @date 2021/4/21
  */
 public class OnlinePingPayloadGenerator implements PingPayloadGenerator {
 

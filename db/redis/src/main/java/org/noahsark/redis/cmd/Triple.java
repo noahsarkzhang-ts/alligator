@@ -6,7 +6,7 @@ import java.util.Objects;
  * Redis 元素
  *
  * @author zhangxt
- * @date 22020/3/9
+ * @date 2020/3/9
  */
 public class Triple {
 

@@ -6,6 +6,12 @@ import org.noahsark.client.future.RpcPromise;
 import org.noahsark.server.rpc.Request;
 import org.noahsark.server.session.ChannelHolder;
 
+/**
+ * MQ代理抽象类
+ *
+ * @author zhangxt
+ * @date 22021/5/3
+ */
 public abstract class AbstractMqProxy implements MqProxy {
 
     protected PromisHolder promiseHolder;

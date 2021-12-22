@@ -11,7 +11,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by hadoop on 2021/5/4.
+ * RocketMQ 代理
+ *
+ * @author zhangxt
+ * @date 2021/5/4
  */
 public class RocketmqProxy extends AbstractMqProxy {
 
@@ -118,7 +121,6 @@ public class RocketmqProxy extends AbstractMqProxy {
             return new RocketmqProxy(this);
         }
     }
-
 
 
     public RocketmqConsumer getConsumer() {

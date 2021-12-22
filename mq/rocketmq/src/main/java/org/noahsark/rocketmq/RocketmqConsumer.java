@@ -14,7 +14,10 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * Created by hadoop on 2021/5/1.
+ * RocketMQ 消费者
+ *
+ * @author zhangxt
+ * @date 2021/5/1
  */
 public class RocketmqConsumer implements Consumer<RocketmqTopic> {
 

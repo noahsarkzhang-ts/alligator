@@ -1,6 +1,7 @@
 package org.noahsark.gw.processor;
 
 import java.util.Set;
+
 import org.noahsark.client.future.CommandCallback;
 import org.noahsark.gw.config.CommonConfig;
 import org.noahsark.gw.context.ServerContext;
@@ -26,9 +27,10 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 /**
- * @author: noahsark
- * @version:
- * @date: 2021/5/10
+ * 默认处理器
+ *
+ * @author zhangxt
+ * @date 2021/5/10
  */
 @Component
 public class DefaultProcessor extends AbstractProcessor<Void> {
@@ -113,10 +115,10 @@ public class DefaultProcessor extends AbstractProcessor<Void> {
                         @Override
                         public void failure(Throwable cause, int currentFanout, int fanout) {
                             logger.warn("catch an exception.", cause);
-                            logger.warn("catch an exception when invoking command:{}",context.getCommand());
+                            logger.warn("catch an exception when invoking command:{}", context.getCommand());
 
                             context.sendResponse(Response.buildCommonResponse(context.getCommand(),
-                                -1, "failed"));
+                                    -1, "failed"));
                         }
                     }, 6000);
                 } else if (request.getType() == RpcCommandType.REQUEST_ONEWAY) {
@@ -130,7 +132,7 @@ public class DefaultProcessor extends AbstractProcessor<Void> {
                 logger.warn("catch an exception.", ex);
 
                 context.sendResponse(Response.buildCommonResponse(context.getCommand(),
-                    -1, "failed"));
+                        -1, "failed"));
             }
 
         });
@@ -147,14 +149,14 @@ public class DefaultProcessor extends AbstractProcessor<Void> {
             CandidateService service = cache.get(command.getBiz());
 
             MultiRequest multiRequest = new MultiRequest.Builder()
-                .biz(command.getBiz())
-                .cmd(command.getCmd())
-                .serializer(command.getSerializer())
-                .type(command.getType())
-                .ver(command.getVer())
-                .payload(command.getPayload())
-                .topic(config.getMqProxy().getTopic())
-                .build();
+                    .biz(command.getBiz())
+                    .cmd(command.getCmd())
+                    .serializer(command.getSerializer())
+                    .type(command.getType())
+                    .ver(command.getVer())
+                    .payload(command.getPayload())
+                    .topic(config.getMqProxy().getTopic())
+                    .build();
 
             logger.info("send a request: {}", multiRequest);
             //logger.info("payload: {}", command.getPayload());
@@ -173,7 +175,7 @@ public class DefaultProcessor extends AbstractProcessor<Void> {
 
                         // 2. 响应
                         context.sendResponse(
-                            Response.buildResponseFromResult(context.getCommand(), result));
+                                Response.buildResponseFromResult(context.getCommand(), result));
                     }
 
                     @Override
@@ -182,7 +184,7 @@ public class DefaultProcessor extends AbstractProcessor<Void> {
                         logger.warn("Invoke catch an exception!", cause);
 
                         context.sendResponse(Response.buildCommonResponse(context.getCommand(),
-                            -1, "failed"));
+                                -1, "failed"));
                     }
                 }, 10000);
             } else if (command.getType() == RpcCommandType.REQUEST_ONEWAY) {
@@ -194,7 +196,7 @@ public class DefaultProcessor extends AbstractProcessor<Void> {
             logger.warn("Invoke catch an exception!", ex);
 
             context.sendResponse(Response.buildCommonResponse(context.getCommand(),
-                -1, "failed"));
+                    -1, "failed"));
         }
     }
 

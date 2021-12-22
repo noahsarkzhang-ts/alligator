@@ -11,7 +11,10 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
 /**
- * Created by hadoop on 2021/3/13.
+ * Websocket 网关启动类
+ *
+ * @author zhangxt
+ * @date 2021/3/13
  */
 @Component
 public class GwCommandLineRunner implements CommandLineRunner {

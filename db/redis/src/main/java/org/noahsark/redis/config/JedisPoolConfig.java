@@ -1,9 +1,10 @@
 package org.noahsark.redis.config;
 
 /**
- * @author: zhangxt
- * @version:
- * @date: 2021/11/4
+ * Jedis 连接池配置
+ *
+ * @author zhangxt
+ * @date 2021/11/4
  */
 public class JedisPoolConfig {
 

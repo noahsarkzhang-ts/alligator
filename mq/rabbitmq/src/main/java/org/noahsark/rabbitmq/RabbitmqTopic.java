@@ -3,34 +3,35 @@ package org.noahsark.rabbitmq;
 import org.noahsark.mq.Topic;
 
 /**
- * @author: zhangxt
- * @version:
- * @date: 2021/9/29
+ * RabbitMQ TOPIC
+ *
+ * @author zhangxt
+ * @date 2021/9/29
  */
 public class RabbitmqTopic implements Topic {
 
     /**
-     *  交换机名称
+     * 交换机名称
      */
     private String exchangeName;
 
     /**
-     *  队列名称
+     * 队列名称
      */
     private String queueName;
 
     /**
-     *  绑定 key
+     * 绑定 key
      */
     private String bindingKey;
 
     /**
-     *  路由 key
+     * 路由 key
      */
     private String routeKey;
 
     /**
-     *  默认为 1
+     * 默认为 1
      */
     private int qos = 1;
 

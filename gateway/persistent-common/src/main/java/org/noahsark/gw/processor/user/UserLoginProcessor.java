@@ -1,30 +1,24 @@
 package org.noahsark.gw.processor.user;
 
-import org.noahsark.client.future.CommandCallback;
-import org.noahsark.gw.context.ServerContext;
 import org.noahsark.gw.manager.UserEventEmitter;
 import org.noahsark.gw.user.UserManager;
 import org.noahsark.gw.user.UserSubject;
-import org.noahsark.registration.RegistrationClient;
-import org.noahsark.registration.domain.User;
 import org.noahsark.server.processor.AbstractProcessor;
 import org.noahsark.server.rpc.Response;
-import org.noahsark.server.rpc.Result;
 import org.noahsark.server.rpc.RpcContext;
 import org.noahsark.server.session.Session;
-import org.noahsark.server.util.JsonUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Component;
 
-import java.util.Date;
 import java.util.UUID;
 
 /**
- * Created by hadoop on 2021/3/13.
+ * 用户登陆处理器
+ *
+ * @author zhangxt
+ * @date 2021/3/13
  */
 @Component
 public class UserLoginProcessor extends AbstractProcessor<UserLoginInfo> {

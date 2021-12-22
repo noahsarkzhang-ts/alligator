@@ -13,7 +13,10 @@ import org.springframework.stereotype.Component;
 import javax.annotation.Resource;
 
 /**
- * Created by hadoop on 2021/3/13.
+ * 注册中心启动类
+ *
+ * @author zhangxt
+ * @date 22021/3/13
  */
 @Component
 public class RegistrationCommandLineRunner implements CommandLineRunner {

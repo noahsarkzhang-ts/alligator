@@ -4,7 +4,9 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 /**
- * Hello Http App!
+ * Http网关APP
+ * @author zhangxt
+ * @date 2021/5/26
  */
 @SpringBootApplication
 public class HttpApp {

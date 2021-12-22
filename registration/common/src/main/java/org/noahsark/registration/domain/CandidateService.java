@@ -3,9 +3,10 @@ package org.noahsark.registration.domain;
 import java.io.Serializable;
 
 /**
- * @author: noahsark
- * @version:
- * @date: 2021/5/18
+ * 满足条件的服务信息
+ *
+ * @author zhangxt
+ * @date 2021/5/18
  */
 public class CandidateService implements Serializable {
 

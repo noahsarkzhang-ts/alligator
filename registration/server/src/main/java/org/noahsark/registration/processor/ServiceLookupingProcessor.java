@@ -18,7 +18,9 @@ import org.springframework.util.StringUtils;
 import java.util.List;
 
 /**
- * Created by hadoop on 2021/4/11.
+ *  服务查询
+ * @author zhangxt
+ * @date 2021/4/11
  */
 @Component
 public class ServiceLookupingProcessor extends AbstractProcessor<ServiceQuery> {

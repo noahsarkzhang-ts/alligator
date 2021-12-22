@@ -5,20 +5,22 @@ import org.noahsark.mq.SendResult;
 import java.util.Objects;
 
 /**
- * @author: zhangxt
- * @version:
- * @date: 2021/9/29
+ * RabbitMQ 结果
+ *
+ * @author zhangxt
+ * @date 2021/9/29
  */
 public class RabbitmqSendResult implements SendResult {
 
     private boolean success;
 
     /**
-     *  消息序号，一个 channel 中的序号唯一
+     * 消息序号，一个 channel 中的序号唯一
      */
     private long deliveryTag;
 
-    public RabbitmqSendResult() {}
+    public RabbitmqSendResult() {
+    }
 
     public RabbitmqSendResult(boolean success, long deliveryTag) {
         this.success = success;

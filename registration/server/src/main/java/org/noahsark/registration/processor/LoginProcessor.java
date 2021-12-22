@@ -12,8 +12,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
- * Created by hadoop on 2021/4/10.
+ * 用户注册
+ *
+ * @author zhangxt
+ * @date 2021/4/10
  */
+@Deprecated
 @Component
 public class LoginProcessor extends AbstractProcessor<User> {
 
@@ -25,7 +29,7 @@ public class LoginProcessor extends AbstractProcessor<User> {
 
         // TODO 从注册中心移除
         context.sendResponse(Response.buildCommonResponse(context.getCommand(),
-            0, "success"));
+                0, "success"));
 
     }
 

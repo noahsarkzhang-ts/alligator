@@ -3,7 +3,10 @@ package org.noahsark.rocketmq;
 import org.noahsark.mq.SendResult;
 
 /**
- * Created by hadoop on 2021/5/2.
+ * 结果
+ *
+ * @author zhangxt
+ * @date 2021/5/2
  */
 public class RocketmqSendResult implements SendResult {
 
@@ -11,7 +14,8 @@ public class RocketmqSendResult implements SendResult {
 
     private String msgId;
 
-    public RocketmqSendResult() {}
+    public RocketmqSendResult() {
+    }
 
     public RocketmqSendResult(boolean success, String msgId) {
         this.success = success;

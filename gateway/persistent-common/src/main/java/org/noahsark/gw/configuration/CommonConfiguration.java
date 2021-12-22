@@ -5,9 +5,10 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 /**
- * @author: noahsark
- * @version:
- * @date: 2021/6/30
+ * CommonConfiguration
+ *
+ * @author zhangxt
+ * @date 2021/6/30
  */
 @Configuration
 public class CommonConfiguration {

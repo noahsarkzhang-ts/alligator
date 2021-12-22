@@ -2,7 +2,7 @@ package org.noahsark.http.common;
 
 /**
  * @Description: 常量
- * @Author:
+ * @Author: zhangxt
  * @Date: 9:20 2017/6/30
  */
 public final class Constants {

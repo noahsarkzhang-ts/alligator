@@ -21,9 +21,10 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 
 /**
- * @author: noahsark
- * @version:
- * @date: 2021/4/12
+ * 客户端连接上线监听器
+ *
+ * @author zhangxt
+ * @date 2021/4/12
  */
 @Component
 public class ClientConnectionListener extends ApplicationListener<ClientConnectionSuccessEvent> {

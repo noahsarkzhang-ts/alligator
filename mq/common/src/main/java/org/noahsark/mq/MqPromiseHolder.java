@@ -10,6 +10,12 @@ import org.slf4j.LoggerFactory;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
+/**
+ * MQ promise 管理
+ *
+ * @author zhangxt
+ * @date 2021/4/29
+ */
 public class MqPromiseHolder implements PromisHolder {
 
     private static Logger logger = LoggerFactory.getLogger(MqPromiseHolder.class);

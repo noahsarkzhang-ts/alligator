@@ -13,7 +13,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
- * Created by hadoop on 2021/6/27.
+ * 用户事件处理器
+ *
+ * @author zhangxt
+ * @date 2021/6/27
  */
 @Component
 public class UserEventProcessor extends AbstractProcessor<UserEvent> {

@@ -8,9 +8,9 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * @author: noahsark
- * @version:
- * @date: 2021/5/13
+ * 用户状态管理
+ * @author zhangxt
+ * @date 2021/5/13
  */
 public class UserManager {
 

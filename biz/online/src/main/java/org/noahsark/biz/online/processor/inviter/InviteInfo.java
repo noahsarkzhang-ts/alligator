@@ -3,9 +3,10 @@ package org.noahsark.biz.online.processor.inviter;
 import java.util.List;
 
 /**
- * @author: noahsark
- * @version:
- * @date: 2021/5/11
+ * 邀请信息
+ *
+ * @author zhangxt
+ * @date 2021/5/11
  */
 public class InviteInfo {
 

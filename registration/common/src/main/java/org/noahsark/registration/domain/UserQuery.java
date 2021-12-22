@@ -3,9 +3,10 @@ package org.noahsark.registration.domain;
 import java.io.Serializable;
 
 /**
- * @author: noahsark
- * @version:
- * @date: 2021/5/18
+ * 用户查询
+ *
+ * @author zhangxt
+ * @date 2021/4/8
  */
 public class UserQuery implements Serializable {
 

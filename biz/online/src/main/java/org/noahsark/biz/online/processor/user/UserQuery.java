@@ -3,9 +3,10 @@ package org.noahsark.biz.online.processor.user;
 import java.io.Serializable;
 
 /**
- * @author: noahsark
- * @version:
- * @date: 2021/7/1
+ * 用户查询
+ *
+ * @author zhangxt
+ * @date 2021/7/1
  */
 public class UserQuery implements Serializable {
 

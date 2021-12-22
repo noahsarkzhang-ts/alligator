@@ -5,9 +5,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * @author: zhangxt
- * @version:
- * @date: 2021/9/29
+ * RabbitMQ 发送回调
+ *
+ * @author zhangxt
+ * @date 2021/9/29
  */
 public abstract class RabbitmqSendCallback implements SendCallback<RabbitmqSendResult> {
 
@@ -17,7 +18,7 @@ public abstract class RabbitmqSendCallback implements SendCallback<RabbitmqSendR
 
         @Override
         public void onSuccess(RabbitmqSendResult var1) {
-            logger.info("send message successfully: {}",var1.getMsgId());
+            logger.info("send message successfully: {}", var1.getMsgId());
         }
 
         @Override

@@ -1,11 +1,10 @@
 package org.noahsark.mq;
 
-import java.util.List;
-
 /**
- * @author: noahsark
- * @version:
- * @date: 2021/4/29
+ * 监听器接口
+ *
+ * @author zhangxt
+ * @date 2021/4/29
  */
 public interface MessageListener {
 

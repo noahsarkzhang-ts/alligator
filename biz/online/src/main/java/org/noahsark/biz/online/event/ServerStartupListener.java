@@ -13,9 +13,10 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 
 /**
- * @author: noahsark
- * @version:
- * @date: 2021/4/12
+ * 服务器启动事件监听
+ *
+ * @author zhangxt
+ * @date 2021/4/12
  */
 @Component
 public class ServerStartupListener extends ApplicationListener<ServerStartupEvent> {

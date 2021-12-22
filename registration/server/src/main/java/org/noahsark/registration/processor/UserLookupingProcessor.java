@@ -15,8 +15,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
- * Created by hadoop on 2021/4/11.
+ * 用户查询
+ * @author zhangxt
+ * @date 2021/4/11
  */
+@Deprecated
 @Component
 public class UserLookupingProcessor extends AbstractProcessor<UserQuery> {
 

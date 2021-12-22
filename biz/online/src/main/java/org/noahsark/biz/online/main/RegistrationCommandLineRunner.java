@@ -8,9 +8,10 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
 /**
- * @author: noahsark
- * @version:
- * @date: 2021/5/21
+ * 注册中心客户端启动类
+ *
+ * @author zhangxt
+ * @date 2021/5/21
  */
 @Component
 public class RegistrationCommandLineRunner implements CommandLineRunner {

@@ -1,9 +1,9 @@
 package org.noahsark.gw.context;
 
 /**
- * @author: noahsark
- * @version:
- * @date: 2021/4/21
+ *  全局状态
+ * @author zhangxt
+ * @date 2021/4/21
  */
 public class GlobalStatus {
 

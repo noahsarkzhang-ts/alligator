@@ -3,15 +3,16 @@ package org.noahsark.rabbitmq;
 import org.noahsark.mq.Message;
 
 /**
- * @author: zhangxt
- * @version:
- * @date: 2021/9/29
+ * RabbitMQ 消息
+ *
+ * @author zhangxt
+ * @date 2021/9/29
  */
 public class RabbitmqMessage implements Message {
 
     private RabbitmqTopic topic;
 
-    private byte [] content;
+    private byte[] content;
 
     public RabbitmqTopic getTopic() {
         return topic;

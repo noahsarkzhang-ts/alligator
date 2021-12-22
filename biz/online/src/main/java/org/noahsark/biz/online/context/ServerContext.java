@@ -5,9 +5,10 @@ import org.noahsark.registration.UserServiceCache;
 import org.noahsark.rocketmq.RocketmqProxy;
 
 /**
- * @author: noahsark
- * @version:
- * @date: 2021/4/12
+ * 服务器上下文
+ *
+ * @author zhangxt
+ * @date 2021/4/12
  */
 public final class ServerContext {
 

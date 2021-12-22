@@ -10,8 +10,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
- * Created by hadoop on 2021/4/10.
+ * 用户退出
+ *
+ * @author zhangxt
+ * @date 2021/4/10
  */
+@Deprecated
 @Component
 public class LogoutProcessor extends AbstractProcessor<Id> {
 

@@ -15,7 +15,9 @@ import org.slf4j.LoggerFactory;
 import java.util.UUID;
 
 /**
- * @author hadoop
+ * RocketMQ 生产者
+ *
+ * @author zhangxt
  * @date 2021/5/1
  */
 public class RocketmqProducer implements Producer<RocketmqMessage, RocketmqSendResult> {

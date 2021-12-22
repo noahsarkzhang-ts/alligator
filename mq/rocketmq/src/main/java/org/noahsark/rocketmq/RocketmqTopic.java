@@ -3,7 +3,10 @@ package org.noahsark.rocketmq;
 import org.noahsark.mq.Topic;
 
 /**
- * Created by hadoop on 2021/5/2.
+ * RocketMQ TOPIC
+ *
+ * @author zhangxt
+ * @date 2021/5/2
  */
 public class RocketmqTopic implements Topic {
 

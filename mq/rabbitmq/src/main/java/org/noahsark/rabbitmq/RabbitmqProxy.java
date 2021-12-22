@@ -11,6 +11,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
+/**
+ * RabbitMQ 代理
+ *
+ * @author zhangxt
+ * @date 2021/9/29
+ */
 public class RabbitmqProxy extends AbstractMqProxy {
 
     private static Logger logger = LoggerFactory.getLogger(RabbitmqProxy.class);
