@@ -144,14 +144,15 @@ public class RpcPromise extends DefaultPromise<Object> implements Comparable<Rpc
                 return this;
             }
 
+            // 1、 响应结果数加 1
             this.currentFanout.incrementAndGet();
 
-            // 1、加入队列
+            // 2、加入队列
             if (result != null) {
                 streams.offer(result);
             }
 
-            // 2、调用回调
+            // 3、调用回调
             safeExecute(EVENT_EXECUTOR, () -> notifyListeners());
         } else if (PromiseEnum.STREAM.equals(this.type)) {
             this.end(result);
