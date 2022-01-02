@@ -100,7 +100,7 @@
         window.WebSocket = window.MozWebSocket;
     }
     if (window.WebSocket) {
-        socket = new WebSocket("ws://192.168.68.25:9091/websocket");
+        socket = new WebSocket("ws://192.168.3.104:9091/websocket");
         socket.onmessage = function (busevent) {
             var msg = busevent.data;
             var data = JSON.parse(msg);

@@ -1,5 +1,5 @@
 server:
-  address: 192.168.68.25
+  address: 192.168.3.104
   port: 9098
 
 logging:
